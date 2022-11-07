@@ -33,7 +33,7 @@ public:
 
     Mat2D &operator=(const VecND &rhs);
 
-    VecND solve(VecND &cof);
+    std::tuple<VecND, Mat2D> solve(VecND &b);
 
     Mat2D T();
 
