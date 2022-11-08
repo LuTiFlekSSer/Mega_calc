@@ -62,3 +62,7 @@ double &VecND::operator[](int index) {
     throw std::length_error("Invalid index");
 }
 
+int VecND::size() {
+    return (int) vec.size();
+}
+

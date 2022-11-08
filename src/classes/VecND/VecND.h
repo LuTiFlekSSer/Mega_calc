@@ -5,14 +5,16 @@
 #include "vector"
 
 class VecND {
+    friend class Mat2D;
+
+private:
+    std::vector<double> vec;
 public:
     VecND();
 
     explicit VecND(int x_);
 
     VecND(const VecND &el);
-
-    std::vector<double> vec;
 
     void print();
 
@@ -26,6 +28,7 @@ public:
 
     VecND &operator=(const VecND &rhs);
 
+    int size();
 };
 
 

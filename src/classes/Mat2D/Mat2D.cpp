@@ -227,7 +227,7 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
     throw std::length_error("Matrix does not match the size of the vector");
 }
 
-std::tuple<int, int, double> max_elem(Mat2D &matrix, int index) {
+std::tuple<int, int, double> Mat2D::max_elem(Mat2D &matrix, int index) {
     int x = index, y = index;
     double max = matrix[index][index];
     for (int i = index; i < std::min(matrix.mat.size(), matrix.mat[0].vec.size()); ++i) {
@@ -285,4 +285,7 @@ Mat2D::Mat2D(int x_) {
     }
 }
 
+int Mat2D::size() {
+    return (int) mat.size();
+}
 

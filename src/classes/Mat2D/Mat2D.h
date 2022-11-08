@@ -8,6 +8,11 @@
 #include "algorithm"
 
 class Mat2D {
+private:
+    std::vector<VecND> mat;
+
+    std::tuple<int, int, double> max_elem(Mat2D &matrix, int index);
+
 public:
     Mat2D(int x_, int y_x);
 
@@ -16,8 +21,6 @@ public:
     Mat2D(const Mat2D &el);
 
     Mat2D();
-
-    std::vector<VecND> mat;
 
     void print();
 
@@ -42,6 +45,8 @@ public:
     std::tuple<Mat2D, Mat2D, Mat2D, Mat2D> lu_decomposition();
 
     VecND &operator[](int index);
+
+    int size();
 };
 
 Mat2D eye(int size);
