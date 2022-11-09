@@ -2,9 +2,9 @@
 #include "src/classes/Mat2D/Mat2D.h"
 
 int main() {
-    Mat2D m(3, 3), A, B;
+    Mat2D m(3, 5);
     for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
+        for (int j = 0; j < 5; ++j) {
             std::cin >> m[i][j];
         }
     }
@@ -14,6 +14,16 @@ int main() {
     }
     auto i = m.solve(v);
     std::get<0>(i).print();
+    std::cout << '\n';
     std::get<1>(i).print();
+    VecND a = std::get<0>(i);
+    for (int j = 0; j < std::get<1>(i).size(); ++j) {
+        for (int k = 0; k < std::get<1>(i)[0].size(); ++k) {
+            a[j] += std::get<1>(i)[j][k];
+        }
+    }
+    std::cout << '\n';
+    v.print();
+    (m * a).print();
     return 0;
 }

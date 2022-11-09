@@ -13,6 +13,8 @@ private:
 
     std::tuple<int, int, double> max_elem(Mat2D &matrix, int index);
 
+    std::tuple<Mat2D, Mat2D, Mat2D, Mat2D> lu_decomposition();
+
 public:
     Mat2D(int x_, int y_x);
 
@@ -41,8 +43,6 @@ public:
     Mat2D T();
 
     double det();
-
-    std::tuple<Mat2D, Mat2D, Mat2D, Mat2D> lu_decomposition();
 
     VecND &operator[](int index);
 
