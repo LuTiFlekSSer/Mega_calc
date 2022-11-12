@@ -7,7 +7,7 @@ VecND::VecND(int x_) {
 }
 
 VecND::VecND() {
-    ;
+
 }
 
 VecND::VecND(const VecND &el) {

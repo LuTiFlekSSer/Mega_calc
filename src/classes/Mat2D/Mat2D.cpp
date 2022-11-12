@@ -160,7 +160,7 @@ Mat2D &Mat2D::operator=(const VecND &rhs) {
 }
 
 Mat2D::Mat2D() {
-    ;
+
 }
 
 Mat2D Mat2D::operator*(const double &rhs) {
@@ -196,12 +196,17 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
 //        b.print();
         VecND pb = std::get<0>(pluq) * b;
         Mat2D c((int) std::get<2>(pluq).mat[0].vec.size(),
-                (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
-        for (int i = (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i >= 0; --i) {
+                (int) std::get<2>(pluq).mat[0].vec.size() -
+                (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
+        for (int i = (int) std::get<2>(pluq).mat[0].vec.size() -
+                     (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1;
+             i >= 0; --i) {
             c[i + (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size())][i] = 1;
         }
         VecND y((int) std::get<2>(pluq).mat.size());
-        Mat2D yc((int) std::get<2>(pluq).mat.size(), (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
+        Mat2D yc((int) std::get<2>(pluq).mat.size(), (int) std::get<2>(pluq).mat[0].vec.size() -
+                                                     (int) std::min(std::get<2>(pluq).mat.size(),
+                                                                    std::get<2>(pluq).mat[0].vec.size()));
         for (int i = 0; i < std::get<2>(pluq).mat.size(); ++i) {
             double sum = 0;
             for (int j = 0; j < i; ++j) {
@@ -210,7 +215,8 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
             y[i] = pb[i] - sum;
         }
         int index_first_not_null = -1;
-        for (int i = (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i >= 0; --i) {
+        for (int i = (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1;
+             i >= 0; --i) {
             if (std::abs(std::get<2>(pluq)[i][i]) < eps) {
                 if (std::abs(y[i]) > eps)
                     return std::make_tuple(VecND(0), Mat2D(0));
@@ -219,8 +225,11 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
                 break;
             }
         }
-        for (int i = (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i < std::get<2>(pluq).mat.size(); ++i)
-            if (std::abs(std::get<2>(pluq)[i][(int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1]) < eps and std::abs(y[i]) > eps)
+        for (int i = (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1;
+             i < std::get<2>(pluq).mat.size(); ++i)
+            if (std::abs(std::get<2>(pluq)[i][
+                                 (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) -
+                                 1]) < eps and std::abs(y[i]) > eps)
                 return std::make_tuple(VecND(0), Mat2D(0));
         VecND x((int) std::get<2>(pluq).mat[0].vec.size());
         for (int i = index_first_not_null; i >= 0; --i) {
@@ -231,7 +240,8 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
             if (std::abs((y[i] - sum) / std::get<2>(pluq)[i][i]) > eps)
                 x[i] = (y[i] - sum) / std::get<2>(pluq)[i][i];
         }
-        for (int i = 0; i < std::get<2>(pluq).mat[0].vec.size() - std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()); ++i) {
+        for (int i = 0; i < std::get<2>(pluq).mat[0].vec.size() -
+                            std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()); ++i) {
             for (int j = (int) std::get<2>(pluq).mat.size() - 1; j >= 0; --j) {
                 double sum = 0;
                 for (int k = (int) std::get<2>(pluq).mat[0].vec.size() - 1; k > j; --k) {
