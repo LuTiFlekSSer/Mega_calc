@@ -22,6 +22,8 @@ public:
 
     VecND operator+(const VecND &rhs) const;
 
+    VecND operator-(const VecND &rhs) const;
+
     VecND operator*(const double &rhs) const;
 
     VecND &operator*=(const double &rhs);

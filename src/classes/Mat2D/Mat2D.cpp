@@ -47,6 +47,19 @@ Mat2D Mat2D::operator+(const Mat2D &rhs) {
     throw std::length_error("Different dimensions of matrix");
 }
 
+Mat2D Mat2D::operator-(const Mat2D &rhs) {
+    if (this->mat.size() == rhs.mat.size() and this->mat[0].vec.size() == rhs.mat[0].vec.size()) {
+        Mat2D tmp((int) mat.size(), (int) mat[0].vec.size());
+        for (int i = 0; i < mat.size(); ++i) {
+            for (int j = 0; j < mat[0].vec.size(); ++j) {
+                tmp[i][j] = mat[i][j] - rhs.mat[i].vec[j];
+            }
+        }
+        return Mat2D(tmp);
+    }
+    throw std::length_error("Different dimensions of matrix");
+}
+
 Mat2D::Mat2D(const Mat2D &el) {
     mat.resize(el.mat.size());
     for (int i = 0; i < mat.size(); ++i) {
@@ -147,7 +160,7 @@ Mat2D &Mat2D::operator=(const VecND &rhs) {
 }
 
 Mat2D::Mat2D() {
-
+    ;
 }
 
 Mat2D Mat2D::operator*(const double &rhs) {
@@ -182,7 +195,8 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
 //        std::cout << "b\n";
 //        b.print();
         VecND pb = std::get<0>(pluq) * b;
-        Mat2D c((int) std::get<2>(pluq).mat[0].vec.size(), (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
+        Mat2D c((int) std::get<2>(pluq).mat[0].vec.size(),
+                (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
         for (int i = (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i >= 0; --i) {
             c[i + (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size())][i] = 1;
         }

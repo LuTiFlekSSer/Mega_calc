@@ -28,6 +28,8 @@ public:
 
     Mat2D operator+(const Mat2D &rhs);
 
+    Mat2D operator-(const Mat2D &rhs);
+
     Mat2D operator*(const double &rhs);
 
     Mat2D operator*(const Mat2D &rhs);
