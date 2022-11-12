@@ -184,16 +184,6 @@ Mat2D eye(int size) {
 std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
     if (this->mat.size() == b.vec.size()) {
         auto pluq = (*this).lu_decomposition();
-//        std::cout << "p\n";
-//        std::get<0>(pluq).print();
-//        std::cout << "l\n";
-//        std::get<1>(pluq).print();
-//        std::cout << "u\n";
-//        std::get<2>(pluq).print();
-//        std::cout << "q\n";
-//        std::get<3>(pluq).print();
-//        std::cout << "b\n";
-//        b.print();
         VecND pb = std::get<0>(pluq) * b;
         Mat2D c((int) std::get<2>(pluq).mat[0].vec.size(),
                 (int) std::get<2>(pluq).mat[0].vec.size() -
@@ -330,5 +320,40 @@ Mat2D::Mat2D(int x_) {
 
 int Mat2D::size() {
     return (int) mat.size();
+}
+
+void print_solve(std::tuple<VecND, Mat2D> xc) {
+    if (std::get<0>(xc).size() == 0)
+        std::cout << "No solution\n";
+    else if (std::get<1>(xc).size() == 0 or std::get<1>(xc)[0].size() == 0) {
+        int hsize = std::get<0>(xc).size() / 2;
+        for (int i = 0; i < std::get<0>(xc).size(); ++i) {
+            if (i != hsize)
+                std::cout << "    |" << std::get<0>(xc)[i] << "|\n";
+            else
+                std::cout << "X = |" << std::get<0>(xc)[i] << "|\n";
+        }
+    } else {
+        int hsize = std::get<0>(xc).size() / 2;
+        for (int i = 0; i < std::get<0>(xc).size(); ++i) {
+            if (i != hsize) {
+                std::cout << "    |" << std::get<0>(xc)[i] << " ";
+                for (int j = 0; j < std::get<1>(xc)[0].size(); ++j) {
+                    if (j < std::get<1>(xc)[0].size() - 1)
+                        std::cout << "+ (" << std::get<1>(xc)[i][j] << ") * C" << j + 1 << ' ';
+                    else
+                        std::cout << "+ (" << std::get<1>(xc)[i][j] << ") * C" << j + 1 << "|\n";
+                }
+            } else {
+                std::cout << "X = |" << std::get<0>(xc)[i] << " ";
+                for (int j = 0; j < std::get<1>(xc)[0].size(); ++j) {
+                    if (j < std::get<1>(xc)[0].size() - 1)
+                        std::cout << "+ (" << std::get<1>(xc)[i][j] << ") * C" << j + 1 << ' ';
+                    else
+                        std::cout << "+ (" << std::get<1>(xc)[i][j] << ") * C" << j + 1 << "|\n";
+                }
+            }
+        }
+    }
 }
 

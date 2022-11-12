@@ -53,4 +53,6 @@ public:
 
 Mat2D eye(int size);
 
+void print_solve(std::tuple<VecND, Mat2D> xc);
+
 #endif
