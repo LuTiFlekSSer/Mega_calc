@@ -1,7 +1,8 @@
 #include <iostream>
 #include "src/classes/Mat2D/Mat2D.h"
+#include "ui files/ui.h"
 
-int main() {
+int main(int argc, char *argv[]) {
     Mat2D m(3, 5);
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 5; ++j) {
@@ -23,5 +24,6 @@ int main() {
     print_solve(i);
     v.print();
     (m * a).print();
-    return 0;
+    return start_UI(argc,argv);
 }
+

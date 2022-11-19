@@ -1,3 +1,4 @@
 # Project exclude paths
-/cmake-build-debug/
+/cmake-build-debug-mingw-for-qt/
 /.idea/
+/app/
