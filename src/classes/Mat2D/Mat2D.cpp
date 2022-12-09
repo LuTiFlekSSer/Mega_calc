@@ -263,14 +263,15 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
 std::tuple<int, int, double> Mat2D::max_elem(Mat2D &matrix, int index) {
     int x = index, y = index;
     double max = matrix[index][index];
-    for (int i = index; i < std::min(matrix.mat.size(), matrix.mat[0].vec.size()); ++i) {
-        for (int j = index; j < std::min(matrix.mat.size(), matrix.mat[0].vec.size()); ++j) {
+    for (int i = index; i < matrix.mat.size(); ++i) {
+        for (int j = index; j < matrix.mat[0].vec.size(); ++j) {
             if (std::abs(matrix[i][j]) > std::abs(max)) {
                 x = i;
                 y = j;
                 max = matrix[i][j];
             }
         }
+
     }
     return std::make_tuple(x, y, max);
 }
@@ -290,9 +291,9 @@ std::tuple<Mat2D, Mat2D, Mat2D, Mat2D> Mat2D::lu_decomposition() {
         if (index_column != i) {
             for (int j = 0; j < this->mat.size(); ++j) {
                 std::swap(u[j][i], u[j][index_column]);
-                if (j < this->mat[0].vec.size())
-                    std::swap(q[j][i], q[j][index_column]);
-                std::swap(l[j][i], l[j][index_column]);
+            }
+            for (int j = 0; j < this->mat[0].vec.size(); ++j) {
+                std::swap(q[j][i], q[j][index_column]);
             }
         }
         if (std::abs(elem) > eps) {

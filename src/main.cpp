@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
     print_solve(i);
     v.print();
     (m * a).print();
-    return start_UI(argc,argv);
+//    start_UI(argc,argv);
+    return 0;
 }
 
