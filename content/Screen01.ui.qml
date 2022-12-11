@@ -15,12 +15,6 @@ Rectangle {
     height: Constants.height
 
     color: Constants.backgroundColor
-    states: [
-        State {
-            name: "clicked"
-            when: button.checked
-        }
-    ]
 }
 
 /*##^##

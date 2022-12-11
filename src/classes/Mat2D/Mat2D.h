@@ -16,7 +16,6 @@ private:
     std::tuple<Mat2D, Mat2D, Mat2D, Mat2D> lu_decomposition();
 
 public:
-
     Mat2D(int x_, int y_x);
 
     explicit Mat2D(int x_);
