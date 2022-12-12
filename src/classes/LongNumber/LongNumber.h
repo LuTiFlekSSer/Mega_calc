@@ -32,7 +32,11 @@ public:
 
     friend std::istream &operator>>(std::istream &in, LongNumber &num);
 
-    std::strong_ordering operator<=>(const LongNumber &rhs);
+    friend std::strong_ordering operator<=>(const LongNumber &lhs, const LongNumber &rhs);
+
+    friend bool operator!=(const LongNumber &lhs, const LongNumber &rhs);
+
+    friend bool operator==(const LongNumber &lhs, const LongNumber &rhs);
 
     [[nodiscard]] std::string to_string() const;
 

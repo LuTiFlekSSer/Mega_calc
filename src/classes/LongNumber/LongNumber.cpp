@@ -16,71 +16,50 @@ LongNumber::LongNumber(const LongNumber &num) {
 
 LongNumber::LongNumber(std::string num) {
     if (num.empty()) {
-        num = "0";
+        num = ".";
     }
     if (num[0] == '-') {
         sign = true;
         num.erase(num.begin());
+        if (num.empty())
+            num.insert(num.begin(), '.');
     } else {
         sign = false;
     }
-
-//    while (num[0] != '.' and num[0] != '0')
-
-
+    while (num[0] == '0') {
+        num.erase(num.begin());
+        if (num.empty())
+            num.insert(num.begin(), '.');
+    }
+    while (num[num.size() - 1] == '0') {
+        num.erase(num.end() - 1);
+        if (num.empty())
+            num.insert(num.begin(), '.');
+    }
+    if (num == ".") {
+        if (sign)
+            sign = false;
+        num = ".0";
+    }
     if (num[0] == '.') {
-        num.insert(num.begin(), '0');
-    }
-    if (num[num.size() - 1] == '.') {
-        num.insert(num.end(), '0');
-    }
-    while (num[0] == '0' and num.size() > 1) {
-        if (num[1] != '.')
-            num.erase(num.begin());
-        else
-            break;
-    }
-    if (num.find('.') != std::string::npos) {
-        while (num[num.size() - 1] == '0') {
-            num.erase(num.end() - 1);
-            if (num[num.size() - 1] == '.') {
-                num.erase(num.end() - 1);
+        for (long long i = 1; i < num.size(); ++i)
+            if (num[i] != '0') {
+                exp = 1 - i;
                 break;
             }
-        }
-    }
-    if (num == "0") {
-        num.clear();
-    }
-    long long count = 0;
-    bool exp_flag = false, dot_flag = false;
-    exp = 0;
-    for (char i: num) {
-        if (isdigit(i)) {
-            ++count;
-            if (exp_flag and i != '0') {
-                exp = -count + 1;
-                exp_flag = false;
+        for (long long i = -exp + 1; i < num.size(); ++i)
+            numbers.push_back((char) (num[i] - '0'));
+    } else {
+        exp = (long long) num.size();
+        for (long long i = 0; i < num.size(); ++i) {
+            if (num[i] == '.') {
+                exp = i;
+                break;
             }
-            if (!exp_flag)
-                numbers.push_back((char) (i - '0'));
-        } else if (i == '.') {
-            dot_flag = true;
-            if (num[0] == '0' and num[1] == '.') {
-                exp_flag = true;
-                count = 0;
-                numbers.clear();
-            } else {
-                exp = count;
-            }
+            numbers.push_back((char) (num[i] - '0'));
         }
-    }
-    if (!dot_flag) {
-        exp = count;
-    }
-    if (num.empty()) {
-        numbers.push_back(0);
-        sign = false;
+        for (long long i = exp + 1; i < num.size(); ++i)
+            numbers.push_back((char) (num[i] - '0'));
     }
 }
 
@@ -125,37 +104,49 @@ std::istream &operator>>(std::istream &in, LongNumber &num) {
     return in;
 }
 
-std::strong_ordering LongNumber::operator<=>(const LongNumber &rhs) {
-    if (this->sign > rhs.sign) {
+std::strong_ordering operator<=>(const LongNumber &lhs, const LongNumber &rhs) {
+    if (lhs.sign > rhs.sign) {
         return std::strong_ordering::less;
-    } else if (this->sign < rhs.sign) {
+    } else if (lhs.sign < rhs.sign) {
         return std::strong_ordering::greater;
     }
-    if (this->exp < rhs.exp) {
+    if (lhs.exp < rhs.exp) {
         return std::strong_ordering::less;
-    } else if (this->exp > rhs.exp) {
+    } else if (lhs.exp > rhs.exp) {
         return std::strong_ordering::greater;
     }
-    if (rhs.exp < 0) {
-        if (this->numbers.size() > rhs.numbers.size()) {
-            return std::strong_ordering::less;
-        } else if (this->numbers.size() < rhs.numbers.size()) {
-            return std::strong_ordering::greater;
-        } else {
-            for (auto i = 0; i < this->numbers.size(); ++i) {
-//                if (this->numbers[0])
-            }
+    for (long long i = 0; i < std::min(lhs.numbers.size(), rhs.numbers.size()); ++i) {
+        if (lhs.numbers[i] > rhs.numbers[i]) {
+            return lhs.sign ? std::strong_ordering::less : std::strong_ordering::greater;
+        } else if (lhs.numbers[i] < rhs.numbers[i]) {
+            return lhs.sign ? std::strong_ordering::greater : std::strong_ordering::less;
         }
-
     }
+    if (lhs.numbers.size() > rhs.numbers.size()) {
+        return lhs.sign ? std::strong_ordering::less : std::strong_ordering::greater;
+    } else if (lhs.numbers.size() < rhs.numbers.size()) {
+        return lhs.sign ? std::strong_ordering::greater : std::strong_ordering::less;
+    }
+    return std::strong_ordering::equivalent;
+}
 
+bool operator!=(const LongNumber &lhs, const LongNumber &rhs) {
+    if (lhs.sign != rhs.sign or lhs.exp != rhs.exp or lhs.numbers != rhs.numbers)
+        return true;
+    return false;
+}
+
+bool operator==(const LongNumber &lhs, const LongNumber &rhs) {
+    if (lhs.sign != rhs.sign or lhs.exp != rhs.exp or lhs.numbers != rhs.numbers)
+        return false;
+    return true;
 }
 
 LongNumber &LongNumber::operator=(const LongNumber &rhs) = default;
 
 bool correct_num(const std::string &num) {
     long long dot_num = 0;
-    for (int i = 0; i < num.size(); ++i) {
+    for (long long i = 0; i < num.size(); ++i) {
         if (!isdigit(num[i])) {
             if (num[i] == '-' and i == 0) {
                 continue;

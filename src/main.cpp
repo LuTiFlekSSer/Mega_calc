@@ -28,10 +28,10 @@ int main(int argc, char *argv[]) {
 //    (m * a).print();
 //    start_UI(argc, argv);
 //
-    LongNumber a(11.1), b(1), c(0);
+    LongNumber a(0), b(0.11);
 //    std::cin >> a >> b >> c;
 //    std::cout << a << ' ' << b << ' ' << c;
-    std::cout << (a < b);
+    std::cout << (a <= b);
     return 0;
 }
 
