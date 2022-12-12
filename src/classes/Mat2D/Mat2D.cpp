@@ -42,7 +42,7 @@ Mat2D Mat2D::operator+(const Mat2D &rhs) {
                 tmp[i][j] = mat[i][j] + rhs.mat[i].vec[j];
             }
         }
-        return Mat2D(tmp);
+        return Mat2D{tmp};
     }
     throw std::length_error("Different dimensions of matrix");
 }
@@ -55,7 +55,7 @@ Mat2D Mat2D::operator-(const Mat2D &rhs) {
                 tmp[i][j] = mat[i][j] - rhs.mat[i].vec[j];
             }
         }
-        return Mat2D(tmp);
+        return Mat2D{tmp};
     }
     throw std::length_error("Different dimensions of matrix");
 }
@@ -85,7 +85,7 @@ Mat2D Mat2D::operator*(const Mat2D &rhs) {
                 }
             }
         }
-        return Mat2D(tmp);
+        return Mat2D{tmp};
     }
     throw std::length_error("Multiplication is not possible");
 }
@@ -97,7 +97,7 @@ Mat2D Mat2D::T() {
             tmp[j][i] = this->mat[i][j];
         }
     }
-    return Mat2D(tmp);
+    return Mat2D{tmp};
 }
 
 double Mat2D::det() {
@@ -148,7 +148,7 @@ VecND Mat2D::operator*(const VecND &rhs) {
         Mat2D tmp(1, (int) rhs.vec.size()), rhs_mat(1, (int) rhs.vec.size());
         rhs_mat[0] = rhs;
         tmp = *this * rhs_mat.T();
-        return VecND(tmp.T()[0]);
+        return VecND{tmp.T()[0]};
     }
     throw std::length_error("Multiplication is not possible");
 }
@@ -159,9 +159,7 @@ Mat2D &Mat2D::operator=(const VecND &rhs) {
     return *this;
 }
 
-Mat2D::Mat2D() {
-
-}
+Mat2D::Mat2D() = default;
 
 Mat2D Mat2D::operator*(const double &rhs) {
     Mat2D tmp(*this);
@@ -170,7 +168,7 @@ Mat2D Mat2D::operator*(const double &rhs) {
             tmp[i][j] *= rhs;
         }
     }
-    return Mat2D(tmp);
+    return Mat2D{tmp};
 }
 
 Mat2D eye(int size) {
@@ -178,7 +176,7 @@ Mat2D eye(int size) {
     for (int i = 0; i < size; ++i) {
         tmp[i][i] = 1;
     }
-    return Mat2D(tmp);
+    return Mat2D{tmp};
 }
 
 std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {

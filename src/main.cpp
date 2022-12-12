@@ -1,18 +1,18 @@
 #include <iostream>
 #include "src/classes/Mat2D/Mat2D.h"
 #include "src/classes/VecND/VecND.h"
-#include "src/classes/LongNumber/LongNimber.h"
+#include "src/classes/LongNumber/LongNumber.h"
 #include "ui files/ui.h"
 
 int main(int argc, char *argv[]) {
-//    Mat2D m(4, 7);
-//    for (int i = 0; i < 4; ++i) {
-//        for (int j = 0; j < 7; ++j) {
+//    Mat2D m(3, 5);
+//    for (int i = 0; i < 3; ++i) {
+//        for (int j = 0; j < 5; ++j) {
 //            std::cin >> m[i][j];
 //        }
 //    }
-//    VecND v(4);
-//    for (int i = 0; i < 4; ++i) {
+//    VecND v(3);
+//    for (int i = 0; i < 3; ++i) {
 //        std::cin >> v[i];
 //    }
 //    auto i = m.solve(v);
@@ -27,10 +27,11 @@ int main(int argc, char *argv[]) {
 //    v.print();
 //    (m * a).print();
 //    start_UI(argc, argv);
-
-//    std::cout << correct_num("+");
-    LongNumber q("-123123");
-    std::cout << q.to_string();
+//
+    LongNumber a(11.1), b(1), c(0);
+//    std::cin >> a >> b >> c;
+//    std::cout << a << ' ' << b << ' ' << c;
+    std::cout << (a < b);
     return 0;
 }
 

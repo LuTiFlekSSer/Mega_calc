@@ -6,9 +6,7 @@ VecND::VecND(int x_) {
     }
 }
 
-VecND::VecND() {
-
-}
+VecND::VecND() = default;
 
 VecND::VecND(const VecND &el) {
     vec = el.vec;
@@ -20,7 +18,7 @@ VecND VecND::operator+(const VecND &rhs) const {
         for (int i = 0; i < rhs.vec.size(); ++i) {
             tmp.vec[i] = this->vec[i] + rhs.vec[i];
         }
-        return VecND(tmp);
+        return VecND{tmp};
     }
     throw std::length_error("Different length of vectors");
 }
@@ -31,22 +29,19 @@ VecND VecND::operator-(const VecND &rhs) const {
         for (int i = 0; i < rhs.vec.size(); ++i) {
             tmp.vec[i] = this->vec[i] - rhs.vec[i];
         }
-        return VecND(tmp);
+        return VecND{tmp};
     }
     throw std::length_error("Different length of vectors");
 }
 
-VecND &VecND::operator=(const VecND &rhs) {
-    vec = rhs.vec;
-    return *this;
-}
+VecND &VecND::operator=(const VecND &rhs) = default;
 
 VecND VecND::operator*(const double &rhs) const {
     VecND tmp((int) vec.size());
     for (int i = 0; i < vec.size(); ++i) {
         tmp.vec[i] = this->vec[i] * rhs;
     }
-    return VecND(tmp);
+    return VecND{tmp};
 }
 
 VecND &VecND::operator*=(const double &rhs) {
