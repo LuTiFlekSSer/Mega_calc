@@ -12,9 +12,9 @@ concept arithmetic = std::is_arithmetic<T>::value;
 
 class LongNumber {
 private:
-    bool sign{};
+    bool sign = false;
     std::vector<char> numbers;
-    long long exp{};
+    long long exp;
 
 public:
     LongNumber();
@@ -27,6 +27,8 @@ public:
     explicit LongNumber(T num) : LongNumber(std::to_string(num)) {};
 
     LongNumber &operator=(const LongNumber &rhs);
+
+    LongNumber operator+(const LongNumber &rhs);
 
     friend std::ostream &operator<<(std::ostream &out, const LongNumber &num);
 
