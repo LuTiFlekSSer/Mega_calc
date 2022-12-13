@@ -28,7 +28,7 @@ public:
 
     LongNumber &operator=(const LongNumber &rhs);
 
-    LongNumber operator+(const LongNumber &rhs);
+    LongNumber operator+(LongNumber &rhs);
 
     friend std::ostream &operator<<(std::ostream &out, const LongNumber &num);
 

@@ -27,7 +27,8 @@ int main(int argc, char *argv[]) {
 //    v.print();
 //    (m * a).print();
 //    start_UI(argc, argv);
-    LongNumber a("0.001"), b("0"), c;
+    LongNumber a("0"),
+    b("0"), c;
     c = a + b;
     std::cout << a + b << '\n' << b + a;
     return 0;

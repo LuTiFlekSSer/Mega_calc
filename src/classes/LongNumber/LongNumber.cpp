@@ -5,7 +5,7 @@ LongNumber::LongNumber() {
     sign = false;
     numbers.resize(1);
     numbers[0] = 0;
-    exp = 0;
+    exp = 1;
 }
 
 LongNumber::LongNumber(const LongNumber &num) {
@@ -164,10 +164,12 @@ bool operator==(const LongNumber &lhs, const LongNumber &rhs) {
     return true;
 }
 
-LongNumber LongNumber::operator+(const LongNumber &rhs) {
+LongNumber LongNumber::operator+(LongNumber &rhs) {
     if (this->sign == rhs.sign) {
-        bool num_with_right_pad = (long long) this->numbers.size() - this->exp > (long long) rhs.numbers.size() - rhs.exp,
+        bool num_with_right_pad = (long long) this->numbers.size() - this->exp >= (long long) rhs.numbers.size() - rhs.exp,
                 num_with_left_pad = this->exp > rhs.exp;
+        if (!num_with_right_pad)
+            return rhs + *this;
         long long null_to_pad_left = std::abs(this->exp - rhs.exp);
         long long null_to_pad_right = std::abs((long long) this->numbers.size() - this->exp - ((long long) rhs.numbers.size() - rhs.exp));
         long long ans_size;
@@ -180,116 +182,59 @@ LongNumber LongNumber::operator+(const LongNumber &rhs) {
         }
         long long max_exp = std::max(this->exp, rhs.exp);
         std::vector<char> answer(ans_size);
-        if (num_with_right_pad) {
-            bool plus_1 = false;
-            if (num_with_left_pad) {
-                for (long long i = (long long) this->numbers.size() - 1; i >= null_to_pad_left + rhs.numbers.size(); --i) {
-                    answer[i] = this->numbers[i];
-                }
-                for (long long i = null_to_pad_left + (long long) rhs.numbers.size() - 1; i >= null_to_pad_left; --i) {
-                    char curr_sum = (char) (rhs.numbers[i - null_to_pad_left] + this->numbers[i] + (char) plus_1);
-                    if (curr_sum > 9) {
-                        plus_1 = true;
-                        answer[i] = (char) (curr_sum - 10);
-                    } else {
-                        plus_1 = false;
-                        answer[i] = curr_sum;
-                    }
-                }
-                for (long long i = null_to_pad_left - 1; i >= 0; --i) {
-                    char curr_sum = (char) (this->numbers[i] + (char) plus_1);
-                    if (curr_sum > 9) {
-                        plus_1 = true;
-                        answer[i] = (char) (curr_sum - 10);
-                    } else {
-                        plus_1 = false;
-                        answer[i] = curr_sum;
-                    }
-                }
-            } else {
-                for (long long i = (long long) this->numbers.size() + null_to_pad_left - 1; i >= rhs.numbers.size() + null_to_pad_right; --i) {
-                    answer[i] = this->numbers[i - null_to_pad_left];
-                }
-                for (long long i = (long long) rhs.numbers.size() - 1; i >= null_to_pad_left; --i) {
-                    char curr_sum = (char) (rhs.numbers[i] + this->numbers[i - null_to_pad_left] + (char) plus_1);
-                    if (curr_sum > 9) {
-                        plus_1 = true;
-                        answer[i] = (char) (curr_sum - 10);
-                    } else {
-                        plus_1 = false;
-                        answer[i] = curr_sum;
-                    }
-                }
-                for (long long i = null_to_pad_left - 1; i >= 0; --i) {
-                    char curr_sum = (char) (rhs.numbers[i] + (char) plus_1);
-                    if (curr_sum > 9) {
-                        plus_1 = true;
-                        answer[i] = (char) (curr_sum - 10);
-                    } else {
-                        plus_1 = false;
-                        answer[i] = curr_sum;
-                    }
+        bool plus_1 = false;
+        if (num_with_left_pad) {
+            for (long long i = (long long) this->numbers.size() - 1; i >= null_to_pad_left + rhs.numbers.size(); --i) {
+                answer[i] = this->numbers[i];
+            }
+            for (long long i = null_to_pad_left + (long long) rhs.numbers.size() - 1; i >= null_to_pad_left; --i) {
+                char curr_sum = (char) (rhs.numbers[i - null_to_pad_left] + this->numbers[i] + (char) plus_1);
+                if (curr_sum > 9) {
+                    plus_1 = true;
+                    answer[i] = (char) (curr_sum - 10);
+                } else {
+                    plus_1 = false;
+                    answer[i] = curr_sum;
                 }
             }
-            if (plus_1) {
-                ++max_exp;
-                answer.insert(answer.begin(), 1);
+            for (long long i = null_to_pad_left - 1; i >= 0; --i) {
+                char curr_sum = (char) (this->numbers[i] + (char) plus_1);
+                if (curr_sum > 9) {
+                    plus_1 = true;
+                    answer[i] = (char) (curr_sum - 10);
+                } else {
+                    plus_1 = false;
+                    answer[i] = curr_sum;
+                }
             }
         } else {
-            bool plus_1 = false;
-            if (num_with_left_pad) {
-                for (long long i = (long long) rhs.numbers.size() + null_to_pad_left - 1; i >= this->numbers.size(); --i) {
-                    answer[i] = rhs.numbers[i - null_to_pad_left];
-                }
-                for (long long i = (long long) this->numbers.size() - 1; i >= null_to_pad_left; --i) {
-                    char curr_sum = (char) (this->numbers[i] + rhs.numbers[i - null_to_pad_left] + (char) plus_1);
-                    if (curr_sum > 9) {
-                        plus_1 = true;
-                        answer[i] = (char) (curr_sum - 10);
-                    } else {
-                        plus_1 = false;
-                        answer[i] = curr_sum;
-                    }
-                }
-                for (long long i = null_to_pad_left - 1; i >= 0; --i) {
-                    char curr_sum = (char) (this->numbers[i] + (char) plus_1);
-                    if (curr_sum > 9) {
-                        plus_1 = true;
-                        answer[i] = (char) (curr_sum - 10);
-                    } else {
-                        plus_1 = false;
-                        answer[i] = curr_sum;
-                    }
-                }
-            } else {
-                for (long long i = (long long) rhs.numbers.size() - 1; i >= null_to_pad_left + this->numbers.size(); --i) {
-                    answer[i] = rhs.numbers[i];
-                }
-                for (long long i = null_to_pad_left + (long long) this->numbers.size() - 1; i >= null_to_pad_left; --i) {
-                    char curr_sum = (char) (this->numbers[i - null_to_pad_left] + rhs.numbers[i] + (char) plus_1);
-                    if (curr_sum > 9) {
-                        plus_1 = true;
-                        answer[i] = (char) (curr_sum - 10);
-                    } else {
-                        plus_1 = false;
-                        answer[i] = curr_sum;
-                    }
-                }
-                for (long long i = null_to_pad_left - 1; i >= 0; --i) {
-                    char curr_sum = (char) (rhs.numbers[i] + (char) plus_1);
-                    if (curr_sum > 9) {
-                        plus_1 = true;
-                        answer[i] = (char) (curr_sum - 10);
-                    } else {
-                        plus_1 = false;
-                        answer[i] = curr_sum;
-                    }
+            for (long long i = (long long) this->numbers.size() + null_to_pad_left - 1; i >= std::max((long long) rhs.numbers.size(), null_to_pad_left); --i) {
+                answer[i] = this->numbers[i - null_to_pad_left];
+            }
+            for (long long i = (long long) rhs.numbers.size() - 1; i >= null_to_pad_left; --i) {
+                char curr_sum = (char) (rhs.numbers[i] + this->numbers[i - null_to_pad_left] + (char) plus_1);
+                if (curr_sum > 9) {
+                    plus_1 = true;
+                    answer[i] = (char) (curr_sum - 10);
+                } else {
+                    plus_1 = false;
+                    answer[i] = curr_sum;
                 }
             }
-            if (plus_1) {
-                ++max_exp;
-                answer.insert(answer.begin(), 1);
+            for (long long i = std::min((long long) rhs.numbers.size(), null_to_pad_left) - 1; i >= 0; --i) {
+                char curr_sum = (char) (rhs.numbers[i] + (char) plus_1);
+                if (curr_sum > 9) {
+                    plus_1 = true;
+                    answer[i] = (char) (curr_sum - 10);
+                } else {
+                    plus_1 = false;
+                    answer[i] = curr_sum;
+                }
             }
+        }
+        if (plus_1) {
+            ++max_exp;
+            answer.insert(answer.begin(), 1);
         }
         while (answer[answer.size() - 1] == 0) {
             answer.erase(answer.end() - 1);
