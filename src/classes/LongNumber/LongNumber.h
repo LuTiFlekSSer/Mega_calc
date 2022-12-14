@@ -14,9 +14,15 @@ class LongNumber {
 private:
     bool sign = false;
     std::vector<char> numbers;
-    long long exp;
+    long long exp{};
 
 public:
+    static const LongNumber zero;
+    static const LongNumber Pi;
+    static const LongNumber e;
+    static const LongNumber inf; //false 10 0
+    static const LongNumber nan; //false 11 0
+
     LongNumber();
 
     LongNumber(const LongNumber &num);
@@ -28,7 +34,11 @@ public:
 
     LongNumber &operator=(const LongNumber &rhs);
 
-    LongNumber operator+(LongNumber &rhs);
+    LongNumber operator+(const LongNumber &rhs) const;
+
+    LongNumber operator-(const LongNumber &rhs) const;
+
+    LongNumber operator-() const;
 
     friend std::ostream &operator<<(std::ostream &out, const LongNumber &num);
 
@@ -44,6 +54,12 @@ public:
 
     ~LongNumber();
 };
+
+LongNumber abs(const LongNumber &num);
+
+LongNumber max(const LongNumber &num1, const LongNumber &num2);
+
+LongNumber min(const LongNumber &num1, const LongNumber &num2);
 
 bool correct_num(const std::string &num);
 
