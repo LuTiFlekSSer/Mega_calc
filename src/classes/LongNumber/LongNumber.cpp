@@ -21,7 +21,7 @@ LongNumber::LongNumber(const LongNumber &num) {
     exp = num.exp;
 }
 
-LongNumber::LongNumber(std::string num) {
+LongNumber::LongNumber(std::string num) { //∞ из потока
     exp = 0;
     if (num.empty()) {
         num = ".";
@@ -80,7 +80,7 @@ LongNumber::LongNumber(std::string num) {
         exp = 1;
 }
 
-std::string LongNumber::to_string() const {
+std::string LongNumber::to_string() const { // А может как значок?
     if (*this == LongNumber::nan) {
         return "nan";
     } else if (*this == LongNumber::inf) {
@@ -117,13 +117,13 @@ std::string LongNumber::to_string() const {
     return str;
 }
 
-std::ostream &operator<<(std::ostream &out, const LongNumber &num) {
+std::ostream &operator<<(std::ostream &out, const LongNumber &num) {// поток для значка
     out << num.to_string();
     return out;
 }
 
 
-std::istream &operator>>(std::istream &in, LongNumber &num) {
+std::istream &operator>>(std::istream &in, LongNumber &num) { //поток для значка
     std::string s_num;
     in >> s_num;
     if (correct_num(s_num))
@@ -134,16 +134,20 @@ std::istream &operator>>(std::istream &in, LongNumber &num) {
 }
 
 std::strong_ordering operator<=>(const LongNumber &lhs, const LongNumber &rhs) {
+    if (isnan(lhs) or isnan(rhs)) {
+        throw std::logic_error("One number is NaN");
+    }
+    if (lhs == rhs) {
+        return std::strong_ordering::equivalent;
+    }
     if (lhs.sign > rhs.sign) {
         return std::strong_ordering::less;
     } else if (lhs.sign < rhs.sign) {
         return std::strong_ordering::greater;
     }
-    if (lhs == LongNumber::zero and rhs == LongNumber::zero) {
-        return std::strong_ordering::equivalent;
-    } else if (lhs == LongNumber::zero) {
+    if (isinfm(lhs) or isinf(rhs) or (lhs == LongNumber::zero and !rhs.sign) or (lhs.sign and rhs == LongNumber::zero)) {
         return std::strong_ordering::less;
-    } else if (rhs == LongNumber::zero) {
+    } else if (isinf(lhs) or isinfm(rhs) or (lhs == LongNumber::zero and rhs.sign) or (!lhs.sign and rhs == LongNumber::zero)) {
         return std::strong_ordering::greater;
     }
     if (lhs.exp < rhs.exp) {
@@ -179,7 +183,14 @@ bool operator==(const LongNumber &lhs, const LongNumber &rhs) {
 }
 
 LongNumber LongNumber::operator+(const LongNumber &rhs) const {
+    if (isnan(*this) or isnan(rhs)) {
+        return LongNumber::nan;
+    }
     if (this->sign == rhs.sign) {
+        if (isinf(*this) or isinfm(*this))
+            return *this;
+        else if (isinf(rhs) or isinfm(rhs))
+            return rhs;
         bool num_with_right_pad = (long long) this->numbers.size() - this->exp >= (long long) rhs.numbers.size() - rhs.exp,
                 num_with_left_pad = this->exp > rhs.exp;
         if (!num_with_right_pad)
@@ -261,11 +272,87 @@ LongNumber LongNumber::operator+(const LongNumber &rhs) const {
         tmp.exp = max_exp;
         return tmp;
     }
-    return *this - rhs;
+    return *this - -rhs;
 }
 
+// 1 - 0.99999999999999
 LongNumber LongNumber::operator-(const LongNumber &rhs) const {
-    return LongNumber{};
+    if (isnan(*this) or isnan(rhs) or (isinf(*this) and isinf(rhs)) or (isinfm(*this) and isinfm(rhs))) {
+        return LongNumber::nan;
+    }
+    if (this->sign == rhs.sign) {
+        if (isinf(*this) or isinfm(*this))
+            return *this;
+        else if (isinf(rhs) or isinfm(rhs))
+            return -rhs;
+        if (this->sign)
+            return -(abs(*this) - abs(rhs));
+        if (*this < rhs)
+            return -(rhs - *this);
+        bool num_with_right_pad = (long long) this->numbers.size() - this->exp >= (long long) rhs.numbers.size() - rhs.exp,
+                num_with_left_pad = this->exp > rhs.exp;
+        long long null_to_pad_left = std::abs(this->exp - rhs.exp);
+        long long null_to_pad_right = std::abs((long long) this->numbers.size() - this->exp - ((long long) rhs.numbers.size() - rhs.exp));
+        long long ans_size;
+        if (num_with_left_pad == num_with_right_pad) {
+            ans_size = (long long) std::max(this->numbers.size(), rhs.numbers.size());
+        } else if (!num_with_left_pad) {
+            ans_size = null_to_pad_left + (long long) this->numbers.size();
+        } else {
+            ans_size = null_to_pad_right + (long long) this->numbers.size();
+        }
+        long long max_exp = std::max(this->exp, rhs.exp);
+        std::vector<char> answer(ans_size);
+        bool minus_1 = false;
+        if (num_with_right_pad)
+            if (num_with_left_pad) {
+                for (long long i = (long long) this->numbers.size() - 1; i >= null_to_pad_left + rhs.numbers.size(); --i) {
+                    answer[i] = this->numbers[i];
+                }
+                for (long long i = null_to_pad_left + (long long) rhs.numbers.size() - 1; i >= null_to_pad_left; --i) {
+                    char curr_diff = (char) (this->numbers[i] - rhs.numbers[i - null_to_pad_left] - (char) minus_1);
+                    if (curr_diff < 0) {
+                        minus_1 = true;
+                        answer[i] = (char) (10 + curr_diff);
+                    } else {
+                        minus_1 = false;
+                        answer[i] = curr_diff;
+                    }
+                }
+                for (long long i = null_to_pad_left - 1; i >= 0; --i) {
+                    char curr_diff = (char) (this->numbers[i] - (char) minus_1);
+                    if (curr_diff < 0) {
+                        minus_1 = true;
+                        answer[i] = (char) (10 + curr_diff);
+                    } else {
+                        minus_1 = false;
+                        answer[i] = curr_diff;
+                    }
+                }
+            } else {
+
+            }
+        else {
+
+        }
+        if (answer[0] == 0) {
+            --max_exp;
+            answer.erase(answer.begin());
+        }
+        if (answer.empty())
+            return LongNumber{};
+        while (answer[answer.size() - 1] == 0) {
+            answer.erase(answer.end() - 1);
+            if (answer.empty())
+                return LongNumber{};
+        }
+        LongNumber tmp{};
+        tmp.numbers = answer;
+        tmp.sign = this->sign;
+        tmp.exp = max_exp;
+        return tmp;
+    }
+    return *this + -rhs;
 }
 
 LongNumber LongNumber::operator-() const {
@@ -310,8 +397,13 @@ bool isnan(const LongNumber &num) {
 }
 
 bool isinf(const LongNumber &num) {
-    return num == LongNumber::inf or num == LongNumber::infm;
+    return num == LongNumber::inf;
 }
+
+bool isinfm(const LongNumber &num) {
+    return num == LongNumber::infm;
+}
+
 
 LongNumber &LongNumber::operator=(const LongNumber &rhs) = default;
 

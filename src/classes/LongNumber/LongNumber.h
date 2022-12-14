@@ -70,6 +70,8 @@ bool isnan(const LongNumber &num);
 
 bool isinf(const LongNumber &num);
 
+bool isinfm(const LongNumber &num);
+
 bool correct_num(const std::string &num);
 
 
