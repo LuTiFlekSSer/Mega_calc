@@ -4,6 +4,9 @@
 const LongNumber LongNumber::zero = LongNumber{0};
 const LongNumber LongNumber::Pi = LongNumber("3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679");
 const LongNumber LongNumber::e = LongNumber("2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274");
+const LongNumber LongNumber::nan = LongNumber(cringe("nan"));
+const LongNumber LongNumber::inf = LongNumber(cringe("inf"));
+const LongNumber LongNumber::infm = LongNumber(cringe("-inf"));
 
 LongNumber::LongNumber() {
     sign = false;
@@ -78,6 +81,13 @@ LongNumber::LongNumber(std::string num) {
 }
 
 std::string LongNumber::to_string() const {
+    if (*this == LongNumber::nan) {
+        return "nan";
+    } else if (*this == LongNumber::inf) {
+        return "inf";
+    } else if (*this == LongNumber::infm) {
+        return "-inf";
+    }
     std::string str;
     if (this->sign)
         str.push_back('-');
@@ -264,6 +274,25 @@ LongNumber LongNumber::operator-() const {
     return tmp;
 }
 
+LongNumber::LongNumber(const cringe &par) {
+    if (par.par == "inf") {
+        sign = false;
+        numbers.resize(1);
+        numbers[0] = 11;
+        exp = 0;
+    } else if (par.par == "nan") {
+        sign = false;
+        numbers.resize(1);
+        numbers[0] = 10;
+        exp = 0;
+    } else if (par.par == "-inf") {
+        sign = true;
+        numbers.resize(1);
+        numbers[0] = 11;
+        exp = 0;
+    }
+}
+
 LongNumber abs(const LongNumber &num) {
     return num >= LongNumber::zero ? num : -num;
 }
@@ -274,6 +303,14 @@ LongNumber max(const LongNumber &num1, const LongNumber &num2) {
 
 LongNumber min(const LongNumber &num1, const LongNumber &num2) {
     return num1 <= num2 ? num1 : num2;
+}
+
+bool isnan(const LongNumber &num) {
+    return num == LongNumber::nan;
+}
+
+bool isinf(const LongNumber &num) {
+    return num == LongNumber::inf or num == LongNumber::infm;
 }
 
 LongNumber &LongNumber::operator=(const LongNumber &rhs) = default;

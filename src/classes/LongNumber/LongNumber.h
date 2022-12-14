@@ -6,9 +6,11 @@
 #include <type_traits>
 #include <iostream>
 #include <concepts>
+#include "cringe class/cringe.h"
 
 template<typename T>
 concept arithmetic = std::is_arithmetic<T>::value;
+
 
 class LongNumber {
 private:
@@ -16,12 +18,15 @@ private:
     std::vector<char> numbers;
     long long exp{};
 
+    explicit LongNumber(const cringe &par);
+
 public:
     static const LongNumber zero;
     static const LongNumber Pi;
     static const LongNumber e;
-    static const LongNumber inf; //false 10 0
-    static const LongNumber nan; //false 11 0
+    static const LongNumber nan; //false 10 0
+    static const LongNumber inf; //false 11 0
+    static const LongNumber infm; //true 11 0
 
     LongNumber();
 
@@ -61,6 +66,11 @@ LongNumber max(const LongNumber &num1, const LongNumber &num2);
 
 LongNumber min(const LongNumber &num1, const LongNumber &num2);
 
+bool isnan(const LongNumber &num);
+
+bool isinf(const LongNumber &num);
+
 bool correct_num(const std::string &num);
+
 
 #endif

@@ -27,9 +27,12 @@ int main(int argc, char *argv[]) {
 //    v.print();
 //    (m * a).print();
 //    start_UI(argc, argv);
-    LongNumber a("111.111"), b("1"), c(-0.1);
+    LongNumber a("111.111"), b("1"), c(-0.1), d, e;
+    e = LongNumber::nan;
+    d = LongNumber::inf;
     std::cout << max(a, b) << '\n';
-    std::cout << a + b << '\n' << b + a;
+    std::cout << a + b << '\n' << b + a << '\n' << LongNumber::inf << ' ' << LongNumber::nan << ' ' << LongNumber::infm << '\n';
+    std::cout << isnan(LongNumber::nan) << ' ' << isnan(LongNumber::zero) << ' ' << isinf(LongNumber::nan) << ' ' << isinf(LongNumber::inf) << ' ' << isinf(LongNumber::infm);
     return 0;
 }
 
