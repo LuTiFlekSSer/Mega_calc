@@ -27,8 +27,9 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    v.print();
 //    (m * a).print();
 //    start_UI(argc, argv);
-    LongNumber a("111.111"), b("111.111");
-    std::cout << a - b;
+    LongNumber a("-inf"), b("0"), c("0.01111");
+    c = a - b;
+    std::cout << (a >= b);
     return 0;
 }
 

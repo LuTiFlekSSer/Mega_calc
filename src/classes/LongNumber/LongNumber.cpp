@@ -87,7 +87,7 @@ LongNumber::LongNumber(std::string num) { //∞ из потока
         exp = 1;
 }
 
-std::string LongNumber::to_string() const { // А может как значок?
+std::string LongNumber::to_string() const {
     if (*this == LongNumber::nan) {
         return "NaN";
     } else if (*this == LongNumber::inf) {
@@ -100,7 +100,7 @@ std::string LongNumber::to_string() const { // А может как значок
         str.push_back('-');
     if (this->exp <= 0) {
         str.append("0.");
-        for (int i = 0; i < -exp - 1; ++i) {
+        for (int i = 0; i < -exp; ++i) {
             str.push_back('0');
         }
         for (char i: this->numbers) {
@@ -124,13 +124,13 @@ std::string LongNumber::to_string() const { // А может как значок
     return str;
 }
 
-std::ostream &operator<<(std::ostream &out, const LongNumber &num) {// поток для значка
+std::ostream &operator<<(std::ostream &out, const LongNumber &num) {
     out << num.to_string();
     return out;
 }
 
 
-std::istream &operator>>(std::istream &in, LongNumber &num) { //поток для значка
+std::istream &operator>>(std::istream &in, LongNumber &num) {
     std::string s_num;
     in >> s_num;
     if (correct_num(s_num))
@@ -282,7 +282,7 @@ LongNumber LongNumber::operator+(const LongNumber &rhs) const {
     return *this - -rhs;
 }
 
-// 1 - 0.99999999999999
+
 LongNumber LongNumber::operator-(const LongNumber &rhs) const {
     if (isnan(*this) or isnan(rhs) or (isinf(*this) and isinf(rhs)) or (isinfm(*this) and isinfm(rhs))) {
         return LongNumber::nan;
@@ -311,7 +311,7 @@ LongNumber LongNumber::operator-(const LongNumber &rhs) const {
         long long max_exp = std::max(this->exp, rhs.exp);
         std::vector<char> answer(ans_size);
         bool minus_1 = false;
-        if (num_with_right_pad)
+        if (num_with_right_pad) {
             if (num_with_left_pad) {
                 for (long long i = (long long) this->numbers.size() - 1; i >= null_to_pad_left + rhs.numbers.size(); --i) {
                     answer[i] = this->numbers[i];
@@ -337,17 +337,91 @@ LongNumber LongNumber::operator-(const LongNumber &rhs) const {
                     }
                 }
             } else {
-
+                for (long long i = (long long) this->numbers.size() + null_to_pad_left - 1; i >= std::max((long long) rhs.numbers.size(), null_to_pad_left); --i) {
+                    answer[i] = this->numbers[i - null_to_pad_left];
+                }
+                for (long long i = (long long) rhs.numbers.size() - 1; i >= null_to_pad_left; --i) {
+                    char curr_diff = (char) (this->numbers[i - null_to_pad_left] - rhs.numbers[i] - (char) minus_1);
+                    if (curr_diff < 0) {
+                        minus_1 = true;
+                        answer[i] = (char) (10 + curr_diff);
+                    } else {
+                        minus_1 = false;
+                        answer[i] = curr_diff;
+                    }
+                }
             }
-        else {
-
+        } else {
+            if (!num_with_left_pad) {
+                for (long long i = (long long) rhs.numbers.size() - 1; i >= (long long) this->numbers.size() + null_to_pad_left; --i) {
+                    char curr_diff = (char) -(rhs.numbers[i] + (char) minus_1);
+                    if (curr_diff < 0) {
+                        minus_1 = true;
+                        answer[i] = (char) (10 + curr_diff);
+                    } else {
+                        minus_1 = false;
+                        answer[i] = curr_diff;
+                    }
+                }
+                for (long long i = null_to_pad_left + (long long) this->numbers.size() - 1; i >= null_to_pad_left; --i) {
+                    char curr_diff = (char) (this->numbers[i - null_to_pad_left] - rhs.numbers[i] - (char) minus_1);
+                    if (curr_diff < 0) {
+                        minus_1 = true;
+                        answer[i] = (char) (10 + curr_diff);
+                    } else {
+                        minus_1 = false;
+                        answer[i] = curr_diff;
+                    }
+                }
+            } else {
+                for (long long i = (long long) this->numbers.size() + null_to_pad_right - 1; i >= std::max((long long) this->numbers.size(), null_to_pad_left); --i) {
+                    char curr_diff = (char) -(rhs.numbers[i - null_to_pad_left] + (char) minus_1);
+                    if (curr_diff < 0) {
+                        minus_1 = true;
+                        answer[i] = (char) (10 + curr_diff);
+                    } else {
+                        minus_1 = false;
+                        answer[i] = curr_diff;
+                    }
+                }
+                for (long long i = (long long) this->numbers.size() - 1; i > null_to_pad_left; --i) {
+                    char curr_diff = (char) (this->numbers[i] - rhs.numbers[i - null_to_pad_left] - (char) minus_1);
+                    if (curr_diff < 0) {
+                        minus_1 = true;
+                        answer[i] = (char) (10 + curr_diff);
+                    } else {
+                        minus_1 = false;
+                        answer[i] = curr_diff;
+                    }
+                }
+                for (long long i = null_to_pad_left - 1; i > (long long) this->numbers.size() - 1; --i) {
+                    char curr_diff = (char) -minus_1;
+                    if (curr_diff < 0) {
+                        minus_1 = true;
+                        answer[i] = (char) (10 + curr_diff);
+                    } else {
+                        minus_1 = false;
+                        answer[i] = curr_diff;
+                    }
+                }
+                for (long long i = (long long) this->numbers.size() - 1; i >= 0; --i) {
+                    char curr_diff = (char) (this->numbers[i] - (char) minus_1);
+                    if (curr_diff < 0) {
+                        minus_1 = true;
+                        answer[i] = (char) (10 + curr_diff);
+                    } else {
+                        minus_1 = false;
+                        answer[i] = curr_diff;
+                    }
+                }
+            }
         }
-        if (answer[0] == 0) {
+        while (answer[0] == 0) {
             --max_exp;
             answer.erase(answer.begin());
+            if (answer.empty())
+                return LongNumber{};
         }
-        if (answer.empty())
-            return LongNumber{};
         while (answer[answer.size() - 1] == 0) {
             answer.erase(answer.end() - 1);
             if (answer.empty())
