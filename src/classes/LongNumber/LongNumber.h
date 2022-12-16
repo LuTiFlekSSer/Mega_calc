@@ -43,6 +43,8 @@ public:
 
     LongNumber operator-(const LongNumber &rhs) const;
 
+    LongNumber operator*(const LongNumber &rhs) const;
+
     LongNumber operator-() const;
 
     friend std::ostream &operator<<(std::ostream &out, const LongNumber &num);

@@ -384,7 +384,7 @@ LongNumber LongNumber::operator-(const LongNumber &rhs) const {
                         answer[i] = curr_diff;
                     }
                 }
-                for (long long i = (long long) this->numbers.size() - 1; i > null_to_pad_left; --i) {
+                for (long long i = (long long) this->numbers.size() - 1; i >= null_to_pad_left; --i) {
                     char curr_diff = (char) (this->numbers[i] - rhs.numbers[i - null_to_pad_left] - (char) minus_1);
                     if (curr_diff < 0) {
                         minus_1 = true;
@@ -394,7 +394,7 @@ LongNumber LongNumber::operator-(const LongNumber &rhs) const {
                         answer[i] = curr_diff;
                     }
                 }
-                for (long long i = null_to_pad_left - 1; i > (long long) this->numbers.size() - 1; --i) {
+                for (long long i = null_to_pad_left - 1; i >= (long long) this->numbers.size(); --i) {
                     char curr_diff = (char) -minus_1;
                     if (curr_diff < 0) {
                         minus_1 = true;
@@ -404,7 +404,7 @@ LongNumber LongNumber::operator-(const LongNumber &rhs) const {
                         answer[i] = curr_diff;
                     }
                 }
-                for (long long i = (long long) this->numbers.size() - 1; i >= 0; --i) {
+                for (long long i = std::min((long long) this->numbers.size(), null_to_pad_left) - 1; i >= 0; --i) {
                     char curr_diff = (char) (this->numbers[i] - (char) minus_1);
                     if (curr_diff < 0) {
                         minus_1 = true;
@@ -459,6 +459,21 @@ LongNumber::LongNumber(const cringe &par) {
         numbers[0] = 11;
         exp = 0;
     }
+}
+
+LongNumber LongNumber::operator*(const LongNumber &rhs) const {
+    if (isnan(*this) or isnan(rhs) or (*this == LongNumber::zero and (isinf(rhs) or isinfm(rhs))) or (rhs == LongNumber::zero and (isinf(*this) or isinfm(*this)))) {
+        return LongNumber::nan;
+    } else if (*this == LongNumber::zero or rhs == LongNumber::zero) {
+        return LongNumber::zero;
+    } else if (isinf(abs(*this)) or isinf(abs(rhs))) {
+        return rhs.sign ^ this->sign ? LongNumber::infm : LongNumber::inf;
+    }
+    LongNumber tmp{};
+//    tmp.numbers = answer;
+    tmp.sign = this->sign ^ rhs.sign;
+    tmp.exp = this->exp + rhs.exp;
+    return tmp;
 }
 
 LongNumber abs(const LongNumber &num) {
