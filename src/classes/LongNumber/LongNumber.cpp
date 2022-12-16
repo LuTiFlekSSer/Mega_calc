@@ -22,6 +22,13 @@ LongNumber::LongNumber(const LongNumber &num) {
 }
 
 LongNumber::LongNumber(std::string num) { //∞ из потока
+    if (num == "inf") {
+        *this = LongNumber::inf;
+        return;
+    } else if (num == "-inf") {
+        *this = LongNumber::infm;
+        return;
+    }
     exp = 0;
     if (num.empty()) {
         num = ".";
@@ -82,7 +89,7 @@ LongNumber::LongNumber(std::string num) { //∞ из потока
 
 std::string LongNumber::to_string() const { // А может как значок?
     if (*this == LongNumber::nan) {
-        return "nan";
+        return "NaN";
     } else if (*this == LongNumber::inf) {
         return "inf";
     } else if (*this == LongNumber::infm) {
@@ -408,6 +415,9 @@ bool isinfm(const LongNumber &num) {
 LongNumber &LongNumber::operator=(const LongNumber &rhs) = default;
 
 bool correct_num(const std::string &num) {
+    if (num == "inf" or num == "-inf") {
+        return true;
+    }
     long long dot_num = 0;
     for (long long i = 0; i < num.size(); ++i) {
         if (!isdigit(num[i])) {
