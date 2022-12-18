@@ -1,5 +1,6 @@
 #include "LongNumber.h"
 #include "iostream"
+#include "unordered_map"
 
 const LongNumber LongNumber::zero = LongNumber{0};
 const LongNumber LongNumber::Pi = LongNumber("3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679");
@@ -462,17 +463,52 @@ LongNumber::LongNumber(const cringe &par) {
 }
 
 LongNumber LongNumber::operator*(const LongNumber &rhs) const {
-    if (isnan(*this) or isnan(rhs) or (*this == LongNumber::zero and (isinf(rhs) or isinfm(rhs))) or (rhs == LongNumber::zero and (isinf(*this) or isinfm(*this)))) {
+    if (rhs.numbers.size() > this->numbers.size()) {
+        return rhs * *this;
+    } else if (isnan(*this) or isnan(rhs) or (*this == LongNumber::zero and (isinf(rhs) or isinfm(rhs))) or (rhs == LongNumber::zero and (isinf(*this) or isinfm(*this)))) {
         return LongNumber::nan;
     } else if (*this == LongNumber::zero or rhs == LongNumber::zero) {
         return LongNumber::zero;
     } else if (isinf(abs(*this)) or isinf(abs(rhs))) {
         return rhs.sign ^ this->sign ? LongNumber::infm : LongNumber::inf;
     }
+    std::unordered_map<char, std::vector<char>> dict;
+    for (auto i = (long long) rhs.numbers.size() - 1; i >= 0; --i) {
+        if (!dict.contains(rhs.numbers[i])) {
+            dict[rhs.numbers[i]].resize(this->numbers.size() + 1);
+            for (auto j = (long long) this->numbers.size() - 1; j >= 0; --j) {
+                char curr_mult = (char) (rhs.numbers[i] * this->numbers[j] + dict[rhs.numbers[i]][j + 1]);
+                dict[rhs.numbers[i]][j + 1] = (char) (curr_mult % 10);
+                dict[rhs.numbers[i]][j] = (char) (curr_mult / 10);
+            }
+        }
+    }
+    std::vector<char> answer(this->numbers.size() + rhs.numbers.size());
+    long long buff = 0;
+    for (auto i = (long long) this->numbers.size(); i >= 1 - (long long) rhs.numbers.size(); --i) {
+        for (auto j = (long long) rhs.numbers.size() - 1; j >= 0; --j) {
+            long long curr_index = i + (long long) rhs.numbers.size() - 1 - j;
+            if (curr_index >= 0 and curr_index < this->numbers.size() + 1) {
+                buff += dict[rhs.numbers[j]][curr_index];
+//                answer[i + rhs.numbers.size() - 1] = (char) (answer[i + rhs.numbers.size() - 1] + dict[rhs.numbers[j]][curr_index]);
+            }
+        }
+        if (buff > 9) {
+//            answer[i + rhs.numbers.size() - 2] = (char) (answer[i + rhs.numbers.size() - 1] / 10);
+            answer[i + rhs.numbers.size() - 1] = (char) (buff % 10);
+            buff /= 10;
+        } else {
+            answer[i + rhs.numbers.size() - 1] = (char) buff;
+            buff = 0;
+        }
+    }
+    while (answer[0] == 0) {
+        answer.erase(answer.begin());
+    }
     LongNumber tmp{};
-//    tmp.numbers = answer;
+    tmp.numbers = answer;
     tmp.sign = this->sign ^ rhs.sign;
-    tmp.exp = this->exp + rhs.exp;
+    tmp.exp = this->exp + rhs.exp - 1;
     return tmp;
 }
 
