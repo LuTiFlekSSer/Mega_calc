@@ -477,19 +477,19 @@ LongNumber LongNumber::operator*(const LongNumber &rhs) const {
             answer[i + j + 1] += rhs.numbers[i] * this->numbers[j];
         }
     }
-    while (answer[0] == 0) {
-        --len;
-        answer.erase(answer.begin());
-    }
     LongNumber tmp{};
     tmp.numbers.resize(len);
+    tmp.sign = this->sign ^ rhs.sign;
+    tmp.exp = this->exp + rhs.exp;
     for (auto i = len - 1; i > 0; i--) {
         answer[i - 1] += answer[i] / 10;
         tmp.numbers[i] = (char) (answer[i] % 10);
     }
     tmp.numbers[0] = (char) answer[0];
-    tmp.sign = this->sign ^ rhs.sign;
-    tmp.exp = this->exp + rhs.exp - 1;
+    while (tmp.numbers[0] == 0) {
+        --tmp.exp;
+        tmp.numbers.erase(tmp.numbers.begin());
+    }
     return tmp;
 }
 
