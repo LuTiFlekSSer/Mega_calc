@@ -7,6 +7,17 @@ const LongNumber LongNumber::e = LongNumber("2.718281828459045235360287471352662
 const LongNumber LongNumber::nan = LongNumber(cringe("nan"));
 const LongNumber LongNumber::inf = LongNumber(cringe("inf"));
 const LongNumber LongNumber::infm = LongNumber(cringe("-inf"));
+const LongNumber LongNumber::eps = LongNumber("0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001");
+
+LongNumber LongNumber::operator/(const LongNumber &rhs) const {
+    if (isnan(*this) or isnan(rhs) or (*this == LongNumber::zero and rhs == LongNumber::zero) or ((isinf(*this) or isinfm(*this)) and (isinf(rhs) or isinfm(rhs))))
+        return LongNumber::nan;
+    else if (isinf(rhs) or isinfm(rhs))
+        return LongNumber::zero;
+    else if (rhs == LongNumber::zero)
+        return LongNumber::inf;
+    return *this * rhs.inv();
+}
 
 LongNumber::LongNumber() {
     sign = false;
@@ -491,6 +502,34 @@ LongNumber LongNumber::operator*(const LongNumber &rhs) const {
         tmp.numbers.erase(tmp.numbers.begin());
     }
     return tmp;
+}
+
+LongNumber LongNumber::inv() const {
+    if (isnan(*this))
+        return LongNumber::nan;
+    else if (isinf(*this) or isinfm(*this))
+        return LongNumber::zero;
+    else if (*this == LongNumber::zero)
+        return LongNumber::inf;
+    LongNumber alpha("2.823529411"), beta("1.8823529411"), x0, tmp(abs(*this)), delta;
+    delta = LongNumber(5 / tmp.numbers[0]);
+    if (tmp.numbers[0] < 5)
+        tmp = tmp * delta;
+    long long tmp_exp = -tmp.exp;
+    tmp.exp = 0;
+    x0 = alpha - beta * tmp;
+    LongNumber gamma(abs(LongNumber(1) - tmp * x0)), two(2);
+    while (gamma > LongNumber::eps) {
+        gamma = gamma * gamma;
+        x0 = x0 * (two - tmp * x0);
+    }
+    x0 = x0 * delta;
+    x0.exp += tmp_exp;
+    if (x0 <= eps * LongNumber(10))
+        return LongNumber::zero;
+    x0.numbers.erase(x0.numbers.begin() - LongNumber::eps.exp, x0.numbers.end());
+    x0.sign = this->sign;
+    return x0;
 }
 
 LongNumber abs(const LongNumber &num) {

@@ -28,12 +28,8 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    v.print();
 //    (m * a).print();
 //   start_UI(argc, argv);
-    LongNumber a("0.100022000047238465727623748562347856374621879546747815479162478526783451273645712345644217033"), b("-156435876236478568765487913256237895483.000222922220933");
-//    std::cout << a * b;
-    for (int i = 0; i < 1000000; ++i) {
-        a + b;
-    }
-
+    LongNumber a("1"), b("1");
+    std::cout << a / b;
 //    std::cout << a - b << ' ' << a + b << ' ' << (a - b == -(b - a)) << (a + b == b + a);
     return 0;
 }

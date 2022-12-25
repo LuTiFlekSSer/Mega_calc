@@ -27,6 +27,7 @@ public:
     static const LongNumber nan; //false 10 0
     static const LongNumber inf; //false 11 0
     static const LongNumber infm; //true 11 0
+    static const LongNumber eps;
 
     LongNumber();
 
@@ -45,7 +46,11 @@ public:
 
     LongNumber operator*(const LongNumber &rhs) const;
 
+    LongNumber operator/(const LongNumber &rhs) const;
+
     LongNumber operator-() const;
+
+    [[nodiscard]] LongNumber inv() const;
 
     friend std::ostream &operator<<(std::ostream &out, const LongNumber &num);
 
