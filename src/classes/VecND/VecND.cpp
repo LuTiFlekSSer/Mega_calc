@@ -2,7 +2,7 @@
 
 VecND::VecND(int x_) {
     for (int i = 0; i < x_; ++i) {
-        vec.push_back(0);
+        vec.push_back(LongNumber::zero);
     }
 }
 
@@ -36,7 +36,7 @@ VecND VecND::operator-(const VecND &rhs) const {
 
 VecND &VecND::operator=(const VecND &rhs) = default;
 
-VecND VecND::operator*(const double &rhs) const {
+VecND VecND::operator*(const LongNumber &rhs) const {
     VecND tmp((int) vec.size());
     for (int i = 0; i < vec.size(); ++i) {
         tmp.vec[i] = this->vec[i] * rhs;
@@ -44,9 +44,9 @@ VecND VecND::operator*(const double &rhs) const {
     return VecND{tmp};
 }
 
-VecND &VecND::operator*=(const double &rhs) {
+VecND &VecND::operator*=(const LongNumber &rhs) {
     for (int i = 0; i < vec.size(); ++i) {
-        this->vec[i] *= rhs;
+        this->vec[i] = this->vec[i] * rhs;
     }
     return *this;
 }
@@ -61,7 +61,7 @@ void VecND::print() {
     std::cout << ")\n";
 }
 
-double &VecND::operator[](int index) {
+LongNumber &VecND::operator[](int index) {
     if (index < this->vec.size()) {
         return vec[index];
     }

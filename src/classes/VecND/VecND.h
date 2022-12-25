@@ -3,12 +3,13 @@
 
 #include "iostream"
 #include "vector"
+#include "../LongNumber/LongNumber.h"
 
 class VecND {
     friend class Mat2D;
 
 private:
-    std::vector<double> vec;
+    std::vector<LongNumber> vec;
 public:
     VecND();
 
@@ -18,15 +19,15 @@ public:
 
     void print();
 
-    double &operator[](int index);
+    LongNumber &operator[](int index);
 
     VecND operator+(const VecND &rhs) const;
 
     VecND operator-(const VecND &rhs) const;
 
-    VecND operator*(const double &rhs) const;
+    VecND operator*(const LongNumber &rhs) const;
 
-    VecND &operator*=(const double &rhs);
+    VecND &operator*=(const LongNumber &rhs);
 
     VecND &operator=(const VecND &rhs);
 
