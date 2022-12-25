@@ -48,6 +48,14 @@ public:
 
     LongNumber operator/(const LongNumber &rhs) const;
 
+    LongNumber &operator+=(const LongNumber &rhs);
+
+    LongNumber &operator-=(const LongNumber &rhs);
+
+    LongNumber &operator*=(const LongNumber &rhs);
+
+    LongNumber &operator/=(const LongNumber &rhs);
+
     LongNumber operator-() const;
 
     [[nodiscard]] LongNumber inv() const;

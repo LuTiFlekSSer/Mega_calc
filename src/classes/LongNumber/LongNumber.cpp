@@ -7,7 +7,7 @@ const LongNumber LongNumber::e = LongNumber("2.718281828459045235360287471352662
 const LongNumber LongNumber::nan = LongNumber(cringe("nan"));
 const LongNumber LongNumber::inf = LongNumber(cringe("inf"));
 const LongNumber LongNumber::infm = LongNumber(cringe("-inf"));
-const LongNumber LongNumber::eps = LongNumber("0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001");
+const LongNumber LongNumber::eps = LongNumber("0.000000000000001");
 
 LongNumber LongNumber::operator/(const LongNumber &rhs) const {
     if (isnan(*this) or isnan(rhs) or (*this == LongNumber::zero and rhs == LongNumber::zero) or ((isinf(*this) or isinfm(*this)) and (isinf(rhs) or isinfm(rhs))))
@@ -530,6 +530,26 @@ LongNumber LongNumber::inv() const {
     x0.numbers.erase(x0.numbers.begin() - LongNumber::eps.exp, x0.numbers.end());
     x0.sign = this->sign;
     return x0;
+}
+
+LongNumber &LongNumber::operator+=(const LongNumber &rhs) {
+    *this = *this + rhs;
+    return *this;
+}
+
+LongNumber &LongNumber::operator-=(const LongNumber &rhs) {
+    *this = *this - rhs;
+    return *this;
+}
+
+LongNumber &LongNumber::operator/=(const LongNumber &rhs) {
+    *this = *this / rhs;
+    return *this;
+}
+
+LongNumber &LongNumber::operator*=(const LongNumber &rhs) {
+    *this = *this * rhs;
+    return *this;
 }
 
 LongNumber abs(const LongNumber &num) {
