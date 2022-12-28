@@ -1,7 +1,6 @@
 #include "Mat2D.h"
 #include "cmath"
 
-LongNumber epss(std::pow(10, -15));
 
 Mat2D::Mat2D(int x_, int y_) {
     mat.resize(x_);
@@ -183,18 +182,12 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
     if (this->mat.size() == b.vec.size()) {
         auto pluq = (*this).lu_decomposition();
         VecND pb = std::get<0>(pluq) * b;
-        Mat2D c((int) std::get<2>(pluq).mat[0].vec.size(),
-                (int) std::get<2>(pluq).mat[0].vec.size() -
-                (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
-        for (int i = (int) std::get<2>(pluq).mat[0].vec.size() -
-                     (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1;
-             i >= 0; --i) {
+        Mat2D c((int) std::get<2>(pluq).mat[0].vec.size(), (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
+        for (int i = (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i >= 0; --i) {
             c[i + (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size())][i] = LongNumber(1);
         }
         VecND y((int) std::get<2>(pluq).mat.size());
-        Mat2D yc((int) std::get<2>(pluq).mat.size(), (int) std::get<2>(pluq).mat[0].vec.size() -
-                                                     (int) std::min(std::get<2>(pluq).mat.size(),
-                                                                    std::get<2>(pluq).mat[0].vec.size()));
+        Mat2D yc((int) std::get<2>(pluq).mat.size(), (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
         for (int i = 0; i < std::get<2>(pluq).mat.size(); ++i) {
             LongNumber sum(0);
             for (int j = 0; j < i; ++j) {
@@ -203,21 +196,17 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
             y[i] = pb[i] - sum;
         }
         int index_first_not_null = -1;
-        for (int i = (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1;
-             i >= 0; --i) {
-            if (abs(std::get<2>(pluq)[i][i]) < epss) {
-                if (abs(y[i]) > epss)
+        for (int i = (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i >= 0; --i) {
+            if (abs(std::get<2>(pluq)[i][i]) < LongNumber::eps) {
+                if (abs(y[i]) > LongNumber::eps)
                     return std::make_tuple(VecND(0), Mat2D(0));
             } else {
                 index_first_not_null = i;
                 break;
             }
         }
-        for (int i = (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1;
-             i < std::get<2>(pluq).mat.size(); ++i)
-            if (abs(std::get<2>(pluq)[i][
-                            (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) -
-                            1]) < epss and abs(y[i]) > epss)
+        for (int i = (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i < std::get<2>(pluq).mat.size(); ++i)
+            if (abs(std::get<2>(pluq)[i][(int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1]) < LongNumber::eps and abs(y[i]) > LongNumber::eps)
                 return std::make_tuple(VecND(0), Mat2D(0));
         VecND x((int) std::get<2>(pluq).mat[0].vec.size());
         for (int i = index_first_not_null; i >= 0; --i) {
@@ -225,7 +214,7 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
             for (int j = index_first_not_null; j > i; --j) {
                 sum += x[j] * std::get<2>(pluq)[i][j];
             }
-            if (abs((y[i] - sum) / std::get<2>(pluq)[i][i]) > epss)
+            if (abs((y[i] - sum) / std::get<2>(pluq)[i][i]) > LongNumber::eps)
                 x[i] = (y[i] - sum) / std::get<2>(pluq)[i][i];
         }
         for (int i = 0; i < std::get<2>(pluq).mat[0].vec.size() -
@@ -236,12 +225,12 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
                     sum += std::get<2>(pluq)[j][k] * c[k][i];
                 }
                 //хуйня! зато какая ↓
-                if (abs(std::get<2>(pluq)[j][j]) > epss) {
+                if (abs(std::get<2>(pluq)[j][j]) > LongNumber::eps) {
                     c[j][i] = (-sum) / std::get<2>(pluq)[j][j];
-                    if (abs(c[j][i]) < epss)
+                    if (abs(c[j][i]) < LongNumber::eps)
                         c[j][i] = LongNumber::zero;
                 } else {
-                    if (abs(sum) < epss)
+                    if (abs(sum) < LongNumber::eps)
                         c[j][i] = LongNumber::zero;
                     else {
                         c[j][i] = LongNumber(1);
@@ -294,7 +283,7 @@ std::tuple<Mat2D, Mat2D, Mat2D, Mat2D> Mat2D::lu_decomposition() {
                 std::swap(q[j][i], q[j][index_column]);
             }
         }
-        if (abs(elem) > epss) {
+        if (abs(elem) > LongNumber::eps) {
             for (int j = i + 1; j < this->mat.size(); ++j) {
                 l[j][i] = u[j][i] / u[i][i];
                 VecND v1((int) this->mat[0].vec.size());

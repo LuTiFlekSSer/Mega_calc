@@ -3,7 +3,6 @@
 #include "src/classes/VecND/VecND.h"
 #include "src/classes/LongNumber/LongNumber.h"
 #include "ui files/ui.h"
-#include "cmath"
 
 int main(int argc, char *argv[]) { // not NaN in == and !=
     Mat2D m(3, 5);
