@@ -284,6 +284,12 @@ LongNumber LongNumber::operator+(const LongNumber &rhs) const {
             if (answer.empty())
                 return LongNumber{};
         }
+        while (answer[0] == 0) {
+            answer.erase(answer.begin());
+            --max_exp;
+            if (answer.empty())
+                return LongNumber{};
+        }
         LongNumber tmp{};
         tmp.numbers = answer;
         tmp.sign = this->sign;
@@ -515,6 +521,8 @@ LongNumber LongNumber::inv() const {
     delta = LongNumber(5 / tmp.numbers[0]);
     if (tmp.numbers[0] < 5)
         tmp = tmp * delta;
+    else
+        delta = LongNumber(1);
     long long tmp_exp = -tmp.exp;
     tmp.exp = 0;
     x0 = alpha - beta * tmp;
