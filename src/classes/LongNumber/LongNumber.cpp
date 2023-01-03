@@ -7,7 +7,7 @@ const LongNumber LongNumber::e = LongNumber("2.718281828459045235360287471352662
 const LongNumber LongNumber::nan = LongNumber(cringe("nan"));
 const LongNumber LongNumber::inf = LongNumber(cringe("inf"));
 const LongNumber LongNumber::infm = LongNumber(cringe("-inf"));
-const LongNumber LongNumber::eps = LongNumber("0.000000000000001");
+const LongNumber LongNumber::eps = LongNumber("0.00000000000000001");
 
 LongNumber LongNumber::operator/(const LongNumber &rhs) const {
     if (isnan(*this) or isnan(rhs) or (*this == LongNumber::zero and rhs == LongNumber::zero) or ((isinf(*this) or isinfm(*this)) and (isinf(rhs) or isinfm(rhs))))
@@ -489,23 +489,74 @@ LongNumber LongNumber::operator*(const LongNumber &rhs) const {
     }
     unsigned long long len = rhs.numbers.size() + this->numbers.size();
     std::vector<unsigned long long> answer(len);
-    for (auto i = 0; i < rhs.numbers.size(); ++i) {
-        for (auto j = 0; j < this->numbers.size(); ++j) {
-            answer[i + j + 1] += rhs.numbers[i] * this->numbers[j];
-        }
-    }
     LongNumber tmp{};
-    tmp.numbers.resize(len);
-    tmp.sign = this->sign ^ rhs.sign;
-    tmp.exp = this->exp + rhs.exp;
-    for (auto i = len - 1; i > 0; i--) {
-        answer[i - 1] += answer[i] / 10;
-        tmp.numbers[i] = (char) (answer[i] % 10);
+    //std::max(rhs.numbers.size(), this->numbers.size()) < 10
+    if (len < 4) {
+        for (auto i = 0; i < rhs.numbers.size(); ++i) {
+            for (auto j = 0; j < this->numbers.size(); ++j) {
+                answer[i + j + 1] += rhs.numbers[i] * this->numbers[j];
+            }
+        }
+        tmp.numbers.resize(len);
+        tmp.sign = this->sign ^ rhs.sign;
+        tmp.exp = this->exp + rhs.exp;
+        for (auto i = len - 1; i > 0; i--) {
+            answer[i - 1] += answer[i] / 10;
+            tmp.numbers[i] = (char) (answer[i] % 10);
+        }
+        tmp.numbers[0] = (char) answer[0];
+    } else {
+        LongNumber a, b, c, d, mult0, mult1, mult2;
+        long long new_size = (long long) (std::max(this->numbers.size(), rhs.numbers.size()) + 1) / 2 * 2;
+        a.exp = (long long) (this->numbers.size()) / 2;
+        a.numbers.resize(a.exp);
+        for (long long i = 0; i < a.exp; ++i) {
+            a.numbers[i] = this->numbers[i];
+        }
+        c.exp = (long long) (rhs.numbers.size()) / 2;
+        c.numbers.resize(c.exp);
+        for (long long i = 0; i < c.exp; ++i) {
+            c.numbers[i] = rhs.numbers[i];
+        }
+        b.exp = (long long) (this->numbers.size() + 1) / 2;
+        b.numbers.resize(b.exp);
+        for (long long i = a.exp; i < this->numbers.size(); ++i) {
+            b.numbers[i - a.exp] = this->numbers[i];
+        }
+        while (b.numbers[0] == 0) {
+            --b.exp;
+            b.numbers.erase(b.numbers.begin());
+        }
+        d.exp = (long long) (rhs.numbers.size() + 1) / 2;
+        d.numbers.resize(d.exp);
+        for (long long i = c.exp; i < rhs.numbers.size(); ++i) {
+            d.numbers[i - c.exp] = rhs.numbers[i];
+        }
+        while (d.numbers[0] == 0) {
+            --d.exp;
+            d.numbers.erase(d.numbers.begin());
+        }
+        if (c.exp == 0)
+            c = LongNumber::zero;
+        if (a.exp == 0)
+            a = LongNumber::zero;
+        mult0 = (a + b) * (c + d);
+        mult1 = a * c;
+        mult2 = b * d;
+        mult0 -= mult1 + mult2;
+        mult0.exp += (long long) (std::max(this->numbers.size(), rhs.numbers.size()) + 1) / 2;
+        mult1.exp += (long long) (std::max(this->numbers.size(), rhs.numbers.size()) + 1) / 2 * 2;
+        tmp = mult0 + mult1 + mult2;
+        tmp.sign = this->sign ^ rhs.sign;
+        tmp.exp -= (long long) this->numbers.size() - this->exp;
+        tmp.exp -= (long long) rhs.numbers.size() - rhs.exp;
     }
-    tmp.numbers[0] = (char) answer[0];
     while (tmp.numbers[0] == 0) {
         --tmp.exp;
         tmp.numbers.erase(tmp.numbers.begin());
+    }
+    while (tmp.numbers[tmp.numbers.size() - 1] == 0) {
+        tmp.numbers.erase(tmp.numbers.end() - 1);
     }
     return tmp;
 }
@@ -528,10 +579,10 @@ LongNumber LongNumber::inv() const {
     x0 = alpha - beta * tmp;
     LongNumber gamma(abs(LongNumber(1) - tmp * x0)), two(2);
     while (gamma > LongNumber::eps) {
-        gamma = gamma * gamma;
-        x0 = x0 * (two - tmp * x0);
+        gamma *= gamma;
+        x0 *= two - tmp * x0;
     }
-    x0 = x0 * delta;
+    x0 *= delta;
     x0.exp += tmp_exp;
     if (x0 <= eps * LongNumber(10))
         return LongNumber::zero;
