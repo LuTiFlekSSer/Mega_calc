@@ -490,116 +490,19 @@ LongNumber LongNumber::operator*(const LongNumber &rhs) const {
     unsigned long long len = rhs.numbers.size() + this->numbers.size();
     std::vector<unsigned long long> answer(len);
     LongNumber tmp{};
-    if (std::max(rhs.numbers.size(), this->numbers.size()) < 10) {
-        for (auto i = 0; i < rhs.numbers.size(); ++i) {
-            for (auto j = 0; j < this->numbers.size(); ++j) {
-                answer[i + j + 1] += rhs.numbers[i] * this->numbers[j];
-            }
+    for (auto i = 0; i < rhs.numbers.size(); ++i) {
+        for (auto j = 0; j < this->numbers.size(); ++j) {
+            answer[i + j + 1] += rhs.numbers[i] * this->numbers[j];
         }
-        tmp.numbers.resize(len);
-        tmp.sign = this->sign ^ rhs.sign;
-        tmp.exp = this->exp + rhs.exp;
-        for (auto i = len - 1; i > 0; i--) {
-            answer[i - 1] += answer[i] / 10;
-            tmp.numbers[i] = (char) (answer[i] % 10);
-        }
-        tmp.numbers[0] = (char) answer[0];
-    } else {
-        LongNumber a, b, c, d, mult0, mult1, mult2;
-        long long this_size =
-                this->exp - (long long) this->numbers.size() > 0 ? (long long) this->numbers.size() + std::abs((long long) this->numbers.size() - this->exp) : (long long) this->numbers.size(),
-                rhs_size = rhs.exp - (long long) rhs.numbers.size() > 0 ? (long long) rhs.numbers.size() + std::abs((long long) rhs.numbers.size() - rhs.exp) : (long long) rhs.numbers.size(),
-                new_size = (std::max(this_size, rhs_size) + 1) / 2 * 2,
-                pad_this = new_size - this_size,
-                pad_rhs = new_size - rhs_size;
-
-        a.exp = (long long) (this_size) / 2;
-        a.numbers.resize(a.exp);
-        long long index = 0;
-        for (long long i = 0; i < new_size / 2; ++i) {
-            if (i + 1 > pad_this) {
-                if (index < this->numbers.size())
-                    a.numbers[index] = this->numbers[index];
-                ++index;
-            }
-        }
-        a.exp = index;
-        while (a.exp > 0 and a.numbers[a.numbers.size() - 1] == 0) {
-            a.numbers.erase(a.numbers.end() - 1);
-        }
-
-        c.exp = (long long) (rhs_size) / 2;
-        c.numbers.resize(c.exp);
-        index = 0;
-        for (long long i = 0; i < new_size / 2; ++i) {
-            if (i + 1 > pad_rhs) {
-                if (index < rhs.numbers.size())
-                    c.numbers[index] = rhs.numbers[index];
-                ++index;
-            }
-        }
-        c.exp = index;
-        while (c.exp > 0 and c.numbers[c.numbers.size() - 1] == 0) {
-            c.numbers.erase(c.numbers.end() - 1);
-        }
-
-        b.exp = (long long) (new_size) / 2;
-        b.numbers.resize(b.exp);
-        index = 0;
-        for (long long i = new_size / 2; i < new_size; ++i) {
-            if (i + 1 > pad_this) {
-                if (index + a.exp < this->numbers.size())
-                    b.numbers[index] = this->numbers[index + a.exp];
-                ++index;
-            }
-        }
-        b.exp = index;
-        while (b.exp > 0 and b.numbers[0] == 0) {
-            --b.exp;
-            b.numbers.erase(b.numbers.begin());
-        }
-        while (b.exp > 0 and b.numbers[b.numbers.size() - 1] == 0) {
-            b.numbers.erase(b.numbers.end() - 1);
-        }
-
-        d.exp = (long long) (new_size) / 2;
-        d.numbers.resize(d.exp);
-        index = 0;
-        for (long long i = new_size / 2; i < new_size; ++i) {
-            if (i + 1 > pad_rhs) {
-                if (index + c.exp < rhs.numbers.size())
-                    d.numbers[index] = rhs.numbers[index + c.exp];
-                ++index;
-            }
-        }
-        d.exp = index;
-        while (d.exp > 0 and d.numbers[0] == 0) {
-            --d.exp;
-            d.numbers.erase(d.numbers.begin());
-        }
-        while (d.exp > 0 and d.numbers[d.numbers.size() - 1] == 0) {
-            d.numbers.erase(d.numbers.end() - 1);
-        }
-
-        if (c.exp == 0)
-            c = LongNumber::zero;
-        if (a.exp == 0)
-            a = LongNumber::zero;
-        if (d.exp == 0)
-            d = LongNumber::zero;
-        if (b.exp == 0)
-            b = LongNumber::zero;
-        mult0 = (a + b) * (c + d);
-        mult1 = a * c;
-        mult2 = b * d;
-        mult0 -= mult1 + mult2;
-        mult0.exp += new_size / 2;
-        mult1.exp += new_size;
-        tmp = mult0 + mult1 + mult2;
-        tmp.sign = this->sign ^ rhs.sign;
-        tmp.exp -= this_size - this->exp;
-        tmp.exp -= rhs_size - rhs.exp;
     }
+    tmp.numbers.resize(len);
+    tmp.sign = this->sign ^ rhs.sign;
+    tmp.exp = this->exp + rhs.exp;
+    for (auto i = len - 1; i > 0; i--) {
+        answer[i - 1] += answer[i] / 10;
+        tmp.numbers[i] = (char) (answer[i] % 10);
+    }
+    tmp.numbers[0] = (char) answer[0];
     while (tmp.numbers[0] == 0) {
         --tmp.exp;
         tmp.numbers.erase(tmp.numbers.begin());
