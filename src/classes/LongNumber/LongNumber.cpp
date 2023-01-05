@@ -2,12 +2,14 @@
 #include "iostream"
 
 const LongNumber LongNumber::zero = LongNumber{0};
+const LongNumber LongNumber::one = LongNumber{1};
+const LongNumber LongNumber::two = LongNumber{2};
 const LongNumber LongNumber::Pi = LongNumber("3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679");
 const LongNumber LongNumber::e = LongNumber("2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274");
 const LongNumber LongNumber::nan = LongNumber(cringe("nan"));
 const LongNumber LongNumber::inf = LongNumber(cringe("inf"));
 const LongNumber LongNumber::infm = LongNumber(cringe("-inf"));
-const LongNumber LongNumber::eps = LongNumber("0.00000000000000001");
+const LongNumber LongNumber::eps = LongNumber("0.00000000000000001");//31 ноль
 
 LongNumber LongNumber::operator/(const LongNumber &rhs) const {
     if (isnan(*this) or isnan(rhs) or (*this == LongNumber::zero and rhs == LongNumber::zero) or ((isinf(*this) or isinfm(*this)) and (isinf(rhs) or isinfm(rhs))))
@@ -490,8 +492,8 @@ LongNumber LongNumber::operator*(const LongNumber &rhs) const {
     unsigned long long len = rhs.numbers.size() + this->numbers.size();
     std::vector<unsigned long long> answer(len);
     LongNumber tmp{};
-    for (auto i = 0; i < rhs.numbers.size(); ++i) {
-        for (auto j = 0; j < this->numbers.size(); ++j) {
+    for (unsigned long long i = 0; i < rhs.numbers.size(); ++i) {
+        for (unsigned long long j = 0; j < this->numbers.size(); ++j) {
             answer[i + j + 1] += rhs.numbers[i] * this->numbers[j];
         }
     }
@@ -513,6 +515,128 @@ LongNumber LongNumber::operator*(const LongNumber &rhs) const {
     return tmp;
 }
 
+LongNumber pow(const LongNumber &num1, const LongNumber &num2) {//nan для дробной степени и отрицательного числа
+    if (isnan(num1) or isnan(num2) or (num1 == LongNumber::zero and num2 == LongNumber::zero) or (num1 == LongNumber::one and (isinf(num2) or isinfm(num2))) or
+        ((isinf(num1) or isinfm(num1)) and num2 == LongNumber::zero))
+        return LongNumber::nan;
+    else if (num2 == LongNumber::zero)
+        return LongNumber::one;
+    else if ((abs(num1) < LongNumber::one and isinf(num2)) or (abs(num1) > LongNumber::one and isinfm(num2)) or num1 == LongNumber::zero)
+        return LongNumber::zero;
+    else if ((abs(num1) < LongNumber::one and isinfm(num2)) or (abs(num1) > LongNumber::one and isinf(num2)))
+        return LongNumber::inf;
+    else if ((long long) num2.numbers.size() - num2.exp <= 0) {
+        LongNumber tmp1 = num2.sign ? num1.inv() : num1, tmp2 = tmp1;
+        tmp1.round();
+        for (auto i = LongNumber::one; i < abs(num2); ++i) {
+            tmp2 *= tmp1;
+            tmp2.round();
+        }
+        return tmp2;
+    }
+    return exp(ln(num1) * num2);
+}
+
+LongNumber LongNumber::round() {
+    if (isinf(*this) or isinfm(*this) or isnan(*this))
+        return *this;
+    auto del_pos = this->exp - LongNumber::eps.exp;
+    if (del_pos < this->numbers.size()) {
+        char tmp = this->numbers[del_pos];
+        this->numbers.erase(this->numbers.begin() + del_pos, this->numbers.end());
+        while ((long long) this->numbers.size() > 0 and (long long) this->numbers.size() >= this->exp and this->numbers[this->numbers.size() - 1] == 0) {
+            this->numbers.erase(this->numbers.end() - 1);
+        }
+        while ((long long) this->numbers.size() > 0 and this->numbers[this->numbers.size() - 1] == 0) {
+            ++this->exp;
+            this->numbers.erase(this->numbers.end() - 1);
+        }
+        if (this->numbers.empty()) {
+            *this = LongNumber::zero;
+        }
+        if (tmp > 5) {
+            *this += LongNumber::eps * LongNumber(10);
+        }
+    }
+    return *this;
+}
+
+LongNumber exp(const LongNumber &num) {
+    if (isnan(num))
+        return LongNumber::nan;
+    else if (isinf(num))
+        return LongNumber::inf;
+    else if (isinfm(num))
+        return LongNumber::infm;
+    else if (num == LongNumber::zero)
+        return LongNumber::one;
+    LongNumber tmp = LongNumber::one, buf = LongNumber::one, count = LongNumber::one;
+    while (buf > LongNumber::eps) {
+        buf *= num / count;
+        buf.round();
+        tmp += buf;
+        ++count;
+    }
+    return tmp;
+
+}
+
+LongNumber ln(const LongNumber &num) {//численное интегрирование
+    if (isnan(num) or num.sign)
+        return LongNumber::nan;
+    else if (isinf(num))
+        return LongNumber::inf;
+    else if (num == LongNumber::zero)
+        return LongNumber::infm;
+    LongNumber tmp = LongNumber::zero, buf = LongNumber::one, count = LongNumber::one, tmp_copy = (num - LongNumber::one) / (num + LongNumber::one);
+    while (buf > LongNumber::eps) {
+        buf = pow(tmp_copy, count) / count;
+        tmp += buf;
+        count += LongNumber::two;
+    }
+    return tmp * LongNumber::two;
+}
+
+LongNumber log(const LongNumber &num1, const LongNumber &num2) {
+    if (isnan(num1) or isnan(num2) or (num1 == LongNumber::zero and num2 == LongNumber::zero) or (num1 == LongNumber::one and num2 == LongNumber::one) or num2.sign or num1.sign or
+        (isinf(num1) and isinf(num2)))
+        return LongNumber::nan;
+    else if (num1 == LongNumber::zero or num2 == LongNumber::one or isinf(num1))
+        return LongNumber::zero;
+    else if (num1 == LongNumber::one or (num2 == LongNumber::zero and num1 < LongNumber::one) or (num1 > LongNumber::one and isinf(num2)))
+        return LongNumber::inf;
+    else if ((num2 == LongNumber::zero and num1 > LongNumber::one) or (num1 < LongNumber::one and isinf(num2)))
+        return LongNumber::infm;
+    return ln(num2) / ln(num1);
+}
+
+LongNumber rec_fact(const LongNumber &num) {
+    if (num == LongNumber::zero)
+        return LongNumber::one;
+    return num * rec_fact(num - LongNumber::one);
+}
+
+LongNumber factorial(const LongNumber &num) {//численное интегрирование
+    if (isnan(num))
+        return LongNumber::nan;
+    else if (isinf(num) or isinfm(num))
+        return LongNumber::inf;
+    else if ((long long) num.numbers.size() - num.exp <= 0) {
+        if (num.sign)
+            return LongNumber::inf;
+        return rec_fact(num);
+    }
+    LongNumber buf = pow(LongNumber::two, num) / (LongNumber::one + num), count = LongNumber::two, eps_plus_one = LongNumber::one + LongNumber::eps, tmp = buf;
+    while (buf > eps_plus_one) {
+        buf = pow(LongNumber::one + LongNumber::one / count, num) / (LongNumber::one + num / count);
+        std::cout << tmp << '\n';
+        tmp *= buf;
+        tmp.round();
+        ++count;
+    }
+    return tmp / num;
+}
+
 LongNumber LongNumber::inv() const {
     if (isnan(*this))
         return LongNumber::nan;
@@ -525,20 +649,20 @@ LongNumber LongNumber::inv() const {
     if (tmp.numbers[0] < 5)
         tmp = tmp * delta;
     else
-        delta = LongNumber(1);
+        delta = LongNumber::one;
     long long tmp_exp = -tmp.exp;
     tmp.exp = 0;
     x0 = alpha - beta * tmp;
-    LongNumber gamma(abs(LongNumber(1) - tmp * x0)), two(2);
+    LongNumber gamma(abs(LongNumber::one - tmp * x0));
     while (gamma > LongNumber::eps) {
         gamma *= gamma;
-        x0 *= two - tmp * x0;
+        x0 *= LongNumber::two - tmp * x0;
     }
     x0 *= delta;
     x0.exp += tmp_exp;
     if (x0 <= eps * LongNumber(10))
         return LongNumber::zero;
-    x0.numbers.erase(x0.numbers.begin() - LongNumber::eps.exp, x0.numbers.end());
+    x0.round();
     x0.sign = this->sign;
     return x0;
 }
@@ -560,6 +684,24 @@ LongNumber &LongNumber::operator/=(const LongNumber &rhs) {
 
 LongNumber &LongNumber::operator*=(const LongNumber &rhs) {
     *this = *this * rhs;
+    return *this;
+}
+
+LongNumber &LongNumber::operator++() {
+    *this += LongNumber::one;
+    return *this;
+}
+
+LongNumber LongNumber::operator++(int) const {
+    return *this + LongNumber::one;
+}
+
+LongNumber LongNumber::operator--(int) const {
+    return *this - LongNumber::one;
+}
+
+LongNumber &LongNumber::operator--() {
+    *this -= LongNumber::one;
     return *this;
 }
 
