@@ -9,7 +9,39 @@ const LongNumber LongNumber::e = LongNumber("2.718281828459045235360287471352662
 const LongNumber LongNumber::nan = LongNumber(cringe("nan"));
 const LongNumber LongNumber::inf = LongNumber(cringe("inf"));
 const LongNumber LongNumber::infm = LongNumber(cringe("-inf"));
-const LongNumber LongNumber::eps = LongNumber("0.00000000000000001");//31 ноль
+const LongNumber LongNumber::eps = LongNumber("0.00000000000000001");
+
+static const LongNumber G("6.024680040776729583740234375");
+static const LongNumber lanczos_num_coeffs[13] = {
+        LongNumber("23531376880.410759688572007674451636754734846804940"),
+        LongNumber("42919803642.649098768957899047001988850926355848959"),
+        LongNumber("35711959237.355668049440185451547166705960488635843"),
+        LongNumber("17921034426.037209699919755754458931112671403265390"),
+        LongNumber("6039542586.3520280050642916443072979210699388420708"),
+        LongNumber("1439720407.3117216736632230727949123939715485786772"),
+        LongNumber("248874557.86205415651146038641322942321632125127801"),
+        LongNumber("31426415.585400194380614231628318205362874684987640"),
+        LongNumber("2876370.6289353724412254090516208496135991145378768"),
+        LongNumber("186056.26539522349504029498971604569928220784236328"),
+        LongNumber("8071.6720023658162106380029022722506138218516325024"),
+        LongNumber("210.82427775157934587250973392071336271166969580291"),
+        LongNumber("2.5066282746310002701649081771338373386264310793408")
+};
+static const LongNumber lanczos_den_coeffs[13] = {
+        LongNumber("0"),
+        LongNumber("39916800"),
+        LongNumber("120543840"),
+        LongNumber("150917976"),
+        LongNumber("105258076"),
+        LongNumber("45995730"),
+        LongNumber("13339535"),
+        LongNumber("2637558"),
+        LongNumber("357423"),
+        LongNumber("32670"),
+        LongNumber("1925"),
+        LongNumber("66"),
+        LongNumber("1")
+};
 
 LongNumber LongNumber::operator/(const LongNumber &rhs) const {
     if (isnan(*this) or isnan(rhs) or (*this == LongNumber::zero and rhs == LongNumber::zero) or ((isinf(*this) or isinfm(*this)) and (isinf(rhs) or isinfm(rhs))))
@@ -32,6 +64,7 @@ LongNumber::LongNumber(const LongNumber &num) {
     sign = num.sign;
     numbers = num.numbers;
     exp = num.exp;
+//    this->round();
 }
 
 LongNumber::LongNumber(std::string num) { //∞ из потока
@@ -123,7 +156,7 @@ std::string LongNumber::to_string() const {
         for (long long i = 0; i < std::min(exp, (long long) numbers.size()); ++i) {
             str.push_back((char) (this->numbers[i] + '0'));
         }
-        if (this->numbers.size() > this->exp) {
+        if ((long long) this->numbers.size() > this->exp) {
             str.push_back('.');
             for (long long i = exp; i < this->numbers.size(); ++i) {
                 str.push_back((char) (this->numbers[i] + '0'));
@@ -456,6 +489,8 @@ LongNumber LongNumber::operator-(const LongNumber &rhs) const {
 }
 
 LongNumber LongNumber::operator-() const {
+    if (*this == LongNumber::zero or isnan(*this))
+        return *this;
     LongNumber tmp = *this;
     tmp.sign = !tmp.sign;
     return tmp;
@@ -527,23 +562,26 @@ LongNumber pow(const LongNumber &num1, const LongNumber &num2) {//nan для д�
         return LongNumber::inf;
     else if ((long long) num2.numbers.size() - num2.exp <= 0) {
         LongNumber tmp1 = num2.sign ? num1.inv() : num1, tmp2 = tmp1;
-        tmp1.round();
         for (auto i = LongNumber::one; i < abs(num2); ++i) {
             tmp2 *= tmp1;
-            tmp2.round();
         }
         return tmp2;
     }
     return exp(ln(num1) * num2);
 }
 
-LongNumber LongNumber::round() {
+void LongNumber::round() {
     if (isinf(*this) or isinfm(*this) or isnan(*this))
-        return *this;
-    auto del_pos = this->exp - LongNumber::eps.exp;
-    if (del_pos < this->numbers.size()) {
-        char tmp = this->numbers[del_pos];
-        this->numbers.erase(this->numbers.begin() + del_pos, this->numbers.end());
+        return;
+    long long flag = (long long) this->numbers.size() - this->exp;
+    if (flag >= -LongNumber::eps.exp + 2ll) {
+        bool old_sign = this->sign;
+        if (this->exp - LongNumber::eps.exp + 1ll < 0) {
+            *this = LongNumber::zero;
+            return;
+        }
+        char tmp = this->numbers[this->exp - LongNumber::eps.exp + 1ll];
+        this->numbers.erase(this->numbers.begin() + this->exp - LongNumber::eps.exp + 1ll, this->numbers.end());
         while ((long long) this->numbers.size() > 0 and (long long) this->numbers.size() >= this->exp and this->numbers[this->numbers.size() - 1] == 0) {
             this->numbers.erase(this->numbers.end() - 1);
         }
@@ -554,11 +592,10 @@ LongNumber LongNumber::round() {
         if (this->numbers.empty()) {
             *this = LongNumber::zero;
         }
-        if (tmp > 5) {
-            *this += LongNumber::eps * LongNumber(10);
+        if (tmp >= 5) {
+            *this += old_sign ? -LongNumber::eps : LongNumber::eps;
         }
     }
-    return *this;
 }
 
 LongNumber exp(const LongNumber &num) {
@@ -571,9 +608,8 @@ LongNumber exp(const LongNumber &num) {
     else if (num == LongNumber::zero)
         return LongNumber::one;
     LongNumber tmp = LongNumber::one, buf = LongNumber::one, count = LongNumber::one;
-    while (buf > LongNumber::eps) {
+    while (abs(buf) > LongNumber::eps) {
         buf *= num / count;
-        buf.round();
         tmp += buf;
         ++count;
     }
@@ -581,20 +617,19 @@ LongNumber exp(const LongNumber &num) {
 
 }
 
-LongNumber ln(const LongNumber &num) {//численное интегрирование
+LongNumber ln(const LongNumber &num) {
     if (isnan(num) or num.sign)
         return LongNumber::nan;
     else if (isinf(num))
         return LongNumber::inf;
     else if (num == LongNumber::zero)
         return LongNumber::infm;
-    LongNumber tmp = LongNumber::zero, buf = LongNumber::one, count = LongNumber::one, tmp_copy = (num - LongNumber::one) / (num + LongNumber::one);
-    while (buf > LongNumber::eps) {
-        buf = pow(tmp_copy, count) / count;
-        tmp += buf;
-        count += LongNumber::two;
+    LongNumber a = num < LongNumber::one ? num.inv() : num, x0 = LongNumber(a.exp - 1) * LongNumber(2.30259), buf = LongNumber::one;
+    while (abs(buf) > LongNumber::eps) {
+        buf = a / exp(x0) - LongNumber::one;
+        x0 += buf;
     }
-    return tmp * LongNumber::two;
+    return num < LongNumber::one ? -x0 : x0;
 }
 
 LongNumber log(const LongNumber &num1, const LongNumber &num2) {
@@ -616,7 +651,7 @@ LongNumber rec_fact(const LongNumber &num) {
     return num * rec_fact(num - LongNumber::one);
 }
 
-LongNumber factorial(const LongNumber &num) {//численное интегрирование
+LongNumber factorial(const LongNumber &num) {
     if (isnan(num))
         return LongNumber::nan;
     else if (isinf(num) or isinfm(num))
@@ -626,15 +661,45 @@ LongNumber factorial(const LongNumber &num) {//численное интегри
             return LongNumber::inf;
         return rec_fact(num);
     }
-    LongNumber buf = pow(LongNumber::two, num) / (LongNumber::one + num), count = LongNumber::two, eps_plus_one = LongNumber::one + LongNumber::eps, tmp = buf;
-    while (buf > eps_plus_one) {
-        buf = pow(LongNumber::one + LongNumber::one / count, num) / (LongNumber::one + num / count);
-        std::cout << tmp << '\n';
-        tmp *= buf;
-        tmp.round();
-        ++count;
+    long long num_exp = num.exp;
+    LongNumber num_num = num - floor(num) + LongNumber::one, G_minus = G - LongNumber(0.5), y = num_num + G_minus, la1, la2;
+    for (int i = 12; i >= 0; --i) {
+        la2 = la2 * num_num + lanczos_num_coeffs[i];
+        la1 = la1 * num_num + lanczos_den_coeffs[i];
     }
-    return tmp / num;
+    LongNumber la_rez = la2 / la1, r = la_rez / exp(y);
+    r *= pow(y, num_num - LongNumber(0.5));
+    for (auto i = num; i >= LongNumber::one; --i) {
+        r *= i;
+    }
+    for (auto i = num + LongNumber::one; i <= LongNumber::one; ++i) {
+        r /= i;
+    }
+    return r;
+}
+
+LongNumber floor(const LongNumber &num) {
+    if (isnan(num) or isinf(abs(num)))
+        return num;
+    else if (num.exp <= 0 or num == LongNumber::zero)
+        return num.sign ? -LongNumber::one : LongNumber::zero;
+    LongNumber tmp;
+    tmp.numbers.resize(std::min(num.exp, (long long) num.numbers.size()));
+    for (long long i = 0; i < num.exp; ++i) {
+        if (i < num.numbers.size())
+            tmp.numbers[i] = num.numbers[i];
+        else
+            break;
+    }
+    tmp.exp = num.exp;
+    if (num.sign and (long long) num.numbers.size() - num.exp > 0)
+        tmp += LongNumber::one;
+    tmp.sign = num.sign;
+    return tmp;
+}
+
+LongNumber ceil(const LongNumber &num) {
+    return num == floor(num) ? num : floor(num) + LongNumber::one;
 }
 
 LongNumber LongNumber::inv() const {
@@ -652,6 +717,8 @@ LongNumber LongNumber::inv() const {
         delta = LongNumber::one;
     long long tmp_exp = -tmp.exp;
     tmp.exp = 0;
+    if (tmp.numbers[0] == 0)
+        return this->sign ? LongNumber::infm : LongNumber::inf;
     x0 = alpha - beta * tmp;
     LongNumber gamma(abs(LongNumber::one - tmp * x0));
     while (gamma > LongNumber::eps) {
@@ -660,9 +727,6 @@ LongNumber LongNumber::inv() const {
     }
     x0 *= delta;
     x0.exp += tmp_exp;
-    if (x0 <= eps * LongNumber(10))
-        return LongNumber::zero;
-    x0.round();
     x0.sign = this->sign;
     return x0;
 }
@@ -692,12 +756,16 @@ LongNumber &LongNumber::operator++() {
     return *this;
 }
 
-LongNumber LongNumber::operator++(int) const {
-    return *this + LongNumber::one;
+LongNumber LongNumber::operator++(int) {
+    LongNumber old = *this;
+    operator++();
+    return old;
 }
 
-LongNumber LongNumber::operator--(int) const {
-    return *this - LongNumber::one;
+LongNumber LongNumber::operator--(int) {
+    LongNumber old = *this;
+    operator--();
+    return old;
 }
 
 LongNumber &LongNumber::operator--() {
@@ -730,7 +798,13 @@ bool isinfm(const LongNumber &num) {
 }
 
 
-LongNumber &LongNumber::operator=(const LongNumber &rhs) = default;
+LongNumber &LongNumber::operator=(const LongNumber &rhs) {
+    exp = rhs.exp;
+    numbers = rhs.numbers;
+    sign = rhs.sign;
+    this->round();
+    return *this;
+}
 
 bool correct_num(const std::string &num) {
     if (num == "inf" or num == "-inf") {

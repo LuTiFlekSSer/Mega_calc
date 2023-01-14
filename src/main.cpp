@@ -5,9 +5,9 @@
 #include "ui files/ui.h"
 
 int main(int argc, char *argv[]) { // not NaN in == and !=
-//    Mat2D m(3, 5);
+//    Mat2D m(3, 3);
 //    for (int i = 0; i < 3; ++i) {
-//        for (int j = 0; j < 5; ++j) {
+//        for (int j = 0; j < 3; ++j) {
 //            std::cin >> m[i][j];
 //        }
 //    }
@@ -26,8 +26,7 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    print_solve(i);
 //    v.print();
 //    (m * a).print();
-//    LongNumber a(1),b(1);
-    std::cout << ln(LongNumber(30));
+    std::cout << factorial(LongNumber(-1.1));
 //   start_UI(argc, argv);
     return 0;
 }

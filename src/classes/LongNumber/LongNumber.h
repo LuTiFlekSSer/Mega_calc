@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <iostream>
 #include <concepts>
+#include <cmath>
 #include "cringe class/cringe.h"
 
 template<typename T>
@@ -28,6 +29,10 @@ class LongNumber {
 
     friend LongNumber log(const LongNumber &num1, const LongNumber &num2);
 
+    friend LongNumber floor(const LongNumber &num);
+
+    friend LongNumber ceil(const LongNumber &num);
+
 private:
     bool sign = false;
     std::vector<char> numbers;
@@ -35,7 +40,7 @@ private:
 
     explicit LongNumber(const cringe &par);
 
-    LongNumber round();
+    void round();
 
 public:
     static const LongNumber zero;
@@ -55,7 +60,7 @@ public:
     explicit LongNumber(std::string num);
 
     template<arithmetic T>
-    explicit LongNumber(T num) : LongNumber(std::to_string(num)) {};
+    explicit LongNumber(T num) : LongNumber(num == std::floor(num) ? std::to_string((long long) num) : std::to_string(num)) {};
 
     LongNumber &operator=(const LongNumber &rhs);
 
@@ -69,11 +74,11 @@ public:
 
     LongNumber &operator++();
 
-    LongNumber operator++(int) const;
+    LongNumber operator++(int);
 
     LongNumber &operator--();
 
-    LongNumber operator--(int) const;
+    LongNumber operator--(int);
 
     LongNumber &operator+=(const LongNumber &rhs);
 
@@ -121,6 +126,10 @@ LongNumber ln(const LongNumber &num);
 LongNumber log(const LongNumber &num1, const LongNumber &num2);
 
 LongNumber min(const LongNumber &num1, const LongNumber &num2);
+
+LongNumber floor(const LongNumber &num);
+
+LongNumber ceil(const LongNumber &num);
 
 LongNumber factorial(const LongNumber &num);
 

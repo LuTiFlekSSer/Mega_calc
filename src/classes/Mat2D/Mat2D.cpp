@@ -189,7 +189,7 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
         VecND y((int) std::get<2>(pluq).mat.size());
         Mat2D yc((int) std::get<2>(pluq).mat.size(), (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
         for (int i = 0; i < std::get<2>(pluq).mat.size(); ++i) {
-            LongNumber sum(0);
+            LongNumber sum = LongNumber::zero;
             for (int j = 0; j < i; ++j) {
                 sum += y[j] * std::get<1>(pluq)[i][j];
             }
