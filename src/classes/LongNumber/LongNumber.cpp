@@ -339,6 +339,8 @@ LongNumber LongNumber::operator-(const LongNumber &rhs) const {
     if (isnan(*this) or isnan(rhs) or (isinf(*this) and isinf(rhs)) or (isinfm(*this) and isinfm(rhs))) {
         return LongNumber::nan;
     }
+    if (rhs == LongNumber::zero)
+        return *this;
     if (this->sign == rhs.sign) {
         if (isinf(*this) or isinfm(*this))
             return *this;
