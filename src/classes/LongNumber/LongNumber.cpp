@@ -737,8 +737,8 @@ LongNumber sqrt(const LongNumber &num) {
 }
 
 LongNumber surd(const LongNumber &num, const LongNumber &deg) {
-    if (isnan(num) or (num < LongNumber::zero and (floor(deg) != deg or floor(deg) == deg and (deg.numbers.size() != deg.exp or deg.numbers[0] % 2 == 0))) or deg == LongNumber::zero or
-        (isinf(abs(deg)) and num == LongNumber::zero))
+    if (isnan(num) or (num < LongNumber::zero and (!isinf(abs(deg)) and (floor(deg) != deg or floor(deg) == deg and (deg.numbers.size() != deg.exp or deg.numbers[0] % 2 == 0)))) or
+        deg == LongNumber::zero or (isinf(abs(deg)) and num == LongNumber::zero))
         return LongNumber::nan;
     else if (isinf(abs(deg)))
         return LongNumber::one;
