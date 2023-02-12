@@ -18,20 +18,24 @@ concept numeric = std::is_integral<T>::value;
 class LongNumber {
     friend LongNumber factorial(const LongNumber &num);
 
-    friend LongNumber pow(const LongNumber &num1, const LongNumber &num2);
+    friend LongNumber pow(const LongNumber &num, const LongNumber &deg);
 
     template<numeric T>
-    friend LongNumber pow(const LongNumber &num1, const T &num2);
+    friend LongNumber pow(const LongNumber &num, const T &deg);
 
     friend LongNumber exp(const LongNumber &num);
 
     friend LongNumber ln(const LongNumber &num);
 
-    friend LongNumber log(const LongNumber &num1, const LongNumber &num2);
+    friend LongNumber log(const LongNumber &num, const LongNumber &base);
 
     friend LongNumber floor(const LongNumber &num);
 
     friend LongNumber ceil(const LongNumber &num);
+
+    friend LongNumber sqrt(const LongNumber &num);
+
+    friend LongNumber surd(const LongNumber &num, const LongNumber &deg);
 
 private:
     bool sign = false;
@@ -123,7 +127,7 @@ LongNumber exp(const LongNumber &num);
 
 LongNumber ln(const LongNumber &num);
 
-LongNumber log(const LongNumber &num1, const LongNumber &num2);
+LongNumber log(const LongNumber &num, const LongNumber &base);
 
 LongNumber min(const LongNumber &num1, const LongNumber &num2);
 
@@ -133,19 +137,47 @@ LongNumber ceil(const LongNumber &num);
 
 LongNumber factorial(const LongNumber &num);
 
-LongNumber pow(const LongNumber &num1, const LongNumber &num2);
+LongNumber pow(const LongNumber &num, const LongNumber &deg);
+
+LongNumber sqrt(const LongNumber &num);
+
+LongNumber surd(const LongNumber &num, const LongNumber &deg);
+
+LongNumber sin(const LongNumber &num);
+
+LongNumber asin(const LongNumber &num);
+
+LongNumber cos(const LongNumber &num);
+
+LongNumber acos(const LongNumber &num);
+
+LongNumber tn(const LongNumber &num);
+
+LongNumber atan(const LongNumber &num);
+
+LongNumber ctg(const LongNumber &num);
+
+LongNumber actg(const LongNumber &num);
+
+LongNumber sec(const LongNumber &num);
+
+LongNumber asec(const LongNumber &num);
+
+LongNumber cosec(const LongNumber &num);
+
+LongNumber acosec(const LongNumber &num);
 
 template<numeric T>
-LongNumber pow(const LongNumber &num1, const T &num2) {
-    if (isnan(num1) or (num1 == LongNumber::zero and num2 == 0) or ((isinf(num1) or isinfm(num1)) and num2 == 0))
+LongNumber pow(const LongNumber &num, const T &deg) {
+    if (isnan(num) or (num == LongNumber::zero and deg == 0) or ((isinf(num) or isinfm(num)) and deg == 0))
         return LongNumber::nan;
-    else if (num2 == 0)
+    else if (deg == 0)
         return LongNumber(1);
-    else if (num1 == LongNumber::zero)
+    else if (num == LongNumber::zero)
         return LongNumber::zero;
-    LongNumber tmp1 = num2 < 0 ? num1.inv() : num1, tmp2 = tmp1;
+    LongNumber tmp1 = deg < 0 ? num.inv() : num, tmp2 = tmp1;
     tmp1.round();
-    for (auto i = 1; i < std::abs(num2); ++i) {
+    for (auto i = 1; i < std::abs(deg); ++i) {
         tmp2 *= tmp1;
         tmp2.round();
     }

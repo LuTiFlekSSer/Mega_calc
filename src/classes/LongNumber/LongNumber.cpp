@@ -188,7 +188,7 @@ std::istream &operator>>(std::istream &in, LongNumber &num) {
 
 std::strong_ordering operator<=>(const LongNumber &lhs, const LongNumber &rhs) {
     if (isnan(lhs) or isnan(rhs)) {
-        throw std::logic_error("One number is NaN");
+        throw std::logic_error("Incorrect comparison: one number is NaN");
     }
     if (lhs == rhs) {
         return std::strong_ordering::equivalent;
@@ -552,24 +552,24 @@ LongNumber LongNumber::operator*(const LongNumber &rhs) const {
     return tmp;
 }
 
-LongNumber pow(const LongNumber &num1, const LongNumber &num2) {//nan для дробной степени и отрицательного числа
-    if (isnan(num1) or isnan(num2) or (num1 == LongNumber::zero and num2 == LongNumber::zero) or (num1 == LongNumber::one and (isinf(num2) or isinfm(num2))) or
-        ((isinf(num1) or isinfm(num1)) and num2 == LongNumber::zero))
+LongNumber pow(const LongNumber &num, const LongNumber &deg) {//nan для дробной степени и отрицательного числа
+    if (isnan(num) or isnan(deg) or (num == LongNumber::zero and deg == LongNumber::zero) or (num == LongNumber::one and (isinf(deg) or isinfm(deg))) or
+        ((isinf(num) or isinfm(num)) and deg == LongNumber::zero))
         return LongNumber::nan;
-    else if (num2 == LongNumber::zero)
+    else if (deg == LongNumber::zero)
         return LongNumber::one;
-    else if ((abs(num1) < LongNumber::one and isinf(num2)) or (abs(num1) > LongNumber::one and isinfm(num2)) or num1 == LongNumber::zero)
+    else if ((abs(num) < LongNumber::one and isinf(deg)) or (abs(num) > LongNumber::one and isinfm(deg)) or num == LongNumber::zero)
         return LongNumber::zero;
-    else if ((abs(num1) < LongNumber::one and isinfm(num2)) or (abs(num1) > LongNumber::one and isinf(num2)))
+    else if ((abs(num) < LongNumber::one and isinfm(deg)) or (abs(num) > LongNumber::one and isinf(deg)))
         return LongNumber::inf;
-    else if ((long long) num2.numbers.size() - num2.exp <= 0) {
-        LongNumber tmp1 = num2.sign ? num1.inv() : num1, tmp2 = tmp1;
-        for (auto i = LongNumber::one; i < abs(num2); ++i) {
+    else if ((long long) deg.numbers.size() - deg.exp <= 0) {
+        LongNumber tmp1 = deg.sign ? num.inv() : num, tmp2 = tmp1;
+        for (auto i = LongNumber::one; i < abs(deg); ++i) {
             tmp2 *= tmp1;
         }
         return tmp2;
     }
-    return exp(ln(num1) * num2);
+    return exp(ln(num) * deg);
 }
 
 void LongNumber::round() {
@@ -600,13 +600,29 @@ void LongNumber::round() {
     }
 }
 
+LongNumber sin(const LongNumber &num) {
+    if (isnan(num) or isinf(abs(num)))
+        return LongNumber::nan;
+    else if (num == LongNumber::zero)
+        return num;
+    LongNumber tmp = LongNumber::zero, buf = num, count = LongNumber::two;
+    bool flag = true;
+    while (abs(buf) > LongNumber::eps) {
+        tmp += flag ? buf : -buf;
+        buf *= num * num / (count * (count + LongNumber::one));
+        count += LongNumber::two;
+        flag = !flag;
+    }
+    return tmp;
+}
+
 LongNumber exp(const LongNumber &num) {
     if (isnan(num))
         return LongNumber::nan;
     else if (isinf(num))
         return LongNumber::inf;
     else if (isinfm(num))
-        return LongNumber::infm;
+        return LongNumber::zero;
     else if (num == LongNumber::zero)
         return LongNumber::one;
     LongNumber tmp = LongNumber::one, buf = LongNumber::one, count = LongNumber::one;
@@ -616,7 +632,6 @@ LongNumber exp(const LongNumber &num) {
         ++count;
     }
     return tmp;
-
 }
 
 LongNumber ln(const LongNumber &num) {
@@ -627,6 +642,8 @@ LongNumber ln(const LongNumber &num) {
     else if (num == LongNumber::zero)
         return LongNumber::infm;
     LongNumber a = num < LongNumber::one ? num.inv() : num, x0 = LongNumber(a.exp - 1) * LongNumber(2.30259), buf = LongNumber::one;
+    if (isinf(a))
+        return LongNumber::infm;
     while (abs(buf) > LongNumber::eps) {
         buf = a / exp(x0) - LongNumber::one;
         x0 += buf;
@@ -634,17 +651,17 @@ LongNumber ln(const LongNumber &num) {
     return num < LongNumber::one ? -x0 : x0;
 }
 
-LongNumber log(const LongNumber &num1, const LongNumber &num2) {
-    if (isnan(num1) or isnan(num2) or (num1 == LongNumber::zero and num2 == LongNumber::zero) or (num1 == LongNumber::one and num2 == LongNumber::one) or num2.sign or num1.sign or
-        (isinf(num1) and isinf(num2)))
+LongNumber log(const LongNumber &num, const LongNumber &base) {
+    if (isnan(base) or isnan(num) or (base == LongNumber::zero and num == LongNumber::zero) or (base == LongNumber::one and num == LongNumber::one) or num.sign or base.sign or
+        (isinf(base) and isinf(num)))
         return LongNumber::nan;
-    else if (num1 == LongNumber::zero or num2 == LongNumber::one or isinf(num1))
+    else if (base == LongNumber::zero or num == LongNumber::one or isinf(base))
         return LongNumber::zero;
-    else if (num1 == LongNumber::one or (num2 == LongNumber::zero and num1 < LongNumber::one) or (num1 > LongNumber::one and isinf(num2)))
+    else if (base == LongNumber::one or (num == LongNumber::zero and base < LongNumber::one) or (base > LongNumber::one and isinf(num)))
         return LongNumber::inf;
-    else if ((num2 == LongNumber::zero and num1 > LongNumber::one) or (num1 < LongNumber::one and isinf(num2)))
+    else if ((num == LongNumber::zero and base > LongNumber::one) or (base < LongNumber::one and isinf(num)))
         return LongNumber::infm;
-    return ln(num2) / ln(num1);
+    return ln(num) / ln(base);
 }
 
 LongNumber rec_fact(const LongNumber &num) {
@@ -702,6 +719,31 @@ LongNumber floor(const LongNumber &num) {
 
 LongNumber ceil(const LongNumber &num) {
     return num == floor(num) ? num : floor(num) + LongNumber::one;
+}
+
+LongNumber sqrt(const LongNumber &num) {
+    if (isnan(num) or isinfm(num) or num < LongNumber::zero)
+        return LongNumber::nan;
+    else if (isinf(num))
+        return LongNumber::inf;
+    else if (num == LongNumber::zero)
+        return num;
+    LongNumber x = LongNumber::inf, half(0.5), x1 = LongNumber::one, new_eps = pow(LongNumber(10), num.exp / 2) * LongNumber::eps;
+    while (abs(x1 - x) > new_eps) {
+        x = x1;
+        x1 = half * (x + num / x);
+    }
+    return x;
+}
+
+LongNumber surd(const LongNumber &num, const LongNumber &deg) {
+    if (isnan(num) or (num < LongNumber::zero and (floor(deg) != deg or floor(deg) == deg and (deg.numbers.size() != deg.exp or deg.numbers[0] % 2 == 0))) or deg == LongNumber::zero)
+        return LongNumber::nan;
+    else if (isinf(abs(deg)))
+        return LongNumber::one;
+    LongNumber tmp = exp(deg.inv() * ln(abs(num)));
+    tmp.sign = num.sign;
+    return tmp;
 }
 
 LongNumber LongNumber::inv() const {

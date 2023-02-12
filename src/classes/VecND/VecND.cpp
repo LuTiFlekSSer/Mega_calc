@@ -20,7 +20,7 @@ VecND VecND::operator+(const VecND &rhs) const {
         }
         return VecND{tmp};
     }
-    throw std::length_error("Different length of vectors");
+    throw std::length_error("Incorrect addition: different length of vectors");
 }
 
 VecND VecND::operator-(const VecND &rhs) const {
@@ -31,7 +31,7 @@ VecND VecND::operator-(const VecND &rhs) const {
         }
         return VecND{tmp};
     }
-    throw std::length_error("Different length of vectors");
+    throw std::length_error("Incorrect subtraction: different length of vectors");
 }
 
 VecND &VecND::operator=(const VecND &rhs) = default;
@@ -65,7 +65,7 @@ LongNumber &VecND::operator[](int index) {
     if (index < this->vec.size()) {
         return vec[index];
     }
-    throw std::length_error("Invalid index");
+    throw std::length_error("Vector: Invalid index");
 }
 
 int VecND::size() {

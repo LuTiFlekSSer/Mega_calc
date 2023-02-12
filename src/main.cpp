@@ -5,9 +5,9 @@
 #include "ui files/ui.h"
 
 int main(int argc, char *argv[]) { // not NaN in == and !=
-//    Mat2D m(3, 3);
+//    Mat2D m(3, 5);
 //    for (int i = 0; i < 3; ++i) {
-//        for (int j = 0; j < 3; ++j) {
+//        for (int j = 0; j < 5; ++j) {
 //            std::cin >> m[i][j];
 //        }
 //    }
@@ -26,7 +26,16 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    print_solve(i);
 //    v.print();
 //    (m * a).print();
-    std::cout << factorial(LongNumber(-1.1));
+//    std::cout << -LongNumber::zero + LongNumber::zero;
+//    for (int i = 0; i < 1000; ++i) {
+//        sqrt(LongNumber("13521321354156413468543843685"));
+//    }
+//    std::cout << sqrt(LongNumber("0.0000000000000000000000000000000000001352132135415641346854384368513521321354156413468543843685")) << '\n';
+//    for (int i = 0; i < 1000; ++i) {
+//        surd(LongNumber(123), LongNumber("2"));
+//    }
+//    std::cout << surd(LongNumber("0.0000000000000000000000000000000000001352132135415641346854384368513521321354156413468543843685"), LongNumber(2)) << '\n';
+    std::cout << surd(LongNumber("8"), LongNumber("inf"));
 //   start_UI(argc, argv);
     return 0;
 }

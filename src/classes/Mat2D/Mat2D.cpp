@@ -30,7 +30,7 @@ VecND &Mat2D::operator[](int index) {
     if (index < this->mat.size()) {
         return mat[index];
     }
-    throw std::length_error("Invalid index");
+    throw std::length_error("Matrix: invalid index");
 }
 
 Mat2D Mat2D::operator+(const Mat2D &rhs) {
@@ -43,7 +43,7 @@ Mat2D Mat2D::operator+(const Mat2D &rhs) {
         }
         return Mat2D{tmp};
     }
-    throw std::length_error("Different dimensions of matrix");
+    throw std::length_error("Incorrect addition: different dimensions of matrix");
 }
 
 Mat2D Mat2D::operator-(const Mat2D &rhs) {
@@ -56,7 +56,7 @@ Mat2D Mat2D::operator-(const Mat2D &rhs) {
         }
         return Mat2D{tmp};
     }
-    throw std::length_error("Different dimensions of matrix");
+    throw std::length_error("Incorrect subtraction: different dimensions of matrix");
 }
 
 Mat2D::Mat2D(const Mat2D &el) {
@@ -86,7 +86,7 @@ Mat2D Mat2D::operator*(const Mat2D &rhs) {
         }
         return Mat2D{tmp};
     }
-    throw std::length_error("Multiplication is not possible");
+    throw std::length_error("Incorrect multiplication: different matrix sizes");
 }
 
 Mat2D Mat2D::T() {
@@ -139,7 +139,7 @@ LongNumber Mat2D::det() {
         }
         return determ * LongNumber(pow(-1, res));
     }
-    throw std::length_error("The matrix is not square");
+    throw std::length_error("Incorrect determinant: the matrix is not square");
 }
 
 VecND Mat2D::operator*(const VecND &rhs) {
@@ -149,7 +149,7 @@ VecND Mat2D::operator*(const VecND &rhs) {
         tmp = *this * rhs_mat.T();
         return VecND{tmp.T()[0]};
     }
-    throw std::length_error("Multiplication is not possible");
+    throw std::length_error("Incorrect multiplication: different matrix and vector sizes");
 }
 
 Mat2D &Mat2D::operator=(const VecND &rhs) {
@@ -244,7 +244,7 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
         else
             return std::make_tuple(VecND(std::get<3>(pluq) * x), Mat2D(std::get<3>(pluq) * c));
     }
-    throw std::length_error("Matrix does not match the size of the vector");
+    throw std::length_error("Incorrect solve: matrix does not match the size of the vector");
 }
 
 std::tuple<int, int, LongNumber> Mat2D::max_elem(Mat2D &matrix, int index) {
