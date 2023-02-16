@@ -26,16 +26,7 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    print_solve(i);
 //    v.print();
 //    (m * a).print();
-//    std::cout << -LongNumber::zero + LongNumber::zero;
-//    for (int i = 0; i < 1000; ++i) {
-//        sqrt(LongNumber("13521321354156413468543843685"));
-//    }
-//    std::cout << sqrt(LongNumber("0.0000000000000000000000000000000000001352132135415641346854384368513521321354156413468543843685")) << '\n';
-//    for (int i = 0; i < 1000; ++i) {
-//        surd(LongNumber(123), LongNumber("2"));
-//    }
-//    std::cout << surd(LongNumber("0.0000000000000000000000000000000000001352132135415641346854384368513521321354156413468543843685"), LongNumber(2)) << '\n';
-    std::cout << surd(LongNumber("8"), LongNumber("inf"));
+    std::cout << cos(LongNumber::Pi / LongNumber::two * LongNumber("-4536486548653468534638547"));
 //   start_UI(argc, argv);
     return 0;
 }

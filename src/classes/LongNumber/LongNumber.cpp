@@ -49,7 +49,7 @@ LongNumber LongNumber::operator/(const LongNumber &rhs) const {
     else if (isinf(rhs) or isinfm(rhs))
         return LongNumber::zero;
     else if (rhs == LongNumber::zero)
-        return LongNumber::inf;
+        return this->sign ? LongNumber::infm : LongNumber::inf;
     return *this * rhs.inv();
 }
 
@@ -64,10 +64,9 @@ LongNumber::LongNumber(const LongNumber &num) {
     sign = num.sign;
     numbers = num.numbers;
     exp = num.exp;
-//    this->round();
 }
 
-LongNumber::LongNumber(std::string num) { //∞ из потока
+LongNumber::LongNumber(std::string num) {
     if (num == "inf") {
         *this = LongNumber::inf;
         return;
@@ -552,7 +551,7 @@ LongNumber LongNumber::operator*(const LongNumber &rhs) const {
     return tmp;
 }
 
-LongNumber pow(const LongNumber &num, const LongNumber &deg) {//nan для дробной степени и отрицательного числа
+LongNumber pow(const LongNumber &num, const LongNumber &deg) {
     if (isnan(num) or isnan(deg) or (num == LongNumber::zero and deg == LongNumber::zero) or (num == LongNumber::one and (isinf(deg) or isinfm(deg))) or
         ((isinf(num) or isinfm(num)) and deg == LongNumber::zero))
         return LongNumber::nan;
@@ -600,20 +599,71 @@ void LongNumber::round() {
     }
 }
 
+LongNumber norm_0_2Pi(const LongNumber &num) {
+    LongNumber x = num - LongNumber::two * LongNumber::Pi * floor(num / (LongNumber::Pi * LongNumber::two)), x0 = LongNumber::zero;
+    while (abs(x - x0) >= LongNumber::eps) {
+        x0 = x;
+        x = x0 - LongNumber::two * LongNumber::Pi * floor(x0 / (LongNumber::Pi * LongNumber::two));
+        if (abs(x) <= LongNumber::eps)
+            return LongNumber::zero;
+    }
+    return x;
+}
+
 LongNumber sin(const LongNumber &num) {
     if (isnan(num) or isinf(abs(num)))
         return LongNumber::nan;
     else if (num == LongNumber::zero)
         return num;
-    LongNumber tmp = LongNumber::zero, buf = num, count = LongNumber::two;
+    LongNumber x = norm_0_2Pi(num), tmp = LongNumber::zero, buf = x, count = LongNumber::two;
     bool flag = true;
-    while (abs(buf) > LongNumber::eps) {
+    while (abs(buf) >= LongNumber::eps) {
         tmp += flag ? buf : -buf;
-        buf *= num * num / (count * (count + LongNumber::one));
+        buf *= x * x / (count * (count + LongNumber::one));
         count += LongNumber::two;
         flag = !flag;
     }
     return tmp;
+}
+
+LongNumber cos(const LongNumber &num) {
+    if (isnan(num) or isinf(abs(num)))
+        return LongNumber::nan;
+    else if (num == LongNumber::zero)
+        return LongNumber::one;
+    LongNumber x = norm_0_2Pi(num), tmp = LongNumber::zero, buf = LongNumber::one, count = LongNumber::one;
+    bool flag = true;
+    while (abs(buf) >= LongNumber::eps) {
+        tmp += flag ? buf : -buf;
+        buf *= x * x / (count * (count + LongNumber::one));
+        count += LongNumber::two;
+        flag = !flag;
+    }
+    return tmp;
+}
+
+LongNumber tan(const LongNumber &num) {
+    if (isnan(num) or isinf(abs(num)))
+        return num;
+    LongNumber otv = sin(num) / cos(num);
+    if (otv == LongNumber("50000000000000000.5") or otv == LongNumber("100000000000000000"))
+        return LongNumber::inf;
+    else if (otv == LongNumber("-50000000000000000.5") or otv == LongNumber("-100000000000000000"))
+        return LongNumber::infm;
+    return otv;
+}
+
+LongNumber ctan(const LongNumber &num) {
+    if (isnan(num))
+        return num;
+    else if (isinf(abs(num)))
+        return -num;
+    LongNumber otv = cos(num) / sin(num);
+    if (otv == LongNumber("50000000000000000.5") or otv == LongNumber("100000000000000000"))
+        return LongNumber::inf;
+    else if (otv == LongNumber("-50000000000000000.5") or otv == LongNumber("-100000000000000000"))
+        return LongNumber::infm;
+    return otv;
 }
 
 LongNumber exp(const LongNumber &num) {
@@ -626,7 +676,7 @@ LongNumber exp(const LongNumber &num) {
     else if (num == LongNumber::zero)
         return LongNumber::one;
     LongNumber tmp = LongNumber::one, buf = LongNumber::one, count = LongNumber::one;
-    while (abs(buf) > LongNumber::eps) {
+    while (abs(buf) >= LongNumber::eps) {
         buf *= num / count;
         tmp += buf;
         ++count;
@@ -644,7 +694,7 @@ LongNumber ln(const LongNumber &num) {
     LongNumber a = num < LongNumber::one ? num.inv() : num, x0 = LongNumber(a.exp - 1) * LongNumber(2.30259), buf = LongNumber::one;
     if (isinf(a))
         return LongNumber::infm;
-    while (abs(buf) > LongNumber::eps) {
+    while (abs(buf) >= LongNumber::eps) {
         buf = a / exp(x0) - LongNumber::one;
         x0 += buf;
     }
@@ -737,7 +787,7 @@ LongNumber sqrt(const LongNumber &num) {
 }
 
 LongNumber surd(const LongNumber &num, const LongNumber &deg) {
-    if (isnan(num) or (num < LongNumber::zero and (!isinf(abs(deg)) and (floor(deg) != deg or floor(deg) == deg and (deg.numbers.size() != deg.exp or deg.numbers[0] % 2 == 0)))) or
+    if (isnan(num) or (num < LongNumber::zero and (!isinf(abs(deg)) and (floor(deg) != deg or floor(deg) == deg and ((long long) deg.numbers.size() != deg.exp or deg.numbers[0] % 2 == 0)))) or
         deg == LongNumber::zero or (isinf(abs(deg)) and num == LongNumber::zero))
         return LongNumber::nan;
     else if (isinf(abs(deg)))
@@ -766,7 +816,7 @@ LongNumber LongNumber::inv() const {
         return this->sign ? LongNumber::infm : LongNumber::inf;
     x0 = alpha - beta * tmp;
     LongNumber gamma(abs(LongNumber::one - tmp * x0));
-    while (gamma > LongNumber::eps) {
+    while (gamma >= LongNumber::eps) {
         gamma *= gamma;
         x0 *= LongNumber::two - tmp * x0;
     }

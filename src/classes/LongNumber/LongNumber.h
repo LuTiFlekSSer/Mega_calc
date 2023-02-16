@@ -29,6 +29,8 @@ class LongNumber {
 
     friend LongNumber log(const LongNumber &num, const LongNumber &base);
 
+    friend LongNumber tan(const LongNumber &num);
+
     friend LongNumber floor(const LongNumber &num);
 
     friend LongNumber ceil(const LongNumber &num);
@@ -151,11 +153,11 @@ LongNumber cos(const LongNumber &num);
 
 LongNumber acos(const LongNumber &num);
 
-LongNumber tn(const LongNumber &num);
+LongNumber tan(const LongNumber &num);
 
 LongNumber atan(const LongNumber &num);
 
-LongNumber ctg(const LongNumber &num);
+LongNumber ctan(const LongNumber &num);
 
 LongNumber actg(const LongNumber &num);
 
