@@ -29,8 +29,6 @@ class LongNumber {
 
     friend LongNumber log(const LongNumber &num, const LongNumber &base);
 
-    friend LongNumber tan(const LongNumber &num);
-
     friend LongNumber floor(const LongNumber &num);
 
     friend LongNumber ceil(const LongNumber &num);
@@ -39,6 +37,12 @@ class LongNumber {
 
     friend LongNumber surd(const LongNumber &num, const LongNumber &deg);
 
+    friend LongNumber asin(const LongNumber &num);
+
+    friend LongNumber acos(const LongNumber &num);
+
+    friend void copy_with_double_round(LongNumber &to_change, const LongNumber &new_num);
+
 private:
     bool sign = false;
     std::vector<char> numbers;
@@ -46,7 +50,7 @@ private:
 
     explicit LongNumber(const cringe &par);
 
-    void round();
+    void round(const LongNumber &eps_to_round);
 
 public:
     static const LongNumber zero;
@@ -159,7 +163,7 @@ LongNumber atan(const LongNumber &num);
 
 LongNumber ctan(const LongNumber &num);
 
-LongNumber actg(const LongNumber &num);
+LongNumber actan(const LongNumber &num);
 
 LongNumber sec(const LongNumber &num);
 
@@ -178,10 +182,8 @@ LongNumber pow(const LongNumber &num, const T &deg) {
     else if (num == LongNumber::zero)
         return LongNumber::zero;
     LongNumber tmp1 = deg < 0 ? num.inv() : num, tmp2 = tmp1;
-    tmp1.round();
     for (auto i = 1; i < std::abs(deg); ++i) {
         tmp2 *= tmp1;
-        tmp2.round();
     }
     return tmp2;
 }
