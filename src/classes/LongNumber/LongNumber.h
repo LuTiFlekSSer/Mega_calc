@@ -54,6 +54,7 @@ private:
 
 public:
     static const LongNumber zero;
+    static const LongNumber half;
     static const LongNumber one;
     static const LongNumber two;
     static const LongNumber e;
@@ -172,6 +173,34 @@ LongNumber asec(const LongNumber &num);
 LongNumber cosec(const LongNumber &num);
 
 LongNumber acosec(const LongNumber &num);
+
+LongNumber sinh(const LongNumber &num);
+
+LongNumber asinh(const LongNumber &num);
+
+LongNumber cosh(const LongNumber &num);
+
+LongNumber acosh(const LongNumber &num);
+
+LongNumber tanh(const LongNumber &num);
+
+LongNumber atanh(const LongNumber &num);
+
+LongNumber ctanh(const LongNumber &num);
+
+LongNumber actanh(const LongNumber &num);
+
+LongNumber sech(const LongNumber &num);
+
+LongNumber asech(const LongNumber &num);
+
+LongNumber cosech(const LongNumber &num);
+
+LongNumber acosech(const LongNumber &num);
+
+LongNumber rad_to_grad(const LongNumber &num);
+
+LongNumber grad_to_rad(const LongNumber &num);
 
 template<numeric T>
 LongNumber pow(const LongNumber &num, const T &deg) {

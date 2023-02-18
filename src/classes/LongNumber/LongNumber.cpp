@@ -2,6 +2,7 @@
 #include "iostream"
 
 const LongNumber LongNumber::zero = LongNumber{0};
+const LongNumber LongNumber::half = LongNumber{0.5};
 const LongNumber LongNumber::one = LongNumber{1};
 const LongNumber LongNumber::two = LongNumber{2};
 const LongNumber LongNumber::Pi = LongNumber("3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679");
@@ -661,7 +662,7 @@ LongNumber cos(const LongNumber &num) {
 LongNumber acos(const LongNumber &num) {
     if (isnan(num) or isinf(abs(num)) or num > LongNumber::one or num < -LongNumber::one)
         return LongNumber::nan;
-    LongNumber x1 = LongNumber::Pi * LongNumber(0.5) - num, x = LongNumber::zero, tmp_num = num;
+    LongNumber x1 = LongNumber::Pi * LongNumber::half - num, x = LongNumber::zero, tmp_num = num;
     tmp_num.round(LongNumber::eps);
     while (abs(x - x1) > LongNumber::eps) {
         x = x1;
@@ -680,9 +681,9 @@ LongNumber atan(const LongNumber &num) {
     if (isnan(num))
         return LongNumber::nan;
     else if (isinf(num))
-        return LongNumber::Pi * LongNumber(0.5);
+        return LongNumber::Pi * LongNumber::half;
     else if (isinfm(num))
-        return -LongNumber::Pi * LongNumber(0.5);
+        return -LongNumber::Pi * LongNumber::half;
     return asin(num / sqrt(LongNumber::one + num * num));
 }
 
@@ -714,7 +715,7 @@ LongNumber asec(const LongNumber &num) {
     if (isnan(num) or num < LongNumber::one and num > -LongNumber::one)
         return LongNumber::nan;
     else if (isnan(abs(num)))
-        return LongNumber::Pi * LongNumber(0.5);
+        return LongNumber::Pi * LongNumber::half;
     return acos(num.inv());
 }
 
@@ -748,6 +749,126 @@ LongNumber exp(const LongNumber &num) {
         ++count;
     }
     return tmp;
+}
+
+LongNumber sinh(const LongNumber &num) {
+    if (isnan(num) or isinf(abs(num)))
+        return num;
+    return (exp(num) - exp(-num)) * LongNumber::half;
+}
+
+LongNumber asinh(const LongNumber &num) {
+    if (isnan(num) or isinf(abs(num)))
+        return num;
+    return ln(num + sqrt(num * num + LongNumber::one));
+}
+
+LongNumber cosh(const LongNumber &num) {
+    if (isnan(num) or isinf(abs(num)))
+        return num;
+    return (exp(num) + exp(-num)) * LongNumber::half;
+}
+
+LongNumber acosh(const LongNumber &num) {
+    if (isnan(num) or num < LongNumber::one)
+        return LongNumber::nan;
+    else if (isinf(num))
+        return num;
+    return ln(num + sqrt(num * num - LongNumber::one));
+}
+
+LongNumber tanh(const LongNumber &num) {
+    if (isnan(num))
+        return num;
+    else if (isinf(num))
+        return LongNumber::one;
+    else if (isinfm(num))
+        return -LongNumber::one;
+    return (exp(LongNumber::two * num) - LongNumber::one) / (exp(LongNumber::two * num) + LongNumber::one);
+}
+
+LongNumber atanh(const LongNumber &num) {
+    if (isnan(num) or num < -LongNumber::one or num > LongNumber::one)
+        return LongNumber::nan;
+    else if (num == LongNumber::one)
+        return LongNumber::inf;
+    else if (num == -LongNumber::one)
+        return LongNumber::infm;
+    return LongNumber::half * ln((num + LongNumber::one) / (-num + LongNumber::one));
+}
+
+LongNumber ctanh(const LongNumber &num) {
+    if (isnan(num))
+        return num;
+    else if (isinf(num))
+        return LongNumber::one;
+    else if (isinfm(num))
+        return -LongNumber::one;
+    return (exp(LongNumber::two * num) + LongNumber::one) / (exp(LongNumber::two * num) - LongNumber::one);
+}
+
+LongNumber actanh(const LongNumber &num) {
+    if (isnan(num) or num > -LongNumber::one and num < LongNumber::one)
+        return LongNumber::nan;
+    else if (num == LongNumber::one)
+        return LongNumber::inf;
+    else if (num == -LongNumber::one)
+        return LongNumber::infm;
+    else if (isinf(abs(num)))
+        return LongNumber::zero;
+    return LongNumber::half * ln((num + LongNumber::one) / (num - LongNumber::one));
+}
+
+LongNumber sech(const LongNumber &num) {
+    if (isnan(num))
+        return num;
+    else if (isinf(abs(num)))
+        return LongNumber::zero;
+    return cosh(num).inv();
+}
+
+LongNumber asech(const LongNumber &num) {
+    if (isnan(num) or num < LongNumber::zero or num > LongNumber::one)
+        return LongNumber::nan;
+    else if (num == LongNumber::zero)
+        return LongNumber::inf;
+    else if (num == LongNumber::one)
+        return LongNumber::zero;
+    return ln((LongNumber::one + sqrt(LongNumber::one - num * num)) / num);
+}
+
+LongNumber cosech(const LongNumber &num) {
+    if (isnan(num))
+        return num;
+    else if (isinf(abs(num)))
+        return LongNumber::zero;
+    return sinh(num).inv();
+}
+
+LongNumber acosech(const LongNumber &num) {
+    if (isnan(num))
+        return LongNumber::nan;
+    else if (isinf(abs(num)))
+        return LongNumber::zero;
+    else if (num == LongNumber::zero)
+        return LongNumber::inf;
+    return ln((LongNumber::one + (num > LongNumber::zero ? LongNumber::one : -LongNumber::one) * sqrt(LongNumber::one + num * num)) / num);
+}
+
+LongNumber rad_to_grad(const LongNumber &num) {
+    if (isnan(num) or isinf(abs(num)))
+        return num;
+    LongNumber otv;
+    otv = num * LongNumber(180) / LongNumber::Pi;
+    return otv;
+}
+
+LongNumber grad_to_rad(const LongNumber &num) {
+    if (isnan(num) or isinf(abs(num)))
+        return num;
+    LongNumber otv;
+    otv = num * LongNumber::Pi / LongNumber(180);
+    return otv;
 }
 
 LongNumber ln(const LongNumber &num) {
@@ -797,7 +918,7 @@ LongNumber factorial(const LongNumber &num) {
         return rec_fact(num);
     }
     long long num_exp = num.exp;
-    LongNumber num_num = num - floor(num) + LongNumber::one, G_minus = G - LongNumber(0.5), y = num_num + G_minus, la1, la2;
+    LongNumber num_num = num - floor(num) + LongNumber::one, G_minus = G - LongNumber::half, y = num_num + G_minus, la1, la2;
     for (int i = 12; i >= 0; --i) {
         la2 = la2 * num_num + lanczos_num_coeffs[i];
         la1 = la1 * num_num + lanczos_den_coeffs[i];

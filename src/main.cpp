@@ -26,8 +26,7 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    print_solve(i);
 //    v.print();
 //    (m * a).print();
-    std::cout << acos(-LongNumber(2) / LongNumber(3)) << '\n';
-    std::cout << asec(LongNumber(-1.5));
+    std::cout << rad_to_grad(LongNumber::Pi*LongNumber::half);
 //   start_UI(argc, argv);
     return 0;
 }
