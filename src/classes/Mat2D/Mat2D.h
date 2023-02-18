@@ -11,12 +11,11 @@ class Mat2D {
 private:
     std::vector<VecND> mat;
 
-    std::tuple<int, int, double> max_elem(Mat2D &matrix, int index);
+    std::tuple<int, int, LongNumber> max_elem(Mat2D &matrix, int index);
 
     std::tuple<Mat2D, Mat2D, Mat2D, Mat2D> lu_decomposition();
 
 public:
-
     Mat2D(int x_, int y_x);
 
     explicit Mat2D(int x_);
@@ -31,7 +30,7 @@ public:
 
     Mat2D operator-(const Mat2D &rhs);
 
-    Mat2D operator*(const double &rhs);
+    Mat2D operator*(const LongNumber &rhs);
 
     Mat2D operator*(const Mat2D &rhs);
 
@@ -45,7 +44,7 @@ public:
 
     Mat2D T();
 
-    double det();
+    LongNumber det();
 
     VecND &operator[](int index);
 
