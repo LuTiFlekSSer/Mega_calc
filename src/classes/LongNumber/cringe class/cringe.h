@@ -4,6 +4,8 @@
 
 class cringe {
 private:
+    friend class LongComplex;
+
     friend class LongNumber;
 
     std::string par;

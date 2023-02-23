@@ -16,6 +16,9 @@ template<typename T>
 concept numeric = std::is_integral<T>::value;
 
 class LongNumber {
+private:
+    friend class LongComplex;
+
     friend LongNumber factorial(const LongNumber &num);
 
     friend LongNumber pow(const LongNumber &num, const LongNumber &deg);
@@ -43,7 +46,6 @@ class LongNumber {
 
     friend void copy_with_double_round(LongNumber &to_change, const LongNumber &new_num);
 
-private:
     bool sign = false;
     std::vector<char> numbers;
     long long exp{};
@@ -124,7 +126,7 @@ bool isinf(const LongNumber &num);
 
 bool isinfm(const LongNumber &num);
 
-bool correct_num(const std::string &num);
+bool correct_long_num(const std::string &num);
 
 LongNumber abs(const LongNumber &num);
 

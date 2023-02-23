@@ -2,7 +2,11 @@
 #include "src/classes/Mat2D/Mat2D.h"
 #include "src/classes/VecND/VecND.h"
 #include "src/classes/LongNumber/LongNumber.h"
+#include "src/classes/LongComplex/LongComplex.h"
 #include "ui files/ui.h"
+#include "sstream"
+
+#include <vector>
 
 int main(int argc, char *argv[]) { // not NaN in == and !=
 //    Mat2D m(3, 5);
@@ -26,8 +30,10 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    print_solve(i);
 //    v.print();
 //    (m * a).print();
-    std::cout << rad_to_grad(LongNumber::Pi*LongNumber::half);
 //   start_UI(argc, argv);
+    LongComplex a;
+    std::cin >> a;
+    std::cout << a;
     return 0;
 }
 

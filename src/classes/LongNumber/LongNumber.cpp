@@ -179,7 +179,7 @@ std::ostream &operator<<(std::ostream &out, const LongNumber &num) {
 std::istream &operator>>(std::istream &in, LongNumber &num) {
     std::string s_num;
     in >> s_num;
-    if (correct_num(s_num))
+    if (correct_long_num(s_num))
         num = LongNumber(s_num);
     else
         num = LongNumber(0);
@@ -1097,7 +1097,7 @@ LongNumber &LongNumber::operator=(const LongNumber &rhs) {
     return *this;
 }
 
-bool correct_num(const std::string &num) {
+bool correct_long_num(const std::string &num) {
     if (num == "inf" or num == "-inf") {
         return true;
     }
