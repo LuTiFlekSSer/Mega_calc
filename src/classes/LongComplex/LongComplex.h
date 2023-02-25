@@ -8,6 +8,7 @@ public:
     LongNumber real;
     LongNumber imag;
     static const LongComplex czero;
+    static const LongComplex cnan;
     static const LongComplex cinf;
     static const LongComplex I;
 
@@ -16,26 +17,18 @@ public:
     explicit LongComplex(std::string s);
 
     template<arithmetic T>
-    explicit LongComplex(T num) : LongComplex(LongNumber(num)) {};
+    LongComplex(T num) : LongComplex(LongNumber(num)) {};
 
     template<arithmetic T, arithmetic Y>
-    explicit LongComplex(T real_, Y imag_) : LongComplex(LongNumber(real_), LongNumber(imag_)) {};
+    LongComplex(T real_, Y imag_) : LongComplex(LongNumber(real_), LongNumber(imag_)) {};
 
-    explicit LongComplex(const LongNumber &num) : LongComplex(num, LongNumber::zero) {};
+    LongComplex(const LongNumber &num) : LongComplex(num, LongNumber::zero) {};
 
-    explicit LongComplex(const LongNumber &real_, const LongNumber &imag_);
+    LongComplex(const LongNumber &real_, const LongNumber &imag_);
 
     LongComplex(const LongComplex &num);
 
     LongComplex &operator=(const LongComplex &rhs);
-
-    LongComplex operator+(const LongComplex &rhs) const;
-
-    LongComplex operator-(const LongComplex &rhs) const;
-
-    LongComplex operator*(const LongComplex &rhs) const;
-
-    LongComplex operator/(const LongComplex &rhs) const;
 
     LongComplex &operator+=(const LongComplex &rhs);
 
@@ -60,10 +53,28 @@ public:
     ~LongComplex() = default;
 };
 
+LongComplex operator+(const LongComplex &lhs, const LongComplex &rhs);
+
+LongComplex operator-(const LongComplex &lhs, const LongComplex &rhs);
+
+LongComplex operator*(const LongComplex &lhs, const LongComplex &rhs);
+
+LongComplex operator/(const LongComplex &lhs, const LongComplex &rhs);
+
+bool iscnan(const LongComplex &num);
+
+bool iscinf(const LongComplex &num);
+
 bool correct_complex_num(const std::string &num);
 
-LongComplex abs(const LongComplex &num);
+LongNumber abs(const LongComplex &num);
 
-LongComplex phase(const LongComplex &num);
+LongNumber phase(const LongComplex &num);
+
+LongComplex exp(const LongComplex &num);
+
+LongComplex ln(const LongComplex &num);
+
+LongComplex log(const LongComplex &num, const LongComplex &base);
 
 #endif

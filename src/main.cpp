@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //   start_UI(argc, argv);
     LongComplex a;
     std::cin >> a;
-    std::cout << a;
+    std::cout << exp(a);
     return 0;
 }
 

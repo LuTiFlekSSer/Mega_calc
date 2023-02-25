@@ -4,6 +4,7 @@
 const LongComplex LongComplex::czero = LongComplex("0");
 const LongComplex LongComplex::cinf = LongComplex(LongNumber(cringe("inf")), LongNumber(cringe("inf")));
 const LongComplex LongComplex::I = LongComplex("i");
+const LongComplex LongComplex::cnan = LongComplex(LongNumber(cringe("nan")), LongNumber(cringe("nan")));
 
 LongComplex::LongComplex(const LongNumber &real_, const LongNumber &imag_) {
     this->real = real_;
@@ -57,27 +58,27 @@ LongComplex::LongComplex(std::string s) {
 
 LongComplex &LongComplex::operator=(const LongComplex &rhs) = default;
 
-LongComplex LongComplex::operator+(const LongComplex &rhs) const {
-    return LongComplex(this->real + rhs.real, this->imag + rhs.imag);
+LongComplex operator+(const LongComplex &lhs, const LongComplex &rhs) {
+    return LongComplex{lhs.real + rhs.real, lhs.imag + rhs.imag};
 }
 
-LongComplex LongComplex::operator-(const LongComplex &rhs) const {
-    return LongComplex(this->real - rhs.real, this->imag - rhs.imag);
+LongComplex operator-(const LongComplex &lhs, const LongComplex &rhs) {
+    return LongComplex{lhs.real - rhs.real, lhs.imag - rhs.imag};
 }
 
-LongComplex LongComplex::operator*(const LongComplex &rhs) const {
-    return LongComplex(this->real * rhs.real - this->imag * rhs.imag,
-                       this->imag * rhs.real + this->real * rhs.imag);
+LongComplex operator*(const LongComplex &lhs, const LongComplex &rhs) {
+    return LongComplex{lhs.real * rhs.real - lhs.imag * rhs.imag,
+                       lhs.imag * rhs.real + lhs.real * rhs.imag};
 }
 
-LongComplex LongComplex::operator/(const LongComplex &rhs) const {
-    if (*this == LongComplex::czero and *this != LongComplex::czero) {
+LongComplex operator/(const LongComplex &lhs, const LongComplex &rhs) {
+    if (lhs == LongComplex::czero and lhs != LongComplex::czero) {
         return LongComplex::czero;
-    } else if (*this != LongComplex::czero and *this == LongComplex::czero) {
+    } else if (lhs != LongComplex::czero and lhs == LongComplex::czero) {
         return LongComplex::cinf;
     }
-    return LongComplex((this->real * rhs.real + this->imag * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag),
-                       (this->imag * rhs.real - this->real * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag));
+    return LongComplex{(lhs.real * rhs.real + lhs.imag * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag),
+                       (lhs.imag * rhs.real - lhs.real * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag)};
 }
 
 bool operator==(const LongComplex &lhs, const LongComplex &rhs) {
@@ -165,14 +166,42 @@ std::istream &operator>>(std::istream &in, LongComplex &num) {
     if (correct_complex_num(s_num)) {
         num = LongComplex(s_num);
     } else {
-        std::cout << "cringe\n";
         num = LongComplex::czero;
     }
     return in;
+}
+
+bool iscnan(const LongComplex &num) {
+    return num == LongComplex::cnan;
+}
+
+bool iscinf(const LongComplex &num) {
+    return num == LongComplex::cinf;
 }
 
 std::string LongComplex::to_string() const {
     std::string tmp;
     tmp += this->real.to_string() + (this->imag.sign ? "" : "+") + this->imag.to_string() + "*i";
     return tmp;
+}
+
+LongNumber abs(const LongComplex &num) {
+    return sqrt(num.real * num.real + num.imag * num.imag);
+}
+
+LongNumber phase(const LongComplex &num) {
+    return atan(num.imag / num.real);
+}
+
+LongComplex exp(const LongComplex &num) {
+    LongNumber e_a = exp(num.real);
+    return LongComplex{e_a * cos(num.imag), e_a * sin(num.imag)};
+}
+
+LongComplex ln(const LongComplex &num) {
+    return LongComplex{ln(abs(num)), num.real < LongNumber::zero ? phase(num) + LongNumber::Pi : phase(num)};
+}
+
+LongComplex log(const LongComplex &num, const LongComplex &base) {
+    return ln(num) / ln(base);
 }
