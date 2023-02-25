@@ -17,18 +17,26 @@ public:
     explicit LongComplex(std::string s);
 
     template<arithmetic T>
-    LongComplex(T num) : LongComplex(LongNumber(num)) {};
+    explicit LongComplex(T num) : LongComplex(LongNumber(num)) {};
 
     template<arithmetic T, arithmetic Y>
     LongComplex(T real_, Y imag_) : LongComplex(LongNumber(real_), LongNumber(imag_)) {};
 
-    LongComplex(const LongNumber &num) : LongComplex(num, LongNumber::zero) {};
+    explicit LongComplex(const LongNumber &num) : LongComplex(num, LongNumber::zero) {};
 
     LongComplex(const LongNumber &real_, const LongNumber &imag_);
 
     LongComplex(const LongComplex &num);
 
     LongComplex &operator=(const LongComplex &rhs);
+
+    LongComplex operator+(const LongComplex &rhs) const;
+
+    LongComplex operator-(const LongComplex &rhs) const;
+
+    LongComplex operator*(const LongComplex &rhs) const;
+
+    LongComplex operator/(const LongComplex &rhs) const;
 
     LongComplex &operator+=(const LongComplex &rhs);
 
@@ -52,14 +60,6 @@ public:
 
     ~LongComplex() = default;
 };
-
-LongComplex operator+(const LongComplex &lhs, const LongComplex &rhs);
-
-LongComplex operator-(const LongComplex &lhs, const LongComplex &rhs);
-
-LongComplex operator*(const LongComplex &lhs, const LongComplex &rhs);
-
-LongComplex operator/(const LongComplex &lhs, const LongComplex &rhs);
 
 bool iscnan(const LongComplex &num);
 

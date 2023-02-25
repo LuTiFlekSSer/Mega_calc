@@ -58,27 +58,27 @@ LongComplex::LongComplex(std::string s) {
 
 LongComplex &LongComplex::operator=(const LongComplex &rhs) = default;
 
-LongComplex operator+(const LongComplex &lhs, const LongComplex &rhs) {
-    return LongComplex{lhs.real + rhs.real, lhs.imag + rhs.imag};
+LongComplex LongComplex::operator+(const LongComplex &rhs) const {
+    return LongComplex(this->real + rhs.real, this->imag + rhs.imag);
 }
 
-LongComplex operator-(const LongComplex &lhs, const LongComplex &rhs) {
-    return LongComplex{lhs.real - rhs.real, lhs.imag - rhs.imag};
+LongComplex LongComplex::operator-(const LongComplex &rhs) const {
+    return LongComplex(this->real - rhs.real, this->imag - rhs.imag);
 }
 
-LongComplex operator*(const LongComplex &lhs, const LongComplex &rhs) {
-    return LongComplex{lhs.real * rhs.real - lhs.imag * rhs.imag,
-                       lhs.imag * rhs.real + lhs.real * rhs.imag};
+LongComplex LongComplex::operator*(const LongComplex &rhs) const {
+    return LongComplex(this->real * rhs.real - this->imag * rhs.imag,
+                       this->imag * rhs.real + this->real * rhs.imag);
 }
 
-LongComplex operator/(const LongComplex &lhs, const LongComplex &rhs) {
-    if (lhs == LongComplex::czero and lhs != LongComplex::czero) {
+LongComplex LongComplex::operator/(const LongComplex &rhs) const {
+    if (*this == LongComplex::czero and *this != LongComplex::czero) {
         return LongComplex::czero;
-    } else if (lhs != LongComplex::czero and lhs == LongComplex::czero) {
+    } else if (*this != LongComplex::czero and *this == LongComplex::czero) {
         return LongComplex::cinf;
     }
-    return LongComplex{(lhs.real * rhs.real + lhs.imag * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag),
-                       (lhs.imag * rhs.real - lhs.real * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag)};
+    return LongComplex((this->real * rhs.real + this->imag * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag),
+                       (this->imag * rhs.real - this->real * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag));
 }
 
 bool operator==(const LongComplex &lhs, const LongComplex &rhs) {
