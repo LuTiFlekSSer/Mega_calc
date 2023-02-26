@@ -1,10 +1,9 @@
 #include "LongComplex.h"
-#include "string"
 
 const LongComplex LongComplex::czero = LongComplex("0");
-const LongComplex LongComplex::cinf = LongComplex(LongNumber(cringe("inf")), LongNumber(cringe("inf")));
+const LongComplex LongComplex::cinf = LongComplex(LongNumber("inf"), LongNumber("inf"));
 const LongComplex LongComplex::I = LongComplex("i");
-const LongComplex LongComplex::cnan = LongComplex(LongNumber(cringe("nan")), LongNumber(cringe("nan")));
+const LongComplex LongComplex::cnan = LongComplex(LongNumber("nan"), LongNumber("nan"));
 
 LongComplex::LongComplex(const LongNumber &real_, const LongNumber &imag_) {
     this->real = real_;
@@ -59,16 +58,16 @@ LongComplex::LongComplex(std::string s) {
 LongComplex &LongComplex::operator=(const LongComplex &rhs) = default;
 
 LongComplex LongComplex::operator+(const LongComplex &rhs) const {
-    return LongComplex(this->real + rhs.real, this->imag + rhs.imag);
+    return LongComplex{this->real + rhs.real, this->imag + rhs.imag};
 }
 
 LongComplex LongComplex::operator-(const LongComplex &rhs) const {
-    return LongComplex(this->real - rhs.real, this->imag - rhs.imag);
+    return LongComplex{this->real - rhs.real, this->imag - rhs.imag};
 }
 
 LongComplex LongComplex::operator*(const LongComplex &rhs) const {
-    return LongComplex(this->real * rhs.real - this->imag * rhs.imag,
-                       this->imag * rhs.real + this->real * rhs.imag);
+    return LongComplex{this->real * rhs.real - this->imag * rhs.imag,
+                       this->imag * rhs.real + this->real * rhs.imag};
 }
 
 LongComplex LongComplex::operator/(const LongComplex &rhs) const {
@@ -77,8 +76,8 @@ LongComplex LongComplex::operator/(const LongComplex &rhs) const {
     } else if (*this != LongComplex::czero and *this == LongComplex::czero) {
         return LongComplex::cinf;
     }
-    return LongComplex((this->real * rhs.real + this->imag * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag),
-                       (this->imag * rhs.real - this->real * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag));
+    return LongComplex{(this->real * rhs.real + this->imag * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag),
+                       (this->imag * rhs.real - this->real * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag)};
 }
 
 bool operator==(const LongComplex &lhs, const LongComplex &rhs) {
@@ -204,4 +203,35 @@ LongComplex ln(const LongComplex &num) {
 
 LongComplex log(const LongComplex &num, const LongComplex &base) {
     return ln(num) / ln(base);
+}
+
+LongComplex pow(const LongComplex &num, const LongComplex &deg) {
+    return exp(ln(num) * deg);
+}
+
+LongComplex factorial(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if ((long long) num.real.numbers.size() - num.real.exp <= 0) {
+        if (num.real.sign and num.imag == LongNumber::zero)
+            return LongComplex::cinf;
+        else if (num.imag == LongNumber::zero)
+            return (LongComplex) factorial(num.real);
+    }
+    LongComplex num_num = LongComplex(num.real - floor(num.real) + LongNumber::one, num.imag), G_minus = LongComplex(LongNumber::G - LongNumber::half), y = num_num + G_minus, la1, la2;
+    for (int i = 12; i >= 0; --i) {
+        la2 = la2 * num_num + (LongComplex) LongNumber::lanczos_num_coeffs[i];
+        la1 = la1 * num_num + (LongComplex) LongNumber::lanczos_den_coeffs[i];
+    }
+    LongComplex la_rez = la2 / la1, r = la_rez / exp(y);
+    r *= pow(y, num_num - (LongComplex) LongNumber(0.5));
+    for (auto i = num.real; i >= LongNumber::one; --i) {
+        r *= LongComplex(i, num.imag);
+    }
+    for (auto i = num.real + LongNumber::one; i <= LongNumber::one; ++i) {
+        r /= LongComplex(i, num.imag);
+    }
+    return r;
 }

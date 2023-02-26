@@ -10,10 +10,10 @@ const LongNumber LongNumber::e = LongNumber("2.718281828459045235360287471352662
 const LongNumber LongNumber::nan = LongNumber(cringe("nan"));
 const LongNumber LongNumber::inf = LongNumber(cringe("inf"));
 const LongNumber LongNumber::infm = LongNumber(cringe("-inf"));
-const LongNumber LongNumber::eps = LongNumber("0.00000000000000001");
+const LongNumber LongNumber::eps = LongNumber{"0.00000000000000001"};
 
-static const LongNumber G("6.024680040776729583740234375");
-static const LongNumber lanczos_num_coeffs[13] = {
+const LongNumber LongNumber::G("6.024680040776729583740234375");
+const LongNumber LongNumber::lanczos_num_coeffs[13] = {
         LongNumber("23531376880.410759688572007674451636754734846804940"),
         LongNumber("42919803642.649098768957899047001988850926355848959"),
         LongNumber("35711959237.355668049440185451547166705960488635843"),
@@ -28,7 +28,7 @@ static const LongNumber lanczos_num_coeffs[13] = {
         LongNumber("210.82427775157934587250973392071336271166969580291"),
         LongNumber("2.5066282746310002701649081771338373386264310793408")
 };
-static const LongNumber lanczos_den_coeffs[13] = {
+const LongNumber LongNumber::lanczos_den_coeffs[13] = {
         LongNumber("0"),
         LongNumber("39916800"),
         LongNumber("120543840"),
@@ -917,11 +917,10 @@ LongNumber factorial(const LongNumber &num) {
             return LongNumber::inf;
         return rec_fact(num);
     }
-    long long num_exp = num.exp;
-    LongNumber num_num = num - floor(num) + LongNumber::one, G_minus = G - LongNumber::half, y = num_num + G_minus, la1, la2;
+    LongNumber num_num = num - floor(num) + LongNumber::one, G_minus = LongNumber::G - LongNumber::half, y = num_num + G_minus, la1, la2;
     for (int i = 12; i >= 0; --i) {
-        la2 = la2 * num_num + lanczos_num_coeffs[i];
-        la1 = la1 * num_num + lanczos_den_coeffs[i];
+        la2 = la2 * num_num + LongNumber::lanczos_num_coeffs[i];
+        la1 = la1 * num_num + LongNumber::lanczos_den_coeffs[i];
     }
     LongNumber la_rez = la2 / la1, r = la_rez / exp(y);
     r *= pow(y, num_num - LongNumber(0.5));

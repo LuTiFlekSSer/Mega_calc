@@ -1,12 +1,9 @@
 #include <iostream>
-#include "src/classes/Mat2D/Mat2D.h"
-#include "src/classes/VecND/VecND.h"
 #include "src/classes/LongNumber/LongNumber.h"
 #include "src/classes/LongComplex/LongComplex.h"
+#include "src/classes/Mat2D/Mat2D.h"
+#include "src/classes/VecND/VecND.h"
 #include "ui files/ui.h"
-#include "sstream"
-
-#include <vector>
 
 int main(int argc, char *argv[]) { // not NaN in == and !=
 //    Mat2D m(3, 5);
@@ -33,7 +30,8 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //   start_UI(argc, argv);
     LongComplex a;
     std::cin >> a;
-    std::cout << exp(a);
+    std::cout << factorial(a);
+
     return 0;
 }
 

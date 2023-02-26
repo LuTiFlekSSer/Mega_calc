@@ -1,11 +1,10 @@
 #ifndef MEGA_CALCAPP_CRINGE_H
 #define MEGA_CALCAPP_CRINGE_H
 
+#include "string"
 
 class cringe {
 private:
-    friend class LongComplex;
-
     friend class LongNumber;
 
     std::string par;

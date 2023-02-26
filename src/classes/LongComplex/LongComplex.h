@@ -2,6 +2,7 @@
 #define MEGA_CALCAPP_LONGCOMPLEX_H
 
 #include "../LongNumber/LongNumber.h"
+#include "string"
 
 class LongComplex {
 public:
@@ -76,5 +77,9 @@ LongComplex exp(const LongComplex &num);
 LongComplex ln(const LongComplex &num);
 
 LongComplex log(const LongComplex &num, const LongComplex &base);
+
+LongComplex pow(const LongComplex &num, const LongComplex &deg);
+
+LongComplex factorial(const LongComplex &num);
 
 #endif
