@@ -30,8 +30,8 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //   start_UI(argc, argv);
     LongComplex a;
     std::cin >> a;
+    std::cout << a << '\n';
     std::cout << factorial(a);
-
     return 0;
 }
 

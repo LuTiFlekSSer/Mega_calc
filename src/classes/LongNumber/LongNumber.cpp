@@ -908,9 +908,9 @@ LongNumber rec_fact(const LongNumber &num) {
 }
 
 LongNumber factorial(const LongNumber &num) {
-    if (isnan(num))
+    if (isnan(num) or isinfm(num))
         return LongNumber::nan;
-    else if (isinf(num) or isinfm(num))
+    else if (isinf(num))
         return LongNumber::inf;
     else if ((long long) num.numbers.size() - num.exp <= 0) {
         if (num.sign)

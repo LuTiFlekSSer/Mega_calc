@@ -7,6 +7,8 @@ class cringe {
 private:
     friend class LongNumber;
 
+    friend class LongComplex;
+
     std::string par;
 
     explicit cringe(const std::string &par_) {

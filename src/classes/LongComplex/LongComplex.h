@@ -5,9 +5,10 @@
 #include "string"
 
 class LongComplex {
-public:
+private:
     LongNumber real;
     LongNumber imag;
+public:
     static const LongComplex czero;
     static const LongComplex cnan;
     static const LongComplex cinf;
@@ -28,6 +29,14 @@ public:
     LongComplex(const LongNumber &real_, const LongNumber &imag_);
 
     LongComplex(const LongComplex &num);
+
+    void set_real(const LongNumber &real_);
+
+    void set_imag(const LongNumber &imag_);
+
+    LongNumber get_real() const;
+
+    LongNumber get_imag() const;
 
     LongComplex &operator=(const LongComplex &rhs);
 
