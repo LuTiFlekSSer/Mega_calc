@@ -91,4 +91,6 @@ LongComplex pow(const LongComplex &num, const LongComplex &deg);
 
 LongComplex factorial(const LongComplex &num);
 
+LongComplex surd(const LongComplex &num, const LongComplex &deg);
+
 #endif

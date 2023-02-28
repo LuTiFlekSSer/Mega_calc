@@ -28,10 +28,10 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    v.print();
 //    (m * a).print();
 //   start_UI(argc, argv);
-    LongComplex a;
-    std::cin >> a;
-    std::cout << a << '\n';
-    std::cout << factorial(a);
+    LongComplex a, b;
+    std::cin >> a >> b;
+    std::cout << a << ' ' << b << '\n';
+    std::cout << surd(a, b);
     return 0;
 }
-
+//Периодичные функции

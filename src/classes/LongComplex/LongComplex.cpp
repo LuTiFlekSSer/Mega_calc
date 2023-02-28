@@ -323,3 +323,17 @@ LongComplex factorial(const LongComplex &num) {
     }
     return r;
 }
+
+LongComplex surd(const LongComplex &num, const LongComplex &deg) {
+    if (iscnan(num) or iscnan(deg) or deg == LongComplex::czero or (iscinf(deg) and (iscinf(num) or num == LongComplex::czero)))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    else if (iscinf(deg))
+        return LongComplex(1);
+    else if (deg == LongComplex(1))
+        return num;
+    return exp(ln(num) / deg);
+}
