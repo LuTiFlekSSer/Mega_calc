@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
     LongComplex a, b;
     std::cin >> a >> b;
     std::cout << a << ' ' << b << '\n';
-    std::cout << surd(a, b);
+    std::cout << exp(a);
     return 0;
 }
 //Периодичные функции

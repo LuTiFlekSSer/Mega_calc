@@ -68,6 +68,9 @@ LongNumber::LongNumber(const LongNumber &num) {
 }
 
 LongNumber::LongNumber(std::string num) {
+    if (!correct_long_num(num)) {
+        throw std::logic_error("Incorrect number form");
+    }
     if (num == "inf") {
         *this = LongNumber::inf;
         return;
@@ -923,7 +926,7 @@ LongNumber factorial(const LongNumber &num) {
         la1 = la1 * num_num + LongNumber::lanczos_den_coeffs[i];
     }
     LongNumber la_rez = la2 / la1, r = la_rez / exp(y);
-    r *= pow(y, num_num - LongNumber(0.5));
+    r *= pow(y, num_num - LongNumber::half);
     for (auto i = num; i >= LongNumber::one; --i) {
         r *= i;
     }

@@ -13,6 +13,8 @@ public:
     static const LongComplex cnan;
     static const LongComplex cinf;
     static const LongComplex I;
+    static const LongComplex half;
+    static const LongComplex one;
 
     LongComplex() : LongComplex(LongNumber::zero, LongNumber::zero) {};
 

@@ -4,6 +4,8 @@ const LongComplex LongComplex::czero = LongComplex("0");
 const LongComplex LongComplex::cinf = LongComplex(LongNumber(cringe("inf")), LongNumber(cringe("inf")));
 const LongComplex LongComplex::I = LongComplex("i");
 const LongComplex LongComplex::cnan = LongComplex(LongNumber(cringe("nan")), LongNumber(cringe("nan")));
+const LongComplex LongComplex::half = LongComplex("0.5");
+const LongComplex LongComplex::one = LongComplex("1");
 
 bool can_change(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
@@ -30,6 +32,9 @@ LongComplex::LongComplex(const LongComplex &num) {
 }
 
 LongComplex::LongComplex(std::string s) {
+    if (!correct_complex_num(s)) {
+        throw std::logic_error("Incorrect complex number form");
+    }
     if (s.empty()) {
         this->real = LongNumber::zero;
         this->imag = LongNumber::zero;
@@ -163,6 +168,9 @@ bool correct_complex_num(const std::string &num) {
             imag_pos = i + 1;
             break;
         } else if (num[i] == '+') {
+            if (i == num.size() - 1 or num[i + 1] == '-') {
+                return false;
+            }
             imag_pos = i + 1;
             break;
         } else if (num[i] == 'i' and i == num.size() - 1) {
@@ -285,7 +293,7 @@ LongComplex pow(const LongComplex &num, const LongComplex &deg) {
     else if ((iscinf(deg) and abs(num) < LongNumber::one) or num == LongComplex::czero)
         return LongComplex::czero;
     else if (deg.get_imag() == LongNumber::zero and deg.get_real() == floor(deg.get_real())) {
-        LongComplex tmp = deg.get_real() >= LongNumber::zero ? num : LongComplex(1) / num, tmp1 = tmp;
+        LongComplex tmp = deg.get_real() >= LongNumber::zero ? num : LongComplex::one / num, tmp1 = tmp;
         for (auto i = LongNumber::one; i < abs(deg.get_real()); ++i) {
             tmp *= tmp1;
         }
@@ -310,7 +318,7 @@ LongComplex factorial(const LongComplex &num) {
         la1 = la1 * num_num + (LongComplex) LongNumber::lanczos_den_coeffs[i];
     }
     LongComplex la_rez = la2 / la1, r = la_rez / exp(y);
-    r *= pow(y, num_num - (LongComplex) LongNumber(0.5));
+    r *= pow(y, num_num - LongComplex::half);
     for (auto i = num.get_real(); i >= LongNumber::one; --i) {
         r *= LongComplex(i, num.get_imag());
     }
@@ -328,8 +336,8 @@ LongComplex surd(const LongComplex &num, const LongComplex &deg) {
     else if (num == LongComplex::czero)
         return LongComplex::czero;
     else if (iscinf(deg))
-        return LongComplex(1);
-    else if (deg == LongComplex(1))
+        return LongComplex::one;
+    else if (deg == LongComplex::one)
         return num;
     return exp(ln(num) / deg);
 }
