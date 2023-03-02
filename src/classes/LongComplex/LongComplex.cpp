@@ -16,7 +16,6 @@ void not_num_converter(LongComplex &num) {
         num = LongComplex::cnan;
     else if (iscinf(num))
         num = LongComplex::cinf;
-
 }
 
 LongComplex::LongComplex(const LongNumber &real_, const LongNumber &imag_) {
@@ -90,18 +89,18 @@ LongComplex LongComplex::operator-(const LongComplex &rhs) const {
 }
 
 LongComplex LongComplex::operator*(const LongComplex &rhs) const {
-    if (iscnan(*this) or iscnan(rhs) or iscinf(*this) and rhs == LongComplex::czero or iscinf(rhs) and *this == LongComplex::czero)
+    if (iscnan(*this) or iscnan(rhs) or (iscinf(*this) and rhs == LongComplex::czero) or (iscinf(rhs) and *this == LongComplex::czero))
         return LongComplex::cnan;
-    else if (iscinf(*this) and rhs != LongComplex::czero or iscinf(rhs) and *this != LongComplex::czero)
+    else if (iscinf(*this) or iscinf(rhs))
         return LongComplex::cinf;
     return LongComplex{this->real * rhs.real - this->imag * rhs.imag,
                        this->imag * rhs.real + this->real * rhs.imag};
 }
 
 LongComplex LongComplex::operator/(const LongComplex &rhs) const {
-    if (iscnan(*this) or iscnan(rhs) or iscinf(*this) and iscinf(rhs) or *this == LongComplex::czero and rhs == LongComplex::czero)
+    if (iscnan(*this) or iscnan(rhs) or (iscinf(*this) and iscinf(rhs)) or (*this == LongComplex::czero and rhs == LongComplex::czero))
         return LongComplex::cnan;
-    else if (iscinf(*this))
+    else if (iscinf(*this) or rhs == LongComplex::czero)
         return LongComplex::cinf;
     else if (*this == LongComplex::czero or iscinf(rhs))
         return LongComplex::czero;
@@ -164,9 +163,6 @@ bool correct_complex_num(const std::string &num) {
             imag_pos = i + 1;
             break;
         } else if (num[i] == '+') {
-            if (i == num.size() - 1 or (i <= num.size() - 2 and !(num[i + 1] >= '0' and num[i + 1] <= '9') and num[i + 1] != 'i')) {
-                return false;
-            }
             imag_pos = i + 1;
             break;
         } else if (num[i] == 'i' and i == num.size() - 1) {
