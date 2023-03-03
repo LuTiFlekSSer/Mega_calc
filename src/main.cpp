@@ -29,9 +29,8 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    (m * a).print();
 //   start_UI(argc, argv);
     LongComplex a, b;
-    std::cin >> a >> b;
-    std::cout << a << ' ' << b << '\n';
-    std::cout << exp(a);
+    std::cin >> a;
+    std::cout << a << '\n';
+    std::cout << cos(a);
     return 0;
 }
-//Периодичные функции

@@ -6,6 +6,7 @@ const LongComplex LongComplex::I = LongComplex("i");
 const LongComplex LongComplex::cnan = LongComplex(LongNumber(cringe("nan")), LongNumber(cringe("nan")));
 const LongComplex LongComplex::half = LongComplex("0.5");
 const LongComplex LongComplex::one = LongComplex("1");
+const LongComplex LongComplex::two = LongComplex("2");
 
 bool can_change(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
@@ -326,6 +327,42 @@ LongComplex factorial(const LongComplex &num) {
         r /= LongComplex(i, num.get_imag());
     }
     return r;
+}
+
+LongComplex sin(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return num;
+    return (exp(LongComplex::I * num) - exp(-LongComplex::I * num)) / (LongComplex::two * LongComplex::I);
+}
+
+LongComplex cos(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::one;
+    return (exp(LongComplex::I * num) + exp(-LongComplex::I * num)) / LongComplex::two;
+}
+
+LongComplex tan(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return sin(num) / cos(num);
+}
+
+LongComplex ctan(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return cos(num) / sin(num);
 }
 
 LongComplex surd(const LongComplex &num, const LongComplex &deg) {

@@ -640,8 +640,8 @@ LongNumber asin(const LongNumber &num) {
     LongNumber x1 = num, x = LongNumber::zero, tmp_num = num;
     tmp_num.round(LongNumber::eps);
     while (abs(x - x1) > LongNumber::eps) {
-        x = x1;
-        x1 -= (sin(x) - tmp_num) / cos(x);
+        copy_with_double_round(x, x1);
+        copy_with_double_round(x1, x1 - (sin(x) - tmp_num) / cos(x));
     }
     return x1;
 }
@@ -668,8 +668,8 @@ LongNumber acos(const LongNumber &num) {
     LongNumber x1 = LongNumber::Pi * LongNumber::half - num, x = LongNumber::zero, tmp_num = num;
     tmp_num.round(LongNumber::eps);
     while (abs(x - x1) > LongNumber::eps) {
-        x = x1;
-        x1 += (cos(x) - tmp_num) / sin(x);
+        copy_with_double_round(x, x1);
+        copy_with_double_round(x1, x1 + (cos(x) - tmp_num) / sin(x));
     }
     return x1;
 }
@@ -745,13 +745,13 @@ LongNumber exp(const LongNumber &num) {
         return LongNumber::zero;
     else if (num == LongNumber::zero)
         return LongNumber::one;
-    LongNumber tmp = LongNumber::one, buf = LongNumber::one, count = LongNumber::one;
+    LongNumber tmp = LongNumber::one, buf = LongNumber::one, count = LongNumber::one, num_num = abs(num);
     while (abs(buf) > LongNumber::eps) {
-        buf *= num / count;
+        buf *= num_num / count;
         tmp += buf;
         ++count;
     }
-    return tmp;
+    return num.sign ? tmp.inv() : tmp;
 }
 
 LongNumber sinh(const LongNumber &num) {
