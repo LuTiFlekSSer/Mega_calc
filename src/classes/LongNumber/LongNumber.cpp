@@ -598,7 +598,6 @@ void LongNumber::round(const LongNumber &eps_to_round) {
             *this = LongNumber::zero;
         }
         if (tmp >= 5) {
-//            *this += old_sign ? -eps_to_round : eps_to_round;
             LongNumber err(*this + (old_sign ? -eps_to_round : eps_to_round));
             this->numbers = err.numbers;
             this->exp = err.exp;
@@ -626,8 +625,8 @@ LongNumber sin(const LongNumber &num) {
     LongNumber x = norm_0_2Pi(num), tmp = LongNumber::zero, buf = x, count = LongNumber::two;
     bool flag = true;
     while (abs(buf) > LongNumber::eps) {
-        tmp += flag ? buf : -buf;
-        buf *= x * x / (count * (count + LongNumber::one));
+        copy_with_double_round(tmp, tmp + (flag ? buf : -buf));
+        copy_with_double_round(buf, buf * (x * x / (count * (count + LongNumber::one))));
         count += LongNumber::two;
         flag = !flag;
     }
@@ -654,8 +653,8 @@ LongNumber cos(const LongNumber &num) {
     LongNumber x = norm_0_2Pi(num), tmp = LongNumber::zero, buf = LongNumber::one, count = LongNumber::one;
     bool flag = true;
     while (abs(buf) > LongNumber::eps) {
-        tmp += flag ? buf : -buf;
-        buf *= x * x / (count * (count + LongNumber::one));
+        copy_with_double_round(tmp, tmp + (flag ? buf : -buf));
+        copy_with_double_round(buf, buf * (x * x / (count * (count + LongNumber::one))));
         count += LongNumber::two;
         flag = !flag;
     }
@@ -747,8 +746,8 @@ LongNumber exp(const LongNumber &num) {
         return LongNumber::one;
     LongNumber tmp = LongNumber::one, buf = LongNumber::one, count = LongNumber::one, num_num = abs(num);
     while (abs(buf) > LongNumber::eps) {
-        buf *= num_num / count;
-        tmp += buf;
+        copy_with_double_round(buf, buf * (num_num / count));
+        copy_with_double_round(tmp, tmp + buf);
         ++count;
     }
     return num.sign ? tmp.inv() : tmp;
@@ -885,8 +884,8 @@ LongNumber ln(const LongNumber &num) {
     if (isinf(a))
         return LongNumber::infm;
     while (abs(buf) > LongNumber::eps) {
-        buf = a / exp(x0) - LongNumber::one;
-        x0 += buf;
+        copy_with_double_round(buf, a / exp(x0) - LongNumber::one);
+        copy_with_double_round(x0, x0 + buf);
     }
     return num < LongNumber::one ? -x0 : x0;
 }
@@ -969,8 +968,8 @@ LongNumber sqrt(const LongNumber &num) {
         return num;
     LongNumber x = LongNumber::inf, half(0.5), x1 = LongNumber::one, new_eps = pow(LongNumber(10), num.exp / 2) * LongNumber::eps;
     while (abs(x1 - x) > new_eps) {
-        x = x1;
-        x1 = half * (x + num / x);
+        copy_with_double_round(x, x1);
+        copy_with_double_round(x1, half * (x + num / x));
     }
     return x;
 }
@@ -1012,9 +1011,6 @@ LongNumber LongNumber::inv() const {
     x0 = alpha - beta * tmp;
     LongNumber gamma(abs(LongNumber::one - tmp * x0)), new_eps = LongNumber::eps * LongNumber::eps;
     while (gamma >= new_eps) {
-//        gamma *= gamma;
-//        x0 *= LongNumber::two - tmp * x0;
-// в тангенсе, котангенсе проверка убрана
         copy_with_double_round(gamma, gamma * gamma);
         copy_with_double_round(x0, x0 * (LongNumber::two - tmp * x0));
     }

@@ -7,6 +7,10 @@ const LongComplex LongComplex::cnan = LongComplex(LongNumber(cringe("nan")), Lon
 const LongComplex LongComplex::half = LongComplex("0.5");
 const LongComplex LongComplex::one = LongComplex("1");
 const LongComplex LongComplex::two = LongComplex("2");
+const LongComplex LongComplex::two_I = LongComplex("2i");
+const LongComplex LongComplex::e = LongComplex(LongNumber::e);
+const LongComplex LongComplex::Pi = LongComplex(LongNumber::Pi);
+const LongComplex LongComplex::half_Pi = LongComplex(LongNumber::Pi * LongNumber::half);
 
 bool can_change(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
@@ -333,8 +337,18 @@ LongComplex sin(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
-        return num;
+        return LongComplex::czero;
     return (exp(LongComplex::I * num) - exp(-LongComplex::I * num)) / (LongComplex::two * LongComplex::I);
+}
+
+LongComplex asin(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return -LongComplex::I * ln(LongComplex::I * num + surd(LongComplex::one - num * num, LongComplex::two));
 }
 
 LongComplex cos(const LongComplex &num) {
@@ -345,15 +359,32 @@ LongComplex cos(const LongComplex &num) {
     return (exp(LongComplex::I * num) + exp(-LongComplex::I * num)) / LongComplex::two;
 }
 
-LongComplex tan(const LongComplex &num) {
+LongComplex acos(const LongComplex &num) {
     if (iscnan(num))
         return LongComplex::cnan;
     else if (iscinf(num))
         return LongComplex::cinf;
     else if (num == LongComplex::czero)
-        return LongComplex::czero;
-    return sin(num) / cos(num);
+        return LongComplex::half_Pi;
+    return LongComplex::half_Pi - asin(num);
 }
+
+LongComplex tan(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return LongComplex::two_I / (exp(LongComplex::two_I * num) + LongComplex::one) - LongComplex::I;
+}
+
+LongComplex atan(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return LongComplex::half * LongComplex::I * (ln(LongComplex::one - LongComplex::I * num) - ln(LongComplex::one + LongComplex::I * num));
+}
+
 
 LongComplex ctan(const LongComplex &num) {
     if (iscnan(num))
@@ -362,7 +393,51 @@ LongComplex ctan(const LongComplex &num) {
         return LongComplex::cinf;
     else if (num == LongComplex::czero)
         return LongComplex::czero;
-    return cos(num) / sin(num);
+    return LongComplex::I + LongComplex::two_I / (exp(LongComplex::two_I * num) - LongComplex::one);
+}
+
+LongComplex actan(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::half_Pi;
+    return LongComplex::half * LongComplex::I * (ln((num - LongComplex::I) / num) - ln((num + LongComplex::I) / num));
+}
+
+LongComplex sec(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return LongComplex::one / cos(num);
+}
+
+LongComplex asec(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::half_Pi;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    return acos(LongComplex::one / num);
+}
+
+LongComplex cosec(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    return LongComplex::one / sin(num);
+}
+
+LongComplex acosec(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::czero;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    return asin(LongComplex::one / num);
 }
 
 LongComplex surd(const LongComplex &num, const LongComplex &deg) {

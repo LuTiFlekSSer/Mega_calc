@@ -16,6 +16,10 @@ public:
     static const LongComplex half;
     static const LongComplex one;
     static const LongComplex two;
+    static const LongComplex two_I;
+    static const LongComplex e;
+    static const LongComplex Pi;
+    static const LongComplex half_Pi;
 
     LongComplex() : LongComplex(LongNumber::zero, LongNumber::zero) {};
 
@@ -82,66 +86,66 @@ bool correct_complex_num(const std::string &num);
 
 LongNumber abs(const LongComplex &num);
 
-LongNumber phase(const LongComplex &num); // periodic
+LongNumber phase(const LongComplex &num);// periodic
 
 LongComplex exp(const LongComplex &num);
 
-LongComplex ln(const LongComplex &num); // periodic
+LongComplex ln(const LongComplex &num);// periodic
 
-LongComplex log(const LongComplex &num, const LongComplex &base); // periodic
+LongComplex log(const LongComplex &num, const LongComplex &base);// periodic
 
-LongComplex pow(const LongComplex &num, const LongComplex &deg);  // periodic
+LongComplex pow(const LongComplex &num, const LongComplex &deg);// periodic
 
 LongComplex factorial(const LongComplex &num);
 
-LongComplex surd(const LongComplex &num, const LongComplex &deg);  // periodic
+LongComplex surd(const LongComplex &num, const LongComplex &deg);// periodic
 
-LongComplex sin(const LongComplex &num);
+LongComplex sin(const LongComplex &num);// periodic
 
-LongComplex asin(const LongComplex &num);
+LongComplex asin(const LongComplex &num);// periodic
 
-LongComplex cos(const LongComplex &num);
+LongComplex cos(const LongComplex &num);// periodic
 
-LongComplex acos(const LongComplex &num);
+LongComplex acos(const LongComplex &num);// periodic
 
-LongComplex tan(const LongComplex &num);
+LongComplex tan(const LongComplex &num);// periodic
 
-LongComplex atan(const LongComplex &num);
+LongComplex atan(const LongComplex &num);// periodic
 
-LongComplex ctan(const LongComplex &num);
+LongComplex ctan(const LongComplex &num);// periodic
 
-LongComplex actan(const LongComplex &num);
+LongComplex actan(const LongComplex &num);// periodic
 
-LongComplex sec(const LongComplex &num);
+LongComplex sec(const LongComplex &num);// periodic
 
-LongComplex asec(const LongComplex &num);
+LongComplex asec(const LongComplex &num);// periodic
 
-LongComplex cosec(const LongComplex &num);
+LongComplex cosec(const LongComplex &num);// periodic
 
-LongComplex acosec(const LongComplex &num);
+LongComplex acosec(const LongComplex &num);// periodic
 
-LongComplex sinh(const LongComplex &num);
+LongComplex sinh(const LongComplex &num);// periodic
 
-LongComplex asinh(const LongComplex &num);
+LongComplex asinh(const LongComplex &num);// periodic
 
-LongComplex cosh(const LongComplex &num);
+LongComplex cosh(const LongComplex &num);// periodic
 
-LongComplex acosh(const LongComplex &num);
+LongComplex acosh(const LongComplex &num);// periodic
 
-LongComplex tanh(const LongComplex &num);
+LongComplex tanh(const LongComplex &num);// periodic
 
-LongComplex atanh(const LongComplex &num);
+LongComplex atanh(const LongComplex &num);// periodic
 
-LongComplex ctanh(const LongComplex &num);
+LongComplex ctanh(const LongComplex &num);// periodic
 
-LongComplex actanh(const LongComplex &num);
+LongComplex actanh(const LongComplex &num);// periodic
 
-LongComplex sech(const LongComplex &num);
+LongComplex sech(const LongComplex &num);// periodic
 
-LongComplex asech(const LongComplex &num);
+LongComplex asech(const LongComplex &num);// periodic
 
-LongComplex cosech(const LongComplex &num);
+LongComplex cosech(const LongComplex &num);// periodic
 
-LongComplex acosech(const LongComplex &num);
+LongComplex acosech(const LongComplex &num);// periodic
 
 #endif

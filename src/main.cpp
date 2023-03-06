@@ -31,6 +31,6 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
     LongComplex a, b;
     std::cin >> a;
     std::cout << a << '\n';
-    std::cout << cos(a);
+    std::cout << acosec(a);
     return 0;
 }
