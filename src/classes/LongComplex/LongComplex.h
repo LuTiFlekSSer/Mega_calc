@@ -86,7 +86,7 @@ bool correct_complex_num(const std::string &num);
 
 LongNumber abs(const LongComplex &num);
 
-LongNumber phase(const LongComplex &num);// periodic
+LongNumber phase(const LongComplex &num);
 
 LongComplex exp(const LongComplex &num);
 

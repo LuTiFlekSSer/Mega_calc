@@ -73,6 +73,8 @@ public:
     static const LongNumber inf; //false 11 0
     static const LongNumber infm; //true 11 0
     static const LongNumber eps;
+    static const LongNumber two_Pi;
+    static const LongNumber half_Pi;
 
     LongNumber();
 
