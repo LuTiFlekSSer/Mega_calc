@@ -466,7 +466,15 @@ LongComplex cosh(const LongComplex &num) {
     return (exp(num) + exp(-num)) * LongComplex::half;
 }
 
-LongComplex acosh(const LongComplex &num);
+LongComplex acosh(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::half_Pi * LongComplex::I;
+    return ln(surd(num + LongComplex::one, LongComplex::two) * surd(num - LongComplex::one, LongComplex::two) + num);
+}
 
 LongComplex tanh(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
@@ -477,7 +485,13 @@ LongComplex tanh(const LongComplex &num) {
     return (exp(two_num) - LongComplex::one) / (exp(two_num) + LongComplex::one);
 }
 
-LongComplex atanh(const LongComplex &num);
+LongComplex atanh(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return LongComplex::half * (ln(num + LongComplex::one) - ln(LongComplex::one - num));
+}
 
 LongComplex ctanh(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
@@ -488,7 +502,15 @@ LongComplex ctanh(const LongComplex &num) {
     return (exp(two_num) + LongComplex::one) / (exp(two_num) - LongComplex::one);
 }
 
-LongComplex actanh(const LongComplex &num);
+LongComplex actanh(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::czero;
+    else if (num == LongComplex::czero)
+        return LongComplex::half_Pi * LongComplex::I;
+    return LongComplex::half * (ln(LongComplex::one / num + LongComplex::one) - ln(LongComplex::one - LongComplex::one / num));
+}
 
 LongComplex sech(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
@@ -498,7 +520,13 @@ LongComplex sech(const LongComplex &num) {
     return LongComplex::one / cosh(num);
 }
 
-LongComplex asech(const LongComplex &num);
+LongComplex asech(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    return acosh(LongComplex::one / num);
+}
 
 LongComplex cosech(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
@@ -508,7 +536,13 @@ LongComplex cosech(const LongComplex &num) {
     return LongComplex::one / sinh(num);
 }
 
-LongComplex acosech(const LongComplex &num);
+LongComplex acosech(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    return asinh(LongComplex::one / num);
+}
 
 LongComplex surd(const LongComplex &num, const LongComplex &deg) {
     if (iscnan(num) or iscnan(deg) or deg == LongComplex::czero or (iscinf(deg) and (iscinf(num) or num == LongComplex::czero)))

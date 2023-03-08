@@ -678,7 +678,9 @@ LongNumber acos(const LongNumber &num) {
 LongNumber tan(const LongNumber &num) {
     if (isnan(num) or isinf(abs(num)))
         return num;
-    return sin(num) / cos(num);
+    LongNumber tmp;
+    tmp = cos(num);
+    return sin(num) / tmp;
 }
 
 LongNumber atan(const LongNumber &num) {
@@ -696,7 +698,9 @@ LongNumber ctan(const LongNumber &num) {
         return num;
     else if (isinf(abs(num)))
         return -num;
-    return cos(num) / sin(num);
+    LongNumber tmp;
+    tmp = sin(num);
+    return cos(num) / tmp;
 }
 
 LongNumber actan(const LongNumber &num) {
@@ -712,7 +716,9 @@ LongNumber actan(const LongNumber &num) {
 LongNumber sec(const LongNumber &num) {
     if (isnan(num) or isinf(abs(num)))
         return LongNumber::nan;
-    return cos(num).inv();
+    LongNumber tmp;
+    tmp = cos(num);
+    return tmp.inv();
 }
 
 LongNumber asec(const LongNumber &num) {
@@ -726,7 +732,9 @@ LongNumber asec(const LongNumber &num) {
 LongNumber cosec(const LongNumber &num) {
     if (isnan(num) or isinf(abs(num)))
         return LongNumber::nan;
-    return sin(num).inv();
+    LongNumber tmp;
+    tmp = sin(num);
+    return tmp.inv();
 }
 
 LongNumber acosec(const LongNumber &num) {
@@ -1005,20 +1013,23 @@ LongNumber LongNumber::inv() const {
         return LongNumber::inf;
     LongNumber alpha("2.823529411"), beta("1.8823529411"), x0, tmp(abs(*this)), delta = LongNumber(5 / tmp.numbers[0]);
     if (tmp.numbers[0] < 5) {
-        tmp = tmp * delta;
+//        tmp = tmp * delta;
+        copy_with_double_round(tmp, tmp * delta);
     } else
         delta = LongNumber::one;
     long long tmp_exp = -tmp.exp;
     tmp.exp = 0;
     if (tmp.numbers[0] == 0)
         return this->sign ? LongNumber::infm : LongNumber::inf;
-    x0 = alpha - beta * tmp;
+//    x0 = alpha - beta * tmp;
+    copy_with_double_round(x0, alpha - beta * tmp);
     LongNumber gamma(abs(LongNumber::one - tmp * x0)), new_eps = LongNumber::eps * LongNumber::eps;
     while (gamma >= new_eps) {
         copy_with_double_round(gamma, gamma * gamma);
         copy_with_double_round(x0, x0 * (LongNumber::two - tmp * x0));
     }
-    x0 *= delta;
+//    x0 *= delta;
+    copy_with_double_round(x0, x0 * delta);
     x0.exp += tmp_exp;
     x0.sign = this->sign;
     return x0;
@@ -1049,13 +1060,13 @@ LongNumber &LongNumber::operator++() {
     return *this;
 }
 
-LongNumber LongNumber::operator++(int) {
+LongNumber LongNumber::operator++(int){
     LongNumber old = *this;
     operator++();
     return old;
 }
 
-LongNumber LongNumber::operator--(int) {
+LongNumber LongNumber::operator--(int){
     LongNumber old = *this;
     operator--();
     return old;
