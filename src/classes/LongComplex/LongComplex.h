@@ -98,6 +98,8 @@ LongComplex pow(const LongComplex &num, const LongComplex &deg);// periodic
 
 LongComplex factorial(const LongComplex &num);
 
+LongComplex sqrt(const LongComplex &num);
+
 LongComplex surd(const LongComplex &num, const LongComplex &deg);// periodic
 
 LongComplex sin(const LongComplex &num);// periodic

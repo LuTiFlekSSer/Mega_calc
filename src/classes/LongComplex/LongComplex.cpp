@@ -258,6 +258,12 @@ LongNumber LongComplex::get_imag() const {
 LongNumber abs(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
         return LongNumber::nan;
+    if (num == LongComplex::czero)
+        return LongNumber::zero;
+    else if (num.get_real() == LongNumber::zero)
+        return abs(num.get_imag());
+    else if (num.get_imag() == LongNumber::zero)
+        return abs(num.get_real());
     return sqrt(num.get_real() * num.get_real() + num.get_imag() * num.get_imag());
 }
 
@@ -348,7 +354,7 @@ LongComplex asin(const LongComplex &num) {
         return LongComplex::cinf;
     else if (num == LongComplex::czero)
         return LongComplex::czero;
-    return -LongComplex::I * ln(LongComplex::I * num + surd(LongComplex::one - num * num, LongComplex::two));
+    return -LongComplex::I * ln(LongComplex::I * num + sqrt(LongComplex::one - num * num));
 }
 
 LongComplex cos(const LongComplex &num) {
@@ -455,7 +461,7 @@ LongComplex asinh(const LongComplex &num) {
         return LongComplex::cinf;
     else if (num == LongComplex::czero)
         return LongComplex::czero;
-    return ln(surd(num * num + LongComplex::one, LongComplex::two) + num);
+    return ln(sqrt(num * num + LongComplex::one) + num);
 }
 
 LongComplex cosh(const LongComplex &num) {
@@ -473,7 +479,7 @@ LongComplex acosh(const LongComplex &num) {
         return LongComplex::cinf;
     else if (num == LongComplex::czero)
         return LongComplex::half_Pi * LongComplex::I;
-    return ln(surd(num + LongComplex::one, LongComplex::two) * surd(num - LongComplex::one, LongComplex::two) + num);
+    return ln(sqrt(num + LongComplex::one) * sqrt(num - LongComplex::one) + num);
 }
 
 LongComplex tanh(const LongComplex &num) {
@@ -556,4 +562,16 @@ LongComplex surd(const LongComplex &num, const LongComplex &deg) {
     else if (deg == LongComplex::one)
         return num;
     return exp(ln(num) / deg);
+}
+
+LongComplex sqrt(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    LongNumber tmp_abs = abs(num);
+    return LongComplex{sqrt((num.get_real() + tmp_abs) * LongNumber::half),
+                       (num.get_imag() >= LongNumber::zero ? LongNumber::one : -LongNumber::one) * sqrt((-num.get_real() + tmp_abs) * LongNumber::half)};
 }

@@ -1101,7 +1101,6 @@ bool isinfm(const LongNumber &num) {
     return num == LongNumber::infm;
 }
 
-
 LongNumber &LongNumber::operator=(const LongNumber &rhs) {
     exp = rhs.exp;
     numbers = rhs.numbers;
