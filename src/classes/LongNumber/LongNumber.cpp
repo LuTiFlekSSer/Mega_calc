@@ -1,5 +1,6 @@
 #include "LongNumber.h"
 #include "iostream"
+#include "future"
 
 const LongNumber LongNumber::zero = LongNumber{0};
 const LongNumber LongNumber::half = LongNumber{0.5};
@@ -522,7 +523,6 @@ LongNumber::LongNumber(const cringe &par) {
     }
 }
 
-
 LongNumber LongNumber::operator*(const LongNumber &rhs) const {
     if (isnan(*this) or isnan(rhs) or (*this == LongNumber::zero and (isinf(rhs) or isinfm(rhs))) or (rhs == LongNumber::zero and (isinf(*this) or isinfm(*this)))) {
         return LongNumber::nan;
@@ -642,7 +642,9 @@ LongNumber asin(const LongNumber &num) {
     tmp_num.round(LongNumber::eps);
     while (abs(x - x1) > LongNumber::eps) {
         copy_with_double_round(x, x1);
-        copy_with_double_round(x1, x1 - (sin(x) - tmp_num) / cos(x));
+        auto sin_x = std::async(std::launch::async, [&x] { return sin(x); }),
+                cos_x = std::async(std::launch::async, [&x] { return cos(x); });
+        copy_with_double_round(x1, x1 - (sin_x.get() - tmp_num) / cos_x.get());
     }
     return x1;
 }
@@ -670,7 +672,9 @@ LongNumber acos(const LongNumber &num) {
     tmp_num.round(LongNumber::eps);
     while (abs(x - x1) > LongNumber::eps) {
         copy_with_double_round(x, x1);
-        copy_with_double_round(x1, x1 + (cos(x) - tmp_num) / sin(x));
+        auto sin_x = std::async(std::launch::async, [&x] { return sin(x); }),
+                cos_x = std::async(std::launch::async, [&x] { return cos(x); });
+        copy_with_double_round(x1, x1 + (cos_x.get() - tmp_num) / sin_x.get());
     }
     return x1;
 }
@@ -678,9 +682,11 @@ LongNumber acos(const LongNumber &num) {
 LongNumber tan(const LongNumber &num) {
     if (isnan(num) or isinf(abs(num)))
         return num;
-    LongNumber tmp;
-    tmp = cos(num);
-    return sin(num) / tmp;
+    auto sin_num = std::async(std::launch::async, [&num] { return sin(num); }),
+            cos_num = std::async(std::launch::async, [&num] { return cos(num); });
+    LongNumber tmp_cos;
+    tmp_cos = cos_num.get();
+    return sin_num.get() / tmp_cos;
 }
 
 LongNumber atan(const LongNumber &num) {
@@ -698,9 +704,11 @@ LongNumber ctan(const LongNumber &num) {
         return num;
     else if (isinf(abs(num)))
         return -num;
-    LongNumber tmp;
-    tmp = sin(num);
-    return cos(num) / tmp;
+    auto sin_num = std::async(std::launch::async, [&num] { return sin(num); }),
+            cos_num = std::async(std::launch::async, [&num] { return cos(num); });
+    LongNumber tmp_sin;
+    tmp_sin = sin_num.get();
+    return cos_num.get() / tmp_sin;
 }
 
 LongNumber actan(const LongNumber &num) {
@@ -796,8 +804,8 @@ LongNumber tanh(const LongNumber &num) {
         return LongNumber::one;
     else if (isinfm(num))
         return -LongNumber::one;
-    LongNumber two_num = LongNumber::two * num;
-    return (exp(two_num) - LongNumber::one) / (exp(two_num) + LongNumber::one);
+    LongNumber exp_two_num = exp(LongNumber::two * num);
+    return (exp_two_num - LongNumber::one) / (exp_two_num + LongNumber::one);
 }
 
 LongNumber atanh(const LongNumber &num) {
@@ -817,8 +825,8 @@ LongNumber ctanh(const LongNumber &num) {
         return LongNumber::one;
     else if (isinfm(num))
         return -LongNumber::one;
-    LongNumber two_num = LongNumber::two * num;
-    return (exp(two_num) + LongNumber::one) / (exp(two_num) - LongNumber::one);
+    LongNumber exp_two_num = exp(LongNumber::two * num);
+    return (exp_two_num + LongNumber::one) / (exp_two_num - LongNumber::one);
 }
 
 LongNumber actanh(const LongNumber &num) {
@@ -912,7 +920,9 @@ LongNumber log(const LongNumber &num, const LongNumber &base) {
         return LongNumber::inf;
     else if ((num == LongNumber::zero and base > LongNumber::one) or (base < LongNumber::one and isinf(num)))
         return LongNumber::infm;
-    return ln(num) / ln(base);
+    auto ln_num = std::async(std::launch::async, [&num] { return ln(num); }),
+            ln_base = std::async(std::launch::async, [&base] { return ln(base); });
+    return ln_num.get() / ln_base.get();
 }
 
 LongNumber rec_fact(const LongNumber &num) {
@@ -1060,13 +1070,13 @@ LongNumber &LongNumber::operator++() {
     return *this;
 }
 
-LongNumber LongNumber::operator++(int){
+LongNumber LongNumber::operator++(int) {
     LongNumber old = *this;
     operator++();
     return old;
 }
 
-LongNumber LongNumber::operator--(int){
+LongNumber LongNumber::operator--(int) {
     LongNumber old = *this;
     operator--();
     return old;

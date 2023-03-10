@@ -17,6 +17,7 @@ concept numeric = std::is_integral<T>::value;
 
 class LongNumber {
 private:
+
     friend class LongComplex;
 
     friend class LongComplex factorial(const class LongComplex &num);

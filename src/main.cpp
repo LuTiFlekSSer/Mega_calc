@@ -4,6 +4,7 @@
 #include "src/classes/Mat2D/Mat2D.h"
 #include "src/classes/VecND/VecND.h"
 #include "ui files/ui.h"
+#include "chrono"
 
 int main(int argc, char *argv[]) { // not NaN in == and !=
 //    Mat2D m(3, 5);
@@ -31,6 +32,10 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
     LongComplex a, b;
     std::cin >> a;
     std::cout << a << '\n';
-    std::cout << sqrt(a) << ' ' << surd(a, LongComplex::two);
+    auto t1 = std::chrono::steady_clock::now();
+    for (int i = 0; i < 1000; ++i) {
+        sqrt(a);
+    }
+    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n' << sqrt(a);
     return 0;
 }

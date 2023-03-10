@@ -1,4 +1,5 @@
 #include "LongComplex.h"
+#include "future"
 
 const LongComplex LongComplex::czero = LongComplex("0");
 const LongComplex LongComplex::cinf = LongComplex(LongNumber(cringe("inf")), LongNumber(cringe("inf")));
@@ -278,8 +279,11 @@ LongComplex exp(const LongComplex &num) {
         return LongComplex::cnan;
     else if (iscinf(num))
         return LongComplex::cinf;
-    LongNumber e_a = exp(num.get_real());
-    return LongComplex{e_a * cos(num.get_imag()), e_a * sin(num.get_imag())};
+    auto e_a = std::async(std::launch::async, [&num] { return exp(num.get_real()); }),
+            sin_num = std::async(std::launch::async, [&num] { return sin(num.get_imag()); }),
+            cos_num = std::async(std::launch::async, [&num] { return cos(num.get_imag()); });
+    LongNumber tmp_e_a = e_a.get();
+    return LongComplex{tmp_e_a * cos_num.get(), tmp_e_a * sin_num.get()};
 }
 
 LongComplex ln(const LongComplex &num) {
@@ -287,13 +291,17 @@ LongComplex ln(const LongComplex &num) {
         return LongComplex::cnan;
     else if (iscinf(num) or num == LongComplex::czero)
         return LongComplex::cinf;
-    return LongComplex{ln(abs(num)), phase(num)};
+    auto ln_num = std::async(std::launch::async, [&num] { return ln(abs(num)); }),
+            phase_num = std::async(std::launch::async, [&num] { return phase(num); });
+    return LongComplex{ln_num.get(), phase_num.get()};
 }
 
 LongComplex log(const LongComplex &num, const LongComplex &base) {
     if (iscnan(num) or iscnan(base))
         return LongComplex::cnan;
-    return ln(num) / ln(base);
+    auto ln_num = std::async(std::launch::async, [&num] { return ln(num); }),
+            ln_base = std::async(std::launch::async, [&base] { return ln(base); });
+    return ln_num.get() / ln_base.get();
 }
 
 LongComplex pow(const LongComplex &num, const LongComplex &deg) {
@@ -344,7 +352,9 @@ LongComplex sin(const LongComplex &num) {
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
         return LongComplex::czero;
-    return (exp(LongComplex::I * num) - exp(-LongComplex::I * num)) / (LongComplex::two * LongComplex::I);
+    auto exp_1 = std::async(std::launch::async, [&num] { return exp(LongComplex::I * num); }),
+            exp_2 = std::async(std::launch::async, [&num] { return exp(-LongComplex::I * num); });
+    return (exp_1.get() - exp_2.get()) / (LongComplex::two * LongComplex::I);
 }
 
 LongComplex asin(const LongComplex &num) {
@@ -362,7 +372,9 @@ LongComplex cos(const LongComplex &num) {
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
         return LongComplex::one;
-    return (exp(LongComplex::I * num) + exp(-LongComplex::I * num)) / LongComplex::two;
+    auto exp_1 = std::async(std::launch::async, [&num] { return exp(LongComplex::I * num); }),
+            exp_2 = std::async(std::launch::async, [&num] { return exp(-LongComplex::I * num); });
+    return (exp_1.get() + exp_2.get()) / LongComplex::two;
 }
 
 LongComplex acos(const LongComplex &num) {
@@ -388,7 +400,9 @@ LongComplex atan(const LongComplex &num) {
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
         return LongComplex::czero;
-    return LongComplex::half * LongComplex::I * (ln(LongComplex::one - LongComplex::I * num) - ln(LongComplex::one + LongComplex::I * num));
+    auto ln_1 = std::async(std::launch::async, [&num] { return ln(LongComplex::one - LongComplex::I * num); }),
+            ln_2 = std::async(std::launch::async, [&num] { return ln(LongComplex::one + LongComplex::I * num); });
+    return LongComplex::half * LongComplex::I * (ln_1.get() - ln_2.get());
 }
 
 
@@ -407,7 +421,9 @@ LongComplex actan(const LongComplex &num) {
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
         return LongComplex::half_Pi;
-    return LongComplex::half * LongComplex::I * (ln((num - LongComplex::I) / num) - ln((num + LongComplex::I) / num));
+    auto ln_1 = std::async(std::launch::async, [&num] { return ln((num - LongComplex::I) / num); }),
+            ln_2 = std::async(std::launch::async, [&num] { return ln((num + LongComplex::I) / num); });
+    return LongComplex::half * LongComplex::I * (ln_1.get() - ln_2.get());
 }
 
 LongComplex sec(const LongComplex &num) {
@@ -451,7 +467,9 @@ LongComplex sinh(const LongComplex &num) {
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
         return LongComplex::czero;
-    return (exp(num) - exp(-num)) * LongComplex::half;
+    auto exp_1 = std::async(std::launch::async, [&num] { return exp(num); }),
+            exp_2 = std::async(std::launch::async, [&num] { return exp(-num); });
+    return (exp_1.get() - exp_2.get()) * LongComplex::half;
 }
 
 LongComplex asinh(const LongComplex &num) {
@@ -469,7 +487,9 @@ LongComplex cosh(const LongComplex &num) {
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
         return LongComplex::one;
-    return (exp(num) + exp(-num)) * LongComplex::half;
+    auto exp_1 = std::async(std::launch::async, [&num] { return exp(num); }),
+            exp_2 = std::async(std::launch::async, [&num] { return exp(-num); });
+    return (exp_1.get() + exp_2.get()) * LongComplex::half;
 }
 
 LongComplex acosh(const LongComplex &num) {
@@ -479,7 +499,9 @@ LongComplex acosh(const LongComplex &num) {
         return LongComplex::cinf;
     else if (num == LongComplex::czero)
         return LongComplex::half_Pi * LongComplex::I;
-    return ln(sqrt(num + LongComplex::one) * sqrt(num - LongComplex::one) + num);
+    auto sqrt_1 = std::async(std::launch::async, [&num] { return sqrt(num + LongComplex::one); }),
+            sqrt_2 = std::async(std::launch::async, [&num] { return sqrt(num - LongComplex::one); });
+    return ln(sqrt_1.get() * sqrt_2.get() + num);
 }
 
 LongComplex tanh(const LongComplex &num) {
@@ -487,8 +509,8 @@ LongComplex tanh(const LongComplex &num) {
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
         return LongComplex::czero;
-    LongComplex two_num = LongComplex::two * num;
-    return (exp(two_num) - LongComplex::one) / (exp(two_num) + LongComplex::one);
+    LongComplex exp_two_num = exp(LongComplex::two * num);
+    return (exp_two_num - LongComplex::one) / (exp_two_num + LongComplex::one);
 }
 
 LongComplex atanh(const LongComplex &num) {
@@ -496,7 +518,9 @@ LongComplex atanh(const LongComplex &num) {
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
         return LongComplex::czero;
-    return LongComplex::half * (ln(num + LongComplex::one) - ln(LongComplex::one - num));
+    auto ln_1 = std::async(std::launch::async, [&num] { return ln(num + LongComplex::one); }),
+            ln_2 = std::async(std::launch::async, [&num] { return ln(LongComplex::one - num); });
+    return LongComplex::half * (ln_1.get() - ln_2.get());
 }
 
 LongComplex ctanh(const LongComplex &num) {
@@ -504,8 +528,8 @@ LongComplex ctanh(const LongComplex &num) {
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
         return LongComplex::cinf;
-    LongComplex two_num = LongComplex::two * num;
-    return (exp(two_num) + LongComplex::one) / (exp(two_num) - LongComplex::one);
+    LongComplex exp_two_num = exp(LongComplex::two * num);
+    return (exp_two_num + LongComplex::one) / (exp_two_num - LongComplex::one);
 }
 
 LongComplex actanh(const LongComplex &num) {
@@ -515,7 +539,9 @@ LongComplex actanh(const LongComplex &num) {
         return LongComplex::czero;
     else if (num == LongComplex::czero)
         return LongComplex::half_Pi * LongComplex::I;
-    return LongComplex::half * (ln(LongComplex::one / num + LongComplex::one) - ln(LongComplex::one - LongComplex::one / num));
+    auto ln_1 = std::async(std::launch::async, [&num] { return ln(LongComplex::one / num + LongComplex::one); }),
+            ln_2 = std::async(std::launch::async, [&num] { return ln(LongComplex::one - LongComplex::one / num); });
+    return LongComplex::half * (ln_1.get() - ln_2.get());
 }
 
 LongComplex sech(const LongComplex &num) {
@@ -572,6 +598,8 @@ LongComplex sqrt(const LongComplex &num) {
     else if (num == LongComplex::czero)
         return LongComplex::czero;
     LongNumber tmp_abs = abs(num);
-    return LongComplex{sqrt((num.get_real() + tmp_abs) * LongNumber::half),
-                       (num.get_imag() >= LongNumber::zero ? LongNumber::one : -LongNumber::one) * sqrt((-num.get_real() + tmp_abs) * LongNumber::half)};
+    auto sqrt_1 = std::async(std::launch::async, [&num, &tmp_abs] { return sqrt((num.get_real() + tmp_abs) * LongNumber::half); }),
+            sqrt_2 = std::async(std::launch::async,
+                                [&num, &tmp_abs] { return (num.get_imag() >= LongNumber::zero ? LongNumber::one : -LongNumber::one) * sqrt((-num.get_real() + tmp_abs) * LongNumber::half); });
+    return LongComplex{sqrt_1.get(), sqrt_2.get()};
 }
