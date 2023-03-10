@@ -86,21 +86,21 @@ bool correct_complex_num(const std::string &num);
 
 LongNumber abs(const LongComplex &num);
 
-LongNumber phase(const LongComplex &num);// periodic
+LongNumber phase(const LongComplex &num);
 
 LongComplex exp(const LongComplex &num);
 
-LongComplex ln(const LongComplex &num);// periodic
+LongComplex ln(const LongComplex &num);
 
-LongComplex log(const LongComplex &num, const LongComplex &base);// periodic
+LongComplex log(const LongComplex &num, const LongComplex &base);
 
-LongComplex pow(const LongComplex &num, const LongComplex &deg);// periodic
+LongComplex pow(const LongComplex &num, const LongComplex &deg);
 
 LongComplex factorial(const LongComplex &num);
 
 LongComplex sqrt(const LongComplex &num);
 
-LongComplex surd(const LongComplex &num, const LongComplex &deg);// periodic
+LongComplex surd(const LongComplex &num, const LongComplex &deg);
 
 LongComplex sin(const LongComplex &num);
 
@@ -149,5 +149,19 @@ LongComplex asech(const LongComplex &num);// periodic
 LongComplex cosech(const LongComplex &num);
 
 LongComplex acosech(const LongComplex &num);// periodic
+
+namespace many_value_f {
+
+    LongNumber phase(const LongComplex &num, long long n);
+
+    LongComplex ln(const LongComplex &num, long  long n);
+
+    LongComplex log(const LongComplex &num, const LongComplex &base, long  long n);
+
+    LongComplex pow(const LongComplex &num, const LongComplex &deg, long  long n);
+
+    LongComplex surd(const LongComplex &num, const LongComplex &deg, long  long n);
+
+}
 
 #endif

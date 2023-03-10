@@ -603,3 +603,34 @@ LongComplex sqrt(const LongComplex &num) {
                                 [&num, &tmp_abs] { return (num.get_imag() >= LongNumber::zero ? LongNumber::one : -LongNumber::one) * sqrt((-num.get_real() + tmp_abs) * LongNumber::half); });
     return LongComplex{sqrt_1.get(), sqrt_2.get()};
 }
+
+std::pair<long long, long long> one2two(long long n) {
+    long long a = std::floor(std::sqrt(n));
+    if (a % 2 == 0)
+        return std::make_pair(std::min(n - a * a, a), n <= a * (a + 1) ? a : a - (n - a * (a + 1)));
+    else
+        return std::make_pair(n <= a * (a + 1) ? a : a - (n - a * (a + 1)), std::min(n - a * a, a));
+}
+
+LongNumber many_value_f::phase(const LongComplex &num, long long n) {
+    return phase(num) + LongNumber::two_Pi * LongNumber{n};
+}
+
+LongComplex many_value_f::ln(const LongComplex &num, long long n) {
+    return ln(num) + LongComplex::I * LongComplex{LongNumber::two_Pi} * LongComplex{n};
+}
+
+LongComplex many_value_f::log(const LongComplex &num, const LongComplex &base, long long n) {
+    auto a = one2two(n);
+    return ln(num, a.first) / ln(base, a.second);
+}
+
+LongComplex many_value_f::pow(const LongComplex &num, const LongComplex &deg, long long n) {
+    LongNumber r = pow(abs(num), deg.get_real()) * exp(-deg.get_imag() * (phase(num) + LongNumber::two_Pi * LongNumber{n})),
+            p = ln(abs(num)) * deg.get_imag() + deg.get_real() * (phase(num) + LongNumber::two_Pi * LongNumber{n});
+    return LongComplex{r * cos(p), r * sin(p)};
+}
+
+LongComplex many_value_f::surd(const LongComplex &num, const LongComplex &deg, long long n) {
+    return pow(num, LongComplex::one / deg, n);
+}
