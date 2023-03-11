@@ -48,6 +48,8 @@ private:
 
     friend void copy_with_double_round(LongNumber &to_change, const LongNumber &new_num);
 
+    friend void move_with_double_round(LongNumber &to_change, LongNumber &&new_num);
+
     bool sign = false;
     std::vector<char> numbers;
     long long exp{};

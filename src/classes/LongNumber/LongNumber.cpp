@@ -602,7 +602,7 @@ void LongNumber::round(const LongNumber &eps_to_round) {
         }
         if (tmp >= 5) {
             LongNumber err(*this + (old_sign ? -eps_to_round : eps_to_round));
-            this->numbers = err.numbers;
+            this->numbers = std::move(err.numbers);
             this->exp = err.exp;
             this->sign = err.sign;
         }
@@ -628,8 +628,8 @@ LongNumber sin(const LongNumber &num) {
     LongNumber x = norm_0_2Pi(num), tmp = LongNumber::zero, buf = x, count = LongNumber::two;
     bool flag = true;
     while (abs(buf) > LongNumber::eps) {
-        copy_with_double_round(tmp, tmp + (flag ? buf : -buf));
-        copy_with_double_round(buf, buf * (x * x / (count * (count + LongNumber::one))));
+        move_with_double_round(tmp, tmp + (flag ? buf : -buf));
+        move_with_double_round(buf, buf * (x * x / (count * (count + LongNumber::one))));
         count += LongNumber::two;
         flag = !flag;
     }
@@ -645,7 +645,7 @@ LongNumber asin(const LongNumber &num) {
         copy_with_double_round(x, x1);
         auto sin_x = std::async(std::launch::async, [&x] { return sin(x); }),
                 cos_x = std::async(std::launch::async, [&x] { return cos(x); });
-        copy_with_double_round(x1, x1 - (sin_x.get() - tmp_num) / cos_x.get());
+        move_with_double_round(x1, x1 - (sin_x.get() - tmp_num) / cos_x.get());
     }
     return x1;
 }
@@ -658,8 +658,8 @@ LongNumber cos(const LongNumber &num) {
     LongNumber x = norm_0_2Pi(num), tmp = LongNumber::zero, buf = LongNumber::one, count = LongNumber::one;
     bool flag = true;
     while (abs(buf) > LongNumber::eps) {
-        copy_with_double_round(tmp, tmp + (flag ? buf : -buf));
-        copy_with_double_round(buf, buf * (x * x / (count * (count + LongNumber::one))));
+        move_with_double_round(tmp, tmp + (flag ? buf : -buf));
+        move_with_double_round(buf, buf * (x * x / (count * (count + LongNumber::one))));
         count += LongNumber::two;
         flag = !flag;
     }
@@ -675,7 +675,7 @@ LongNumber acos(const LongNumber &num) {
         copy_with_double_round(x, x1);
         auto sin_x = std::async(std::launch::async, [&x] { return sin(x); }),
                 cos_x = std::async(std::launch::async, [&x] { return cos(x); });
-        copy_with_double_round(x1, x1 + (cos_x.get() - tmp_num) / sin_x.get());
+        move_with_double_round(x1, x1 + (cos_x.get() - tmp_num) / sin_x.get());
     }
     return x1;
 }
@@ -765,8 +765,8 @@ LongNumber exp(const LongNumber &num) {
         return LongNumber::one;
     LongNumber tmp = LongNumber::one, buf = LongNumber::one, count = LongNumber::one, num_num = abs(num);
     while (abs(buf) > LongNumber::eps) {
-        copy_with_double_round(buf, buf * (num_num / count));
-        copy_with_double_round(tmp, tmp + buf);
+        move_with_double_round(buf, buf * (num_num / count));
+        move_with_double_round(tmp, tmp + buf);
         ++count;
     }
     return num.sign ? tmp.inv() : tmp;
@@ -905,8 +905,8 @@ LongNumber ln(const LongNumber &num) {
     if (isinf(a))
         return LongNumber::infm;
     while (abs(buf) > LongNumber::eps) {
-        copy_with_double_round(buf, a / exp(x0) - LongNumber::one);
-        copy_with_double_round(x0, x0 + buf);
+        move_with_double_round(buf, a / exp(x0) - LongNumber::one);
+        move_with_double_round(x0, x0 + buf);
     }
     return num < LongNumber::one ? -x0 : x0;
 }
@@ -992,7 +992,7 @@ LongNumber sqrt(const LongNumber &num) {
     LongNumber x = LongNumber::inf, half(0.5), x1 = LongNumber::one, new_eps = pow(LongNumber(10), num.exp / 2) * LongNumber::eps;
     while (abs(x1 - x) > new_eps) {
         copy_with_double_round(x, x1);
-        copy_with_double_round(x1, half * (x + num / x));
+        move_with_double_round(x1, half * (x + num / x));
     }
     return x;
 }
@@ -1015,6 +1015,13 @@ void copy_with_double_round(LongNumber &to_change, const LongNumber &new_num) {
     to_change.round(LongNumber::eps * LongNumber::eps);
 }
 
+void move_with_double_round(LongNumber &to_change, LongNumber &&new_num) {
+    to_change.exp = new_num.exp;
+    to_change.numbers = std::move(new_num.numbers);
+    to_change.sign = new_num.sign;
+    to_change.round(LongNumber::eps * LongNumber::eps);
+}
+
 LongNumber LongNumber::inv() const {
     if (isnan(*this))
         return LongNumber::nan;
@@ -1024,23 +1031,20 @@ LongNumber LongNumber::inv() const {
         return LongNumber::inf;
     LongNumber alpha("2.823529411"), beta("1.8823529411"), x0, tmp(abs(*this)), delta = LongNumber(5 / tmp.numbers[0]);
     if (tmp.numbers[0] < 5) {
-//        tmp = tmp * delta;
-        copy_with_double_round(tmp, tmp * delta);
+        move_with_double_round(tmp, tmp * delta);
     } else
         delta = LongNumber::one;
     long long tmp_exp = -tmp.exp;
     tmp.exp = 0;
     if (tmp.numbers[0] == 0)
         return this->sign ? LongNumber::infm : LongNumber::inf;
-//    x0 = alpha - beta * tmp;
-    copy_with_double_round(x0, alpha - beta * tmp);
+    move_with_double_round(x0, alpha - beta * tmp);
     LongNumber gamma(abs(LongNumber::one - tmp * x0)), new_eps = LongNumber::eps * LongNumber::eps;
     while (gamma >= new_eps) {
-        copy_with_double_round(gamma, gamma * gamma);
-        copy_with_double_round(x0, x0 * (LongNumber::two - tmp * x0));
+        move_with_double_round(gamma, gamma * gamma);
+        move_with_double_round(x0, x0 * (LongNumber::two - tmp * x0));
     }
-//    x0 *= delta;
-    copy_with_double_round(x0, x0 * delta);
+    move_with_double_round(x0, x0 * delta);
     x0.exp += tmp_exp;
     x0.sign = this->sign;
     return x0;
