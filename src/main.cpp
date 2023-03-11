@@ -1,12 +1,10 @@
 #include <iostream>
-#include "src/classes/Mat2D/Mat2D.h"
-#include "src/classes/VecND/VecND.h"
 #include "src/classes/LongNumber/LongNumber.h"
 #include "src/classes/LongComplex/LongComplex.h"
+#include "src/classes/Mat2D/Mat2D.h"
+#include "src/classes/VecND/VecND.h"
 #include "ui files/ui.h"
-#include "sstream"
-
-#include <vector>
+#include "chrono"
 
 int main(int argc, char *argv[]) { // not NaN in == and !=
 //    Mat2D m(3, 5);
@@ -31,9 +29,13 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    v.print();
 //    (m * a).print();
 //   start_UI(argc, argv);
-    LongComplex a;
+    LongComplex a, b;
     std::cin >> a;
-    std::cout << a;
+    std::cout << a << '\n';
+    auto t1 = std::chrono::steady_clock::now();
+    for (int i = 0; i < 1000; ++i) {
+        sqrt(a);
+    }
+    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n' << sqrt(a);
     return 0;
 }
-

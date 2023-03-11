@@ -1,13 +1,13 @@
 #ifndef MEGA_CALCAPP_LONGNUMBER_H
 #define MEGA_CALCAPP_LONGNUMBER_H
 
+#include "cringe class/cringe.h"
 #include <vector>
 #include <string>
 #include <type_traits>
 #include <iostream>
 #include <concepts>
 #include <cmath>
-#include "cringe class/cringe.h"
 
 template<typename T>
 concept arithmetic = std::is_arithmetic<T>::value;
@@ -17,7 +17,10 @@ concept numeric = std::is_integral<T>::value;
 
 class LongNumber {
 private:
+
     friend class LongComplex;
+
+    friend class LongComplex factorial(const class LongComplex &num);
 
     friend LongNumber factorial(const LongNumber &num);
 
@@ -54,6 +57,12 @@ private:
 
     void round(const LongNumber &eps_to_round);
 
+    static const LongNumber G;
+
+    static const LongNumber lanczos_num_coeffs[13];
+
+    static const LongNumber lanczos_den_coeffs[13];
+
 public:
     static const LongNumber zero;
     static const LongNumber half;
@@ -65,6 +74,8 @@ public:
     static const LongNumber inf; //false 11 0
     static const LongNumber infm; //true 11 0
     static const LongNumber eps;
+    static const LongNumber two_Pi;
+    static const LongNumber half_Pi;
 
     LongNumber();
 

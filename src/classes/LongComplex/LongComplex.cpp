@@ -1,13 +1,35 @@
 #include "LongComplex.h"
-#include "string"
+#include "future"
 
 const LongComplex LongComplex::czero = LongComplex("0");
 const LongComplex LongComplex::cinf = LongComplex(LongNumber(cringe("inf")), LongNumber(cringe("inf")));
 const LongComplex LongComplex::I = LongComplex("i");
+const LongComplex LongComplex::cnan = LongComplex(LongNumber(cringe("nan")), LongNumber(cringe("nan")));
+const LongComplex LongComplex::half = LongComplex("0.5");
+const LongComplex LongComplex::one = LongComplex("1");
+const LongComplex LongComplex::two = LongComplex("2");
+const LongComplex LongComplex::two_I = LongComplex("2i");
+const LongComplex LongComplex::e = LongComplex(LongNumber::e);
+const LongComplex LongComplex::Pi = LongComplex(LongNumber::Pi);
+const LongComplex LongComplex::half_Pi = LongComplex(LongNumber::Pi * LongNumber::half);
+
+bool can_change(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return false;
+    return true;
+}
+
+void not_num_converter(LongComplex &num) {
+    if (iscnan(num))
+        num = LongComplex::cnan;
+    else if (iscinf(num))
+        num = LongComplex::cinf;
+}
 
 LongComplex::LongComplex(const LongNumber &real_, const LongNumber &imag_) {
     this->real = real_;
     this->imag = imag_;
+    not_num_converter(*this);
 }
 
 LongComplex::LongComplex(const LongComplex &num) {
@@ -16,6 +38,9 @@ LongComplex::LongComplex(const LongComplex &num) {
 }
 
 LongComplex::LongComplex(std::string s) {
+    if (!correct_complex_num(s)) {
+        throw std::logic_error("Incorrect complex number form");
+    }
     if (s.empty()) {
         this->real = LongNumber::zero;
         this->imag = LongNumber::zero;
@@ -53,31 +78,45 @@ LongComplex::LongComplex(std::string s) {
     }
     this->real = LongNumber(real_);
     this->imag = LongNumber(imag_);
+    not_num_converter(*this);
 }
 
 LongComplex &LongComplex::operator=(const LongComplex &rhs) = default;
 
 LongComplex LongComplex::operator+(const LongComplex &rhs) const {
-    return LongComplex(this->real + rhs.real, this->imag + rhs.imag);
+    if (iscnan(*this) or iscnan(rhs))
+        return LongComplex::cnan;
+    else if (iscinf(*this) or iscinf(rhs))
+        return LongComplex::cinf;
+    return LongComplex{this->real + rhs.real, this->imag + rhs.imag};
 }
 
 LongComplex LongComplex::operator-(const LongComplex &rhs) const {
-    return LongComplex(this->real - rhs.real, this->imag - rhs.imag);
+    if (iscnan(*this) or iscnan(rhs) or (iscinf(*this) and iscinf(rhs)))
+        return LongComplex::cnan;
+    else if (iscinf(*this) or iscinf(rhs))
+        return LongComplex::cinf;
+    return LongComplex{this->real - rhs.real, this->imag - rhs.imag};
 }
 
 LongComplex LongComplex::operator*(const LongComplex &rhs) const {
-    return LongComplex(this->real * rhs.real - this->imag * rhs.imag,
-                       this->imag * rhs.real + this->real * rhs.imag);
+    if (iscnan(*this) or iscnan(rhs) or (iscinf(*this) and rhs == LongComplex::czero) or (iscinf(rhs) and *this == LongComplex::czero))
+        return LongComplex::cnan;
+    else if (iscinf(*this) or iscinf(rhs))
+        return LongComplex::cinf;
+    return LongComplex{this->real * rhs.real - this->imag * rhs.imag,
+                       this->imag * rhs.real + this->real * rhs.imag};
 }
 
 LongComplex LongComplex::operator/(const LongComplex &rhs) const {
-    if (*this == LongComplex::czero and *this != LongComplex::czero) {
-        return LongComplex::czero;
-    } else if (*this != LongComplex::czero and *this == LongComplex::czero) {
+    if (iscnan(*this) or iscnan(rhs) or (iscinf(*this) and iscinf(rhs)) or (*this == LongComplex::czero and rhs == LongComplex::czero))
+        return LongComplex::cnan;
+    else if (iscinf(*this) or rhs == LongComplex::czero)
         return LongComplex::cinf;
-    }
-    return LongComplex((this->real * rhs.real + this->imag * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag),
-                       (this->imag * rhs.real - this->real * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag));
+    else if (*this == LongComplex::czero or iscinf(rhs))
+        return LongComplex::czero;
+    return LongComplex{(this->real * rhs.real + this->imag * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag),
+                       (this->imag * rhs.real - this->real * rhs.imag) / (rhs.real * rhs.real + rhs.imag * rhs.imag)};
 }
 
 bool operator==(const LongComplex &lhs, const LongComplex &rhs) {
@@ -109,10 +148,13 @@ LongComplex &LongComplex::operator/=(const LongComplex &rhs) {
 }
 
 LongComplex LongComplex::operator-() const {
-    LongComplex tmp = *this;
-    tmp.real = -this->real;
-    tmp.imag = -this->imag;
-    return tmp;
+    if (can_change(*this)) {
+        LongComplex tmp = *this;
+        tmp.real = -this->real;
+        tmp.imag = -this->imag;
+        return tmp;
+    }
+    return *this;
 }
 
 bool correct_complex_num(const std::string &num) {
@@ -132,7 +174,7 @@ bool correct_complex_num(const std::string &num) {
             imag_pos = i + 1;
             break;
         } else if (num[i] == '+') {
-            if (i == num.size() - 1 or (i <= num.size() - 2 and !(num[i + 1] >= '0' and num[i + 1] <= '9') and num[i + 1] != 'i')) {
+            if (i == num.size() - 1 or num[i + 1] == '-') {
                 return false;
             }
             imag_pos = i + 1;
@@ -165,14 +207,437 @@ std::istream &operator>>(std::istream &in, LongComplex &num) {
     if (correct_complex_num(s_num)) {
         num = LongComplex(s_num);
     } else {
-        std::cout << "cringe\n";
         num = LongComplex::czero;
     }
     return in;
 }
 
+bool iscnan(const LongComplex &num) {
+    return num.get_real() == LongNumber::nan or num.get_imag() == LongNumber::nan;
+}
+
+bool iscinf(const LongComplex &num) {
+    return abs(num.get_real()) == LongNumber::inf or abs(num.get_imag()) == LongNumber::inf;
+}
+
 std::string LongComplex::to_string() const {
+    if (iscnan(*this))
+        return "NaN";
+    else if (iscinf(*this))
+        return "cinf";
     std::string tmp;
     tmp += this->real.to_string() + (this->imag.sign ? "" : "+") + this->imag.to_string() + "*i";
     return tmp;
+}
+
+void LongComplex::set_real(const LongNumber &real_) {
+    if (can_change(*this)) {
+        this->real = real_;
+        not_num_converter(*this);
+        return;
+    }
+    throw std::logic_error("Can't change non-numerical value");
+}
+
+void LongComplex::set_imag(const LongNumber &imag_) {
+    if (can_change(*this)) {
+        this->imag = imag_;
+        not_num_converter(*this);
+        return;
+    }
+    throw std::logic_error("Can't change non-numerical value");
+}
+
+LongNumber LongComplex::get_real() const {
+    return this->real;
+}
+
+LongNumber LongComplex::get_imag() const {
+    return this->imag;
+}
+
+LongNumber abs(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongNumber::nan;
+    if (num == LongComplex::czero)
+        return LongNumber::zero;
+    else if (num.get_real() == LongNumber::zero)
+        return abs(num.get_imag());
+    else if (num.get_imag() == LongNumber::zero)
+        return abs(num.get_real());
+    return sqrt(num.get_real() * num.get_real() + num.get_imag() * num.get_imag());
+}
+
+LongNumber phase(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongNumber::nan;
+    return atan(num.get_imag() / num.get_real()) + (num.get_real() < LongNumber::zero ? (num.get_imag() >= LongNumber::zero ? LongNumber::Pi : -LongNumber::Pi) : LongNumber::zero);
+}
+
+LongComplex exp(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    auto e_a = std::async(std::launch::async, [&num] { return exp(num.get_real()); }),
+            sin_num = std::async(std::launch::async, [&num] { return sin(num.get_imag()); }),
+            cos_num = std::async(std::launch::async, [&num] { return cos(num.get_imag()); });
+    LongNumber tmp_e_a = e_a.get();
+    return LongComplex{tmp_e_a * cos_num.get(), tmp_e_a * sin_num.get()};
+}
+
+LongComplex ln(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num) or num == LongComplex::czero)
+        return LongComplex::cinf;
+    auto ln_num = std::async(std::launch::async, [&num] { return ln(abs(num)); }),
+            phase_num = std::async(std::launch::async, [&num] { return phase(num); });
+    return LongComplex{ln_num.get(), phase_num.get()};
+}
+
+LongComplex log(const LongComplex &num, const LongComplex &base) {
+    if (iscnan(num) or iscnan(base))
+        return LongComplex::cnan;
+    auto ln_num = std::async(std::launch::async, [&num] { return ln(num); }),
+            ln_base = std::async(std::launch::async, [&base] { return ln(base); });
+    return ln_num.get() / ln_base.get();
+}
+
+LongComplex pow(const LongComplex &num, const LongComplex &deg) {
+    if (iscnan(num) or iscnan(deg) or ((num == LongComplex::czero or iscinf(num)) and deg == LongComplex::czero) or (iscinf(deg) and abs(num) == LongNumber::one))
+        return LongComplex::cnan;
+    else if (iscinf(deg) and (iscinf(num) or abs(num) > LongNumber::one))
+        return LongComplex::cinf;
+    else if ((iscinf(deg) and abs(num) < LongNumber::one) or num == LongComplex::czero)
+        return LongComplex::czero;
+    else if (deg.get_imag() == LongNumber::zero and deg.get_real() == floor(deg.get_real())) {
+        LongComplex tmp = deg.get_real() >= LongNumber::zero ? num : LongComplex::one / num, tmp1 = tmp;
+        for (auto i = LongNumber::one; i < abs(deg.get_real()); ++i) {
+            tmp *= tmp1;
+        }
+        return tmp;
+    }
+    return exp(ln(num) * deg);
+}
+
+LongComplex factorial(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num.get_real() == floor(num.get_real()) and num.get_imag() == LongNumber::zero) {
+        if (num.get_real().sign)
+            return LongComplex::cinf;
+        else
+            return (LongComplex) factorial(num.get_real());
+    }
+    LongComplex num_num = LongComplex(num.get_real() - floor(num.get_real()) + LongNumber::one, num.get_imag()), G_minus = LongComplex(LongNumber::G - LongNumber::half),
+            y = num_num + G_minus, la1, la2;
+    for (int i = 12; i >= 0; --i) {
+        la2 = la2 * num_num + (LongComplex) LongNumber::lanczos_num_coeffs[i];
+        la1 = la1 * num_num + (LongComplex) LongNumber::lanczos_den_coeffs[i];
+    }
+    LongComplex la_rez = la2 / la1, r = la_rez / exp(y);
+    r *= pow(y, num_num - LongComplex::half);
+    for (auto i = num.get_real(); i >= LongNumber::one; --i) {
+        r *= LongComplex(i, num.get_imag());
+    }
+    for (auto i = num.get_real() + LongNumber::one; i <= LongNumber::one; ++i) {
+        r /= LongComplex(i, num.get_imag());
+    }
+    return r;
+}
+
+LongComplex sin(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    auto exp_1 = std::async(std::launch::async, [&num] { return exp(LongComplex::I * num); }),
+            exp_2 = std::async(std::launch::async, [&num] { return exp(-LongComplex::I * num); });
+    return (exp_1.get() - exp_2.get()) / (LongComplex::two * LongComplex::I);
+}
+
+LongComplex asin(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return -LongComplex::I * ln(LongComplex::I * num + sqrt(LongComplex::one - num * num));
+}
+
+LongComplex cos(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::one;
+    auto exp_1 = std::async(std::launch::async, [&num] { return exp(LongComplex::I * num); }),
+            exp_2 = std::async(std::launch::async, [&num] { return exp(-LongComplex::I * num); });
+    return (exp_1.get() + exp_2.get()) / LongComplex::two;
+}
+
+LongComplex acos(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::half_Pi;
+    return LongComplex::half_Pi - asin(num);
+}
+
+LongComplex tan(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return LongComplex::two_I / (exp(LongComplex::two_I * num) + LongComplex::one) - LongComplex::I;
+}
+
+LongComplex atan(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    auto ln_1 = std::async(std::launch::async, [&num] { return ln(LongComplex::one - LongComplex::I * num); }),
+            ln_2 = std::async(std::launch::async, [&num] { return ln(LongComplex::one + LongComplex::I * num); });
+    return LongComplex::half * LongComplex::I * (ln_1.get() - ln_2.get());
+}
+
+
+LongComplex ctan(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return LongComplex::I + LongComplex::two_I / (exp(LongComplex::two_I * num) - LongComplex::one);
+}
+
+LongComplex actan(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::half_Pi;
+    auto ln_1 = std::async(std::launch::async, [&num] { return ln((num - LongComplex::I) / num); }),
+            ln_2 = std::async(std::launch::async, [&num] { return ln((num + LongComplex::I) / num); });
+    return LongComplex::half * LongComplex::I * (ln_1.get() - ln_2.get());
+}
+
+LongComplex sec(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return LongComplex::one / cos(num);
+}
+
+LongComplex asec(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::half_Pi;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    return acos(LongComplex::one / num);
+}
+
+LongComplex cosec(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    return LongComplex::one / sin(num);
+}
+
+LongComplex acosec(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::czero;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    return asin(LongComplex::one / num);
+}
+
+LongComplex sinh(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    auto exp_1 = std::async(std::launch::async, [&num] { return exp(num); }),
+            exp_2 = std::async(std::launch::async, [&num] { return exp(-num); });
+    return (exp_1.get() - exp_2.get()) * LongComplex::half;
+}
+
+LongComplex asinh(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    return ln(sqrt(num * num + LongComplex::one) + num);
+}
+
+LongComplex cosh(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::one;
+    auto exp_1 = std::async(std::launch::async, [&num] { return exp(num); }),
+            exp_2 = std::async(std::launch::async, [&num] { return exp(-num); });
+    return (exp_1.get() + exp_2.get()) * LongComplex::half;
+}
+
+LongComplex acosh(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::half_Pi * LongComplex::I;
+    auto sqrt_1 = std::async(std::launch::async, [&num] { return sqrt(num + LongComplex::one); }),
+            sqrt_2 = std::async(std::launch::async, [&num] { return sqrt(num - LongComplex::one); });
+    return ln(sqrt_1.get() * sqrt_2.get() + num);
+}
+
+LongComplex tanh(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    LongComplex exp_two_num = exp(LongComplex::two * num);
+    return (exp_two_num - LongComplex::one) / (exp_two_num + LongComplex::one);
+}
+
+LongComplex atanh(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    auto ln_1 = std::async(std::launch::async, [&num] { return ln(num + LongComplex::one); }),
+            ln_2 = std::async(std::launch::async, [&num] { return ln(LongComplex::one - num); });
+    return LongComplex::half * (ln_1.get() - ln_2.get());
+}
+
+LongComplex ctanh(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    LongComplex exp_two_num = exp(LongComplex::two * num);
+    return (exp_two_num + LongComplex::one) / (exp_two_num - LongComplex::one);
+}
+
+LongComplex actanh(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::czero;
+    else if (num == LongComplex::czero)
+        return LongComplex::half_Pi * LongComplex::I;
+    auto ln_1 = std::async(std::launch::async, [&num] { return ln(LongComplex::one / num + LongComplex::one); }),
+            ln_2 = std::async(std::launch::async, [&num] { return ln(LongComplex::one - LongComplex::one / num); });
+    return LongComplex::half * (ln_1.get() - ln_2.get());
+}
+
+LongComplex sech(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::one;
+    return LongComplex::one / cosh(num);
+}
+
+LongComplex asech(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    return acosh(LongComplex::one / num);
+}
+
+LongComplex cosech(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    return LongComplex::one / sinh(num);
+}
+
+LongComplex acosech(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num))
+        return LongComplex::cnan;
+    else if (num == LongComplex::czero)
+        return LongComplex::cinf;
+    return asinh(LongComplex::one / num);
+}
+
+LongComplex surd(const LongComplex &num, const LongComplex &deg) {
+    if (iscnan(num) or iscnan(deg) or deg == LongComplex::czero or (iscinf(deg) and (iscinf(num) or num == LongComplex::czero)))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    else if (iscinf(deg))
+        return LongComplex::one;
+    else if (deg == LongComplex::one)
+        return num;
+    return exp(ln(num) / deg);
+}
+
+LongComplex sqrt(const LongComplex &num) {
+    if (iscnan(num))
+        return LongComplex::cnan;
+    else if (iscinf(num))
+        return LongComplex::cinf;
+    else if (num == LongComplex::czero)
+        return LongComplex::czero;
+    LongNumber tmp_abs = abs(num);
+    auto sqrt_1 = std::async(std::launch::async, [&num, &tmp_abs] { return sqrt((num.get_real() + tmp_abs) * LongNumber::half); }),
+            sqrt_2 = std::async(std::launch::async,
+                                [&num, &tmp_abs] { return (num.get_imag() >= LongNumber::zero ? LongNumber::one : -LongNumber::one) * sqrt((-num.get_real() + tmp_abs) * LongNumber::half); });
+    return LongComplex{sqrt_1.get(), sqrt_2.get()};
+}
+
+std::pair<long long, long long> one2two(long long n) {
+    long long a = std::floor(std::sqrt(n));
+    if (a % 2 == 0)
+        return std::make_pair(std::min(n - a * a, a), n <= a * (a + 1) ? a : a - (n - a * (a + 1)));
+    else
+        return std::make_pair(n <= a * (a + 1) ? a : a - (n - a * (a + 1)), std::min(n - a * a, a));
+}
+
+LongNumber many_value_f::phase(const LongComplex &num, long long n) {
+    return phase(num) + LongNumber::two_Pi * LongNumber{n};
+}
+
+LongComplex many_value_f::ln(const LongComplex &num, long long n) {
+    return ln(num) + LongComplex::I * LongComplex{LongNumber::two_Pi} * LongComplex{n};
+}
+
+LongComplex many_value_f::log(const LongComplex &num, const LongComplex &base, long long n) {
+    auto a = one2two(n);
+    auto ln_num = std::async(std::launch::async, [&num, &a] { return ln(num, a.first); }),
+            ln_base = std::async(std::launch::async, [&base, &a] { return ln(base, a.second); });
+    return ln_num.get() / ln_base.get();
+}
+
+LongComplex many_value_f::pow(const LongComplex &num, const LongComplex &deg, long long n) {
+    LongNumber abs_num = abs(num), phase_num = phase(num), N = LongNumber(n);
+    auto pow_r = std::async(std::launch::async, [&abs_num, &deg] { return pow(abs_num, deg.get_real()); }),
+            exp_r = std::async(std::launch::async, [&phase_num, &deg, &N] { return exp(-deg.get_imag() * (phase_num + LongNumber::two_Pi * N)); }),
+            ln_p = std::async(std::launch::async, [&abs_num] { return ln(abs_num); });
+    LongNumber r = pow_r.get() * exp_r.get(), p = ln_p.get() * deg.get_imag() + deg.get_real() * (phase_num + LongNumber::two_Pi * N);
+    auto cos_p = std::async(std::launch::async, [&p] { return cos(p); }),
+            sin_p = std::async(std::launch::async, [&p] { return sin(p); });
+    return LongComplex{r * cos_p.get(), r * sin_p.get()};
+}
+
+LongComplex many_value_f::surd(const LongComplex &num, const LongComplex &deg, long long n) {
+    return pow(num, LongComplex::one / deg, n);
 }
