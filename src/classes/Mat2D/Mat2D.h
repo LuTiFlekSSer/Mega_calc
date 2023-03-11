@@ -22,6 +22,8 @@ public:
 
     Mat2D(const Mat2D &el);
 
+    Mat2D(Mat2D &&el) noexcept;
+
     Mat2D();
 
     void print();
@@ -38,7 +40,11 @@ public:
 
     Mat2D &operator=(const Mat2D &rhs);
 
+    Mat2D &operator=(Mat2D &&rhs) noexcept;
+
     Mat2D &operator=(const VecND &rhs);
+
+    Mat2D &operator=(VecND &&rhs) noexcept;
 
     std::tuple<VecND, Mat2D> solve(VecND &b);
 

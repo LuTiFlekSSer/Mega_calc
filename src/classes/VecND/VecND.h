@@ -17,6 +17,8 @@ public:
 
     VecND(const VecND &el);
 
+    VecND(VecND &&el) noexcept;
+
     void print();
 
     LongNumber &operator[](int index);
@@ -30,6 +32,8 @@ public:
     VecND &operator*=(const LongNumber &rhs);
 
     VecND &operator=(const VecND &rhs);
+
+    VecND &operator=(VecND &&rhs) noexcept;
 
     int size();
 };

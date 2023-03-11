@@ -72,3 +72,14 @@ int VecND::size() {
     return (int) vec.size();
 }
 
+VecND::VecND(VecND &&el) noexcept {
+    vec = std::move(el.vec);
+}
+
+VecND &VecND::operator=(VecND &&rhs) noexcept {
+    if (this == &rhs)
+        return *this;
+    vec = std::move(rhs.vec);
+    return *this;
+}
+

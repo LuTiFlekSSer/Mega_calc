@@ -256,6 +256,19 @@ LongNumber LongComplex::get_imag() const {
     return this->imag;
 }
 
+LongComplex::LongComplex(LongComplex &&num) noexcept {
+    real = std::move(num.real);
+    imag = std::move(num.imag);
+}
+
+LongComplex &LongComplex::operator=(LongComplex &&rhs) noexcept {
+    if (this == &rhs)
+        return *this;
+    real = std::move(rhs.real);
+    imag = std::move(rhs.imag);
+    return *this;
+}
+
 LongNumber abs(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
         return LongNumber::nan;

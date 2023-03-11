@@ -310,6 +310,23 @@ int Mat2D::size() {
     return (int) mat.size();
 }
 
+Mat2D::Mat2D(Mat2D &&el) noexcept {
+    mat = std::move(el.mat);
+}
+
+Mat2D &Mat2D::operator=(Mat2D &&rhs) noexcept {
+    if (this == &rhs)
+        return *this;
+    mat = std::move(rhs.mat);
+    return *this;
+}
+
+Mat2D &Mat2D::operator=(VecND &&rhs) noexcept {
+    mat.resize(1);
+    mat[0] = std::move(rhs);
+    return *this;
+}
+
 void print_solve(std::tuple<VecND, Mat2D> xc) {
     if (std::get<0>(xc).size() == 0)
         std::cout << "No solution\n";

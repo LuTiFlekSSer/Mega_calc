@@ -37,6 +37,8 @@ public:
 
     LongComplex(const LongComplex &num);
 
+    LongComplex(LongComplex &&num) noexcept;
+
     void set_real(const LongNumber &real_);
 
     void set_imag(const LongNumber &imag_);
@@ -46,6 +48,8 @@ public:
     [[nodiscard]] LongNumber get_imag() const;
 
     LongComplex &operator=(const LongComplex &rhs);
+
+    LongComplex &operator=(LongComplex &&rhs) noexcept;
 
     LongComplex operator+(const LongComplex &rhs) const;
 

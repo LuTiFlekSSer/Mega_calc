@@ -79,12 +79,16 @@ public:
 
     LongNumber(const LongNumber &num);
 
+    LongNumber(LongNumber &&num) noexcept;
+
     explicit LongNumber(std::string num);
 
     template<arithmetic T>
     explicit LongNumber(T num) : LongNumber(num == std::floor(num) ? std::to_string((long long) num) : std::to_string(num)) {};
 
     LongNumber &operator=(const LongNumber &rhs);
+
+    LongNumber &operator=(LongNumber &&rhs) noexcept;
 
     LongNumber operator+(const LongNumber &rhs) const;
 

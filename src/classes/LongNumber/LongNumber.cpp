@@ -1120,6 +1120,21 @@ LongNumber &LongNumber::operator=(const LongNumber &rhs) {
     return *this;
 }
 
+LongNumber::LongNumber(LongNumber &&num) noexcept {
+    exp = num.exp;
+    numbers = std::move(num.numbers);
+    sign = num.sign;
+}
+
+LongNumber &LongNumber::operator=(LongNumber &&rhs) noexcept {
+    if (this == &rhs)
+        return *this;
+    exp = rhs.exp;
+    numbers = std::move(rhs.numbers);
+    sign = rhs.sign;
+    return *this;
+}
+
 bool correct_long_num(const std::string &num) {
     if (num == "inf" or num == "-inf") {
         return true;
