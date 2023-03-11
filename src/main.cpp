@@ -32,10 +32,11 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
     LongComplex a, b;
     std::cin >> a;
     std::cout << a << '\n';
-    auto t1 = std::chrono::steady_clock::now();
-    for (int i = 0; i < 1000; ++i) {
-        sqrt(a);
-    }
-    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n' << sqrt(a);
+//    auto t1 = std::chrono::steady_clock::now();
+//    for (int i = 0; i < 1000; ++i) {
+//        sqrt(a);
+//    }
+//    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n';
+    std::cout << ln(a);
     return 0;
 }

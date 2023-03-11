@@ -151,7 +151,6 @@ LongComplex cosech(const LongComplex &num);
 LongComplex acosech(const LongComplex &num);// periodic
 
 namespace many_value_f {
-
     LongNumber phase(const LongComplex &num, long long n);
 
     LongComplex ln(const LongComplex &num, long long n);
@@ -161,7 +160,6 @@ namespace many_value_f {
     LongComplex pow(const LongComplex &num, const LongComplex &deg, long long n);
 
     LongComplex surd(const LongComplex &num, const LongComplex &deg, long long n);
-
 }
 
 #endif

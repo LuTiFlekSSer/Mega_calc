@@ -14,6 +14,7 @@ const LongNumber LongNumber::infm = LongNumber(cringe("-inf"));
 const LongNumber LongNumber::eps = LongNumber{"0.00000000000000001"};
 const LongNumber LongNumber::two_Pi = LongNumber::Pi * LongNumber::two;
 const LongNumber LongNumber::half_Pi = LongNumber::Pi * LongNumber::half;
+const LongNumber LongNumber::log_to_ln = LongNumber("2.30259");
 
 const LongNumber LongNumber::G("6.024680040776729583740234375");
 const LongNumber LongNumber::lanczos_num_coeffs[13] = {
@@ -900,7 +901,7 @@ LongNumber ln(const LongNumber &num) {
         return LongNumber::inf;
     else if (num == LongNumber::zero)
         return LongNumber::infm;
-    LongNumber a = num < LongNumber::one ? num.inv() : num, x0 = LongNumber(a.exp - 1) * LongNumber(2.30259), buf = LongNumber::one;
+    LongNumber a = num < LongNumber::one ? num.inv() : num, x0 = LongNumber(a.exp - 1) * LongNumber::log_to_ln, buf = LongNumber::one;
     if (isinf(a))
         return LongNumber::infm;
     while (abs(buf) > LongNumber::eps) {

@@ -605,7 +605,7 @@ LongComplex sqrt(const LongComplex &num) {
 }
 
 std::pair<long long, long long> one2two(long long n) {
-    long long a = std::floor(std::sqrt(n));
+    long long a = std::floor(std::sqrt(std::abs(n)));
     if (a % 2 == 0)
         return std::make_pair(std::min(n - a * a, a), n <= a * (a + 1) ? a : a - (n - a * (a + 1)));
     else

@@ -17,7 +17,6 @@ concept numeric = std::is_integral<T>::value;
 
 class LongNumber {
 private:
-
     friend class LongComplex;
 
     friend class LongComplex factorial(const class LongComplex &num);
@@ -58,10 +57,9 @@ private:
     void round(const LongNumber &eps_to_round);
 
     static const LongNumber G;
-
     static const LongNumber lanczos_num_coeffs[13];
-
     static const LongNumber lanczos_den_coeffs[13];
+    static const LongNumber log_to_ln;
 
 public:
     static const LongNumber zero;
