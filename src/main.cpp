@@ -29,14 +29,14 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    v.print();
 //    (m * a).print();
 //   start_UI(argc, argv);
-    LongNumber a, b;
+    LongComplex a, b;
     std::cin >> a;
     std::cout << a << '\n';
     auto t1 = std::chrono::steady_clock::now();
     for (int i = 0; i < 1000; ++i) {
-        b = sin(a);
+        b = ln(a);
     }
     std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n';
-    std::cout << sin(a);
+    std::cout << ln(a);
     return 0;
 }

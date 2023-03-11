@@ -68,12 +68,14 @@ public:
     static const LongNumber half;
     static const LongNumber one;
     static const LongNumber two;
+    static const LongNumber ten;
     static const LongNumber e;
     static const LongNumber Pi;
     static const LongNumber nan; //false 10 0
     static const LongNumber inf; //false 11 0
     static const LongNumber infm; //true 11 0
     static const LongNumber eps;
+    static const LongNumber double_eps;
     static const LongNumber two_Pi;
     static const LongNumber half_Pi;
 
