@@ -154,13 +154,13 @@ namespace many_value_f {
 
     LongNumber phase(const LongComplex &num, long long n);
 
-    LongComplex ln(const LongComplex &num, long  long n);
+    LongComplex ln(const LongComplex &num, long long n);
 
-    LongComplex log(const LongComplex &num, const LongComplex &base, long  long n);
+    LongComplex log(const LongComplex &num, const LongComplex &base, long long n);
 
-    LongComplex pow(const LongComplex &num, const LongComplex &deg, long  long n);
+    LongComplex pow(const LongComplex &num, const LongComplex &deg, long long n);
 
-    LongComplex surd(const LongComplex &num, const LongComplex &deg, long  long n);
+    LongComplex surd(const LongComplex &num, const LongComplex &deg, long long n);
 
 }
 

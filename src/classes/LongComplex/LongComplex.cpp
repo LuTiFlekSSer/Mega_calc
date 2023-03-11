@@ -622,13 +622,20 @@ LongComplex many_value_f::ln(const LongComplex &num, long long n) {
 
 LongComplex many_value_f::log(const LongComplex &num, const LongComplex &base, long long n) {
     auto a = one2two(n);
-    return ln(num, a.first) / ln(base, a.second);
+    auto ln_num = std::async(std::launch::async, [&num, &a] { return ln(num, a.first); }),
+            ln_base = std::async(std::launch::async, [&base, &a] { return ln(base, a.second); });
+    return ln_num.get() / ln_base.get();
 }
 
 LongComplex many_value_f::pow(const LongComplex &num, const LongComplex &deg, long long n) {
-    LongNumber r = pow(abs(num), deg.get_real()) * exp(-deg.get_imag() * (phase(num) + LongNumber::two_Pi * LongNumber{n})),
-            p = ln(abs(num)) * deg.get_imag() + deg.get_real() * (phase(num) + LongNumber::two_Pi * LongNumber{n});
-    return LongComplex{r * cos(p), r * sin(p)};
+    LongNumber abs_num = abs(num), phase_num = phase(num), N = LongNumber(n);
+    auto pow_r = std::async(std::launch::async, [&abs_num, &deg] { return pow(abs_num, deg.get_real()); }),
+            exp_r = std::async(std::launch::async, [&phase_num, &deg, &N] { return exp(-deg.get_imag() * (phase_num + LongNumber::two_Pi * N)); }),
+            ln_p = std::async(std::launch::async, [&abs_num] { return ln(abs_num); });
+    LongNumber r = pow_r.get() * exp_r.get(), p = ln_p.get() * deg.get_imag() + deg.get_real() * (phase_num + LongNumber::two_Pi * N);
+    auto cos_p = std::async(std::launch::async, [&p] { return cos(p); }),
+            sin_p = std::async(std::launch::async, [&p] { return sin(p); });
+    return LongComplex{r * cos_p.get(), r * sin_p.get()};
 }
 
 LongComplex many_value_f::surd(const LongComplex &num, const LongComplex &deg, long long n) {
