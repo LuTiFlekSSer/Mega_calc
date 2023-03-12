@@ -6,7 +6,7 @@
 #include "ui files/ui.h"
 #include "chrono"
 
-int main(int argc, char *argv[]) { // not NaN in == and !=
+int main(int argc, char *argv[]) {
 //    Mat2D m(3, 5);
 //    for (int i = 0; i < 3; ++i) {
 //        for (int j = 0; j < 5; ++j) {
@@ -29,13 +29,14 @@ int main(int argc, char *argv[]) { // not NaN in == and !=
 //    v.print();
 //    (m * a).print();
 //   start_UI(argc, argv);
-    LongComplex a, b;
-    std::cin >> a;
+    LongComplex a, b, c;
+    std::cin >> a >> b;
     std::cout << a << '\n';
     auto t1 = std::chrono::steady_clock::now();
     for (int i = 0; i < 1000; ++i) {
-        sqrt(a);
+        b = factorial(a);
     }
-    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n' << sqrt(a);
+    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n';
+    std::cout << factorial(a);
     return 0;
 }

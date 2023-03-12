@@ -17,7 +17,6 @@ concept numeric = std::is_integral<T>::value;
 
 class LongNumber {
 private:
-
     friend class LongComplex;
 
     friend class LongComplex factorial(const class LongComplex &num);
@@ -49,6 +48,8 @@ private:
 
     friend void copy_with_double_round(LongNumber &to_change, const LongNumber &new_num);
 
+    friend void move_with_double_round(LongNumber &to_change, LongNumber &&new_num);
+
     bool sign = false;
     std::vector<char> numbers;
     long long exp{};
@@ -58,22 +59,22 @@ private:
     void round(const LongNumber &eps_to_round);
 
     static const LongNumber G;
-
     static const LongNumber lanczos_num_coeffs[13];
-
     static const LongNumber lanczos_den_coeffs[13];
-
+    static const LongNumber lns[10];
 public:
     static const LongNumber zero;
     static const LongNumber half;
     static const LongNumber one;
     static const LongNumber two;
+    static const LongNumber ten;
     static const LongNumber e;
     static const LongNumber Pi;
     static const LongNumber nan; //false 10 0
     static const LongNumber inf; //false 11 0
     static const LongNumber infm; //true 11 0
     static const LongNumber eps;
+    static const LongNumber double_eps;
     static const LongNumber two_Pi;
     static const LongNumber half_Pi;
 
@@ -81,12 +82,16 @@ public:
 
     LongNumber(const LongNumber &num);
 
+    LongNumber(LongNumber &&num) noexcept;
+
     explicit LongNumber(std::string num);
 
     template<arithmetic T>
     explicit LongNumber(T num) : LongNumber(num == std::floor(num) ? std::to_string((long long) num) : std::to_string(num)) {};
 
     LongNumber &operator=(const LongNumber &rhs);
+
+    LongNumber &operator=(LongNumber &&rhs) noexcept;
 
     LongNumber operator+(const LongNumber &rhs) const;
 

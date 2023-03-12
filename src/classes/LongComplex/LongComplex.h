@@ -37,6 +37,8 @@ public:
 
     LongComplex(const LongComplex &num);
 
+    LongComplex(LongComplex &&num) noexcept;
+
     void set_real(const LongNumber &real_);
 
     void set_imag(const LongNumber &imag_);
@@ -45,7 +47,11 @@ public:
 
     [[nodiscard]] LongNumber get_imag() const;
 
+    [[nodiscard]] std::string to_string() const;
+
     LongComplex &operator=(const LongComplex &rhs);
+
+    LongComplex &operator=(LongComplex &&rhs) noexcept;
 
     LongComplex operator+(const LongComplex &rhs) const;
 
@@ -64,8 +70,6 @@ public:
     LongComplex &operator/=(const LongComplex &rhs);
 
     LongComplex operator-() const;
-
-    [[nodiscard]] std::string to_string() const;
 
     friend std::ostream &operator<<(std::ostream &out, const LongComplex &num);
 
@@ -104,64 +108,88 @@ LongComplex surd(const LongComplex &num, const LongComplex &deg);
 
 LongComplex sin(const LongComplex &num);
 
-LongComplex asin(const LongComplex &num);// periodic
+LongComplex asin(const LongComplex &num);
 
 LongComplex cos(const LongComplex &num);
 
-LongComplex acos(const LongComplex &num);// periodic
+LongComplex acos(const LongComplex &num);
 
 LongComplex tan(const LongComplex &num);
 
-LongComplex atan(const LongComplex &num);// periodic
+LongComplex atan(const LongComplex &num);
 
 LongComplex ctan(const LongComplex &num);
 
-LongComplex actan(const LongComplex &num);// periodic
+LongComplex actan(const LongComplex &num);
 
 LongComplex sec(const LongComplex &num);
 
-LongComplex asec(const LongComplex &num);// periodic
+LongComplex asec(const LongComplex &num);
 
 LongComplex cosec(const LongComplex &num);
 
-LongComplex acosec(const LongComplex &num);// periodic
+LongComplex acosec(const LongComplex &num);
 
 LongComplex sinh(const LongComplex &num);
 
-LongComplex asinh(const LongComplex &num);// periodic
+LongComplex asinh(const LongComplex &num);
 
 LongComplex cosh(const LongComplex &num);
 
-LongComplex acosh(const LongComplex &num);// periodic
+LongComplex acosh(const LongComplex &num);
 
 LongComplex tanh(const LongComplex &num);
 
-LongComplex atanh(const LongComplex &num);// periodic
+LongComplex atanh(const LongComplex &num);
 
 LongComplex ctanh(const LongComplex &num);
 
-LongComplex actanh(const LongComplex &num);// periodic
+LongComplex actanh(const LongComplex &num);
 
 LongComplex sech(const LongComplex &num);
 
-LongComplex asech(const LongComplex &num);// periodic
+LongComplex asech(const LongComplex &num);
 
 LongComplex cosech(const LongComplex &num);
 
-LongComplex acosech(const LongComplex &num);// periodic
+LongComplex acosech(const LongComplex &num);
 
 namespace many_value_f {
-
     LongNumber phase(const LongComplex &num, long long n);
 
     LongComplex ln(const LongComplex &num, long long n);
 
-    LongComplex log(const LongComplex &num, const LongComplex &base, long long n);
+    LongComplex log(const LongComplex &num, const LongComplex &base, long long n, long long k);
 
     LongComplex pow(const LongComplex &num, const LongComplex &deg, long long n);
 
     LongComplex surd(const LongComplex &num, const LongComplex &deg, long long n);
 
+    LongComplex sqrt(const LongComplex &num, long long n);
+
+    LongComplex asin(const LongComplex &num, long long n, long long k);
+
+    LongComplex acos(const LongComplex &num, long long n, long long k);
+
+    LongComplex atan(const LongComplex &num, long long n, long long k);
+
+    LongComplex actan(const LongComplex &num, long long n, long long k);
+
+    LongComplex asec(const LongComplex &num, long long n, long long k);
+
+    LongComplex acosec(const LongComplex &num, long long n, long long k);
+
+    LongComplex asinh(const LongComplex &num, long long n, long long k);
+
+    LongComplex acosh(const LongComplex &num, long long n, long long k);
+
+    LongComplex atanh(const LongComplex &num, long long n, long long k);
+
+    LongComplex actanh(const LongComplex &num, long long n, long long k);
+
+    LongComplex asech(const LongComplex &num, long long n, long long k);
+
+    LongComplex acosech(const LongComplex &num, long long n, long long k);
 }
 
 #endif

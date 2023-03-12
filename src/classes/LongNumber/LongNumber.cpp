@@ -2,18 +2,33 @@
 #include "iostream"
 #include "future"
 
+static const LongNumber alpha("2.823529411"), beta("1.8823529411");
 const LongNumber LongNumber::zero = LongNumber{0};
 const LongNumber LongNumber::half = LongNumber{0.5};
 const LongNumber LongNumber::one = LongNumber{1};
 const LongNumber LongNumber::two = LongNumber{2};
+const LongNumber LongNumber::ten = LongNumber{10};
 const LongNumber LongNumber::Pi = LongNumber("3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679");
 const LongNumber LongNumber::e = LongNumber("2.7182818284590452353602874713526624977572470936999595749669676277240766303535475945713821785251664274");
 const LongNumber LongNumber::nan = LongNumber(cringe("nan"));
 const LongNumber LongNumber::inf = LongNumber(cringe("inf"));
 const LongNumber LongNumber::infm = LongNumber(cringe("-inf"));
 const LongNumber LongNumber::eps = LongNumber{"0.00000000000000001"};
+const LongNumber LongNumber::double_eps = LongNumber::eps * LongNumber::eps;
 const LongNumber LongNumber::two_Pi = LongNumber::Pi * LongNumber::two;
 const LongNumber LongNumber::half_Pi = LongNumber::Pi * LongNumber::half;
+const LongNumber LongNumber::lns[10] = {
+        LongNumber::zero,
+        LongNumber("0.6931471805599453094172321214581765680755001343602552541206800094933936219696947156058633269964186875420014810205706857336855202"),
+        LongNumber("1.0986122886681096913952452369225257046474905578227494517346943336374942932186089668736157548137320887879700290659578657423680042"),
+        LongNumber("1.3862943611198906188344642429163531361510002687205105082413600189867872439393894312117266539928373750840029620411413714673710404"),
+        LongNumber("1.6094379124341003746007593332261876395256013542685177219126478914741789877076577646301338780931796107999663030217155628997240052"),
+        LongNumber("1.7917594692280550008124773583807022727229906921830047058553743431308879151883036824794790818101507763299715100865285514760535244"),
+        LongNumber("1.9459101490553133051053527434431797296370847295818611884593901499375798627520692677876584985878715269930616942058511409117237522"),
+        LongNumber("2.0794415416798359282516963643745297042265004030807657623620400284801808659090841468175899809892560626260044430617120572010565607"),
+        LongNumber("2.1972245773362193827904904738450514092949811156454989034693886672749885864372179337472315096274641775759400581319157314847360084"),
+        LongNumber("2.3025850929940456840179914546843642076011014886287729760333279009675726096773524802359972050895982983419677840422862486334095254")
+};
 
 const LongNumber LongNumber::G("6.024680040776729583740234375");
 const LongNumber LongNumber::lanczos_num_coeffs[13] = {
@@ -188,7 +203,7 @@ std::istream &operator>>(std::istream &in, LongNumber &num) {
     if (correct_long_num(s_num))
         num = LongNumber(s_num);
     else
-        num = LongNumber(0);
+        num = LongNumber::zero;
     return in;
 }
 
@@ -332,7 +347,7 @@ LongNumber LongNumber::operator+(const LongNumber &rhs) const {
                 return LongNumber{};
         }
         LongNumber tmp{};
-        tmp.numbers = answer;
+        tmp.numbers = std::move(answer);
         tmp.sign = this->sign;
         tmp.exp = max_exp;
         return tmp;
@@ -488,7 +503,7 @@ LongNumber LongNumber::operator-(const LongNumber &rhs) const {
                 return LongNumber{};
         }
         LongNumber tmp{};
-        tmp.numbers = answer;
+        tmp.numbers = std::move(answer);
         tmp.sign = this->sign;
         tmp.exp = max_exp;
         return tmp;
@@ -601,7 +616,7 @@ void LongNumber::round(const LongNumber &eps_to_round) {
         }
         if (tmp >= 5) {
             LongNumber err(*this + (old_sign ? -eps_to_round : eps_to_round));
-            this->numbers = err.numbers;
+            this->numbers = std::move(err.numbers);
             this->exp = err.exp;
             this->sign = err.sign;
         }
@@ -627,8 +642,8 @@ LongNumber sin(const LongNumber &num) {
     LongNumber x = norm_0_2Pi(num), tmp = LongNumber::zero, buf = x, count = LongNumber::two;
     bool flag = true;
     while (abs(buf) > LongNumber::eps) {
-        copy_with_double_round(tmp, tmp + (flag ? buf : -buf));
-        copy_with_double_round(buf, buf * (x * x / (count * (count + LongNumber::one))));
+        move_with_double_round(tmp, tmp + (flag ? buf : -buf));
+        move_with_double_round(buf, buf * (x * x / (count * (count + LongNumber::one))));
         count += LongNumber::two;
         flag = !flag;
     }
@@ -644,7 +659,7 @@ LongNumber asin(const LongNumber &num) {
         copy_with_double_round(x, x1);
         auto sin_x = std::async(std::launch::async, [&x] { return sin(x); }),
                 cos_x = std::async(std::launch::async, [&x] { return cos(x); });
-        copy_with_double_round(x1, x1 - (sin_x.get() - tmp_num) / cos_x.get());
+        move_with_double_round(x1, x1 - (sin_x.get() - tmp_num) / cos_x.get());
     }
     return x1;
 }
@@ -657,8 +672,8 @@ LongNumber cos(const LongNumber &num) {
     LongNumber x = norm_0_2Pi(num), tmp = LongNumber::zero, buf = LongNumber::one, count = LongNumber::one;
     bool flag = true;
     while (abs(buf) > LongNumber::eps) {
-        copy_with_double_round(tmp, tmp + (flag ? buf : -buf));
-        copy_with_double_round(buf, buf * (x * x / (count * (count + LongNumber::one))));
+        move_with_double_round(tmp, tmp + (flag ? buf : -buf));
+        move_with_double_round(buf, buf * (x * x / (count * (count + LongNumber::one))));
         count += LongNumber::two;
         flag = !flag;
     }
@@ -674,7 +689,7 @@ LongNumber acos(const LongNumber &num) {
         copy_with_double_round(x, x1);
         auto sin_x = std::async(std::launch::async, [&x] { return sin(x); }),
                 cos_x = std::async(std::launch::async, [&x] { return cos(x); });
-        copy_with_double_round(x1, x1 + (cos_x.get() - tmp_num) / sin_x.get());
+        move_with_double_round(x1, x1 + (cos_x.get() - tmp_num) / sin_x.get());
     }
     return x1;
 }
@@ -764,8 +779,8 @@ LongNumber exp(const LongNumber &num) {
         return LongNumber::one;
     LongNumber tmp = LongNumber::one, buf = LongNumber::one, count = LongNumber::one, num_num = abs(num);
     while (abs(buf) > LongNumber::eps) {
-        copy_with_double_round(buf, buf * (num_num / count));
-        copy_with_double_round(tmp, tmp + buf);
+        move_with_double_round(buf, buf * (num_num / count));
+        move_with_double_round(tmp, tmp + buf);
         ++count;
     }
     return num.sign ? tmp.inv() : tmp;
@@ -900,14 +915,15 @@ LongNumber ln(const LongNumber &num) {
         return LongNumber::inf;
     else if (num == LongNumber::zero)
         return LongNumber::infm;
-    LongNumber a = num < LongNumber::one ? num.inv() : num, x0 = LongNumber(a.exp - 1) * LongNumber(2.30259), buf = LongNumber::one;
-    if (isinf(a))
-        return LongNumber::infm;
+    LongNumber mnoj = LongNumber(num.exp - 1), a = num;
+    a.exp = 1;
+    a /= LongNumber(a.numbers[0]);
+    LongNumber x0 = LongNumber::zero, buf = LongNumber::one;
     while (abs(buf) > LongNumber::eps) {
-        copy_with_double_round(buf, a / exp(x0) - LongNumber::one);
-        copy_with_double_round(x0, x0 + buf);
+        move_with_double_round(buf, a / exp(x0) - LongNumber::one);
+        move_with_double_round(x0, x0 + buf);
     }
-    return num < LongNumber::one ? -x0 : x0;
+    return x0 + mnoj * LongNumber::lns[9] + LongNumber::lns[num.numbers[0] - 1];
 }
 
 LongNumber log(const LongNumber &num, const LongNumber &base) {
@@ -942,12 +958,14 @@ LongNumber factorial(const LongNumber &num) {
         return rec_fact(num);
     }
     LongNumber num_num = num - floor(num) + LongNumber::one, G_minus = LongNumber::G - LongNumber::half, y = num_num + G_minus, la1, la2;
+    auto pow_for_r = std::async(std::launch::async, [&y, &num_num] { return pow(y, num_num - LongNumber::half); }),
+            exp_y = std::async(std::launch::async, [&y] { return exp(y); });
     for (int i = 12; i >= 0; --i) {
         la2 = la2 * num_num + LongNumber::lanczos_num_coeffs[i];
         la1 = la1 * num_num + LongNumber::lanczos_den_coeffs[i];
     }
-    LongNumber la_rez = la2 / la1, r = la_rez / exp(y);
-    r *= pow(y, num_num - LongNumber::half);
+    LongNumber la_rez = la2 / la1, r = la_rez / exp_y.get();
+    r *= pow_for_r.get();
     for (auto i = num; i >= LongNumber::one; --i) {
         r *= i;
     }
@@ -988,10 +1006,10 @@ LongNumber sqrt(const LongNumber &num) {
         return LongNumber::inf;
     else if (num == LongNumber::zero)
         return num;
-    LongNumber x = LongNumber::inf, half(0.5), x1 = LongNumber::one, new_eps = pow(LongNumber(10), num.exp / 2) * LongNumber::eps;
+    LongNumber x = LongNumber::inf, half = LongNumber::half, x1 = LongNumber::one, new_eps = pow(LongNumber::ten, num.exp / 2) * LongNumber::eps;
     while (abs(x1 - x) > new_eps) {
         copy_with_double_round(x, x1);
-        copy_with_double_round(x1, half * (x + num / x));
+        move_with_double_round(x1, half * (x + num / x));
     }
     return x;
 }
@@ -1011,7 +1029,14 @@ void copy_with_double_round(LongNumber &to_change, const LongNumber &new_num) {
     to_change.exp = new_num.exp;
     to_change.numbers = new_num.numbers;
     to_change.sign = new_num.sign;
-    to_change.round(LongNumber::eps * LongNumber::eps);
+    to_change.round(LongNumber::double_eps);
+}
+
+void move_with_double_round(LongNumber &to_change, LongNumber &&new_num) {
+    to_change.exp = new_num.exp;
+    to_change.numbers = std::move(new_num.numbers);
+    to_change.sign = new_num.sign;
+    to_change.round(LongNumber::double_eps);
 }
 
 LongNumber LongNumber::inv() const {
@@ -1021,25 +1046,22 @@ LongNumber LongNumber::inv() const {
         return LongNumber::zero;
     else if (*this == LongNumber::zero)
         return LongNumber::inf;
-    LongNumber alpha("2.823529411"), beta("1.8823529411"), x0, tmp(abs(*this)), delta = LongNumber(5 / tmp.numbers[0]);
+    LongNumber x0, tmp(abs(*this)), delta = LongNumber(5 / tmp.numbers[0]);
     if (tmp.numbers[0] < 5) {
-//        tmp = tmp * delta;
-        copy_with_double_round(tmp, tmp * delta);
+        move_with_double_round(tmp, tmp * delta);
     } else
         delta = LongNumber::one;
     long long tmp_exp = -tmp.exp;
     tmp.exp = 0;
     if (tmp.numbers[0] == 0)
         return this->sign ? LongNumber::infm : LongNumber::inf;
-//    x0 = alpha - beta * tmp;
-    copy_with_double_round(x0, alpha - beta * tmp);
-    LongNumber gamma(abs(LongNumber::one - tmp * x0)), new_eps = LongNumber::eps * LongNumber::eps;
-    while (gamma >= new_eps) {
-        copy_with_double_round(gamma, gamma * gamma);
-        copy_with_double_round(x0, x0 * (LongNumber::two - tmp * x0));
+    move_with_double_round(x0, alpha - beta * tmp);
+    LongNumber gamma(abs(LongNumber::one - tmp * x0));
+    while (gamma > LongNumber::double_eps) {
+        move_with_double_round(gamma, gamma * gamma);
+        move_with_double_round(x0, x0 * (LongNumber::two - tmp * x0));
     }
-//    x0 *= delta;
-    copy_with_double_round(x0, x0 * delta);
+    move_with_double_round(x0, x0 * delta);
     x0.exp += tmp_exp;
     x0.sign = this->sign;
     return x0;
@@ -1116,6 +1138,21 @@ LongNumber &LongNumber::operator=(const LongNumber &rhs) {
     numbers = rhs.numbers;
     sign = rhs.sign;
     this->round(LongNumber::eps);
+    return *this;
+}
+
+LongNumber::LongNumber(LongNumber &&num) noexcept {
+    exp = num.exp;
+    numbers = std::move(num.numbers);
+    sign = num.sign;
+}
+
+LongNumber &LongNumber::operator=(LongNumber &&rhs) noexcept {
+    if (this == &rhs)
+        return *this;
+    exp = rhs.exp;
+    numbers = std::move(rhs.numbers);
+    sign = rhs.sign;
     return *this;
 }
 

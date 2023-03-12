@@ -256,6 +256,19 @@ LongNumber LongComplex::get_imag() const {
     return this->imag;
 }
 
+LongComplex::LongComplex(LongComplex &&num) noexcept {
+    real = std::move(num.real);
+    imag = std::move(num.imag);
+}
+
+LongComplex &LongComplex::operator=(LongComplex &&rhs) noexcept {
+    if (this == &rhs)
+        return *this;
+    real = std::move(rhs.real);
+    imag = std::move(rhs.imag);
+    return *this;
+}
+
 LongNumber abs(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
         return LongNumber::nan;
@@ -287,9 +300,9 @@ LongComplex exp(const LongComplex &num) {
 }
 
 LongComplex ln(const LongComplex &num) {
-    if (iscnan(num))
+    if (iscnan(num) or num == LongComplex::czero)
         return LongComplex::cnan;
-    else if (iscinf(num) or num == LongComplex::czero)
+    else if (iscinf(num))
         return LongComplex::cinf;
     auto ln_num = std::async(std::launch::async, [&num] { return ln(abs(num)); }),
             phase_num = std::async(std::launch::async, [&num] { return phase(num); });
@@ -332,12 +345,14 @@ LongComplex factorial(const LongComplex &num) {
     }
     LongComplex num_num = LongComplex(num.get_real() - floor(num.get_real()) + LongNumber::one, num.get_imag()), G_minus = LongComplex(LongNumber::G - LongNumber::half),
             y = num_num + G_minus, la1, la2;
+    auto pow_for_r = std::async(std::launch::async, [&y, &num_num] { return pow(y, num_num - LongComplex::half); }),
+            exp_y = std::async(std::launch::async, [&y] { return exp(y); });
     for (int i = 12; i >= 0; --i) {
         la2 = la2 * num_num + (LongComplex) LongNumber::lanczos_num_coeffs[i];
         la1 = la1 * num_num + (LongComplex) LongNumber::lanczos_den_coeffs[i];
     }
-    LongComplex la_rez = la2 / la1, r = la_rez / exp(y);
-    r *= pow(y, num_num - LongComplex::half);
+    LongComplex la_rez = la2 / la1, r = la_rez / exp_y.get();
+    r *= pow_for_r.get();
     for (auto i = num.get_real(); i >= LongNumber::one; --i) {
         r *= LongComplex(i, num.get_imag());
     }
@@ -604,14 +619,6 @@ LongComplex sqrt(const LongComplex &num) {
     return LongComplex{sqrt_1.get(), sqrt_2.get()};
 }
 
-std::pair<long long, long long> one2two(long long n) {
-    long long a = std::floor(std::sqrt(n));
-    if (a % 2 == 0)
-        return std::make_pair(std::min(n - a * a, a), n <= a * (a + 1) ? a : a - (n - a * (a + 1)));
-    else
-        return std::make_pair(n <= a * (a + 1) ? a : a - (n - a * (a + 1)), std::min(n - a * a, a));
-}
-
 LongNumber many_value_f::phase(const LongComplex &num, long long n) {
     return phase(num) + LongNumber::two_Pi * LongNumber{n};
 }
@@ -620,10 +627,9 @@ LongComplex many_value_f::ln(const LongComplex &num, long long n) {
     return ln(num) + LongComplex::I * LongComplex{LongNumber::two_Pi} * LongComplex{n};
 }
 
-LongComplex many_value_f::log(const LongComplex &num, const LongComplex &base, long long n) {
-    auto a = one2two(n);
-    auto ln_num = std::async(std::launch::async, [&num, &a] { return ln(num, a.first); }),
-            ln_base = std::async(std::launch::async, [&base, &a] { return ln(base, a.second); });
+LongComplex many_value_f::log(const LongComplex &num, const LongComplex &base, long long n, long long k) {
+    auto ln_num = std::async(std::launch::async, [&num, &n] { return many_value_f::ln(num, n); }),
+            ln_base = std::async(std::launch::async, [&base, &k] { return many_value_f::ln(base, k); });
     return ln_num.get() / ln_base.get();
 }
 
@@ -640,4 +646,70 @@ LongComplex many_value_f::pow(const LongComplex &num, const LongComplex &deg, lo
 
 LongComplex many_value_f::surd(const LongComplex &num, const LongComplex &deg, long long n) {
     return pow(num, LongComplex::one / deg, n);
+}
+
+LongComplex many_value_f::sqrt(const LongComplex &num, long long n) {
+    if (n % 2 == 0)
+        return sqrt(num);
+    return -sqrt(num);
+}
+
+LongComplex many_value_f::asin(const LongComplex &num, long long n, long long k) {
+    return ln(sqrt(num * num + LongComplex::one, k) + num, n);
+}
+
+LongComplex many_value_f::acos(const LongComplex &num, long long n, long long k) {
+    return LongComplex::half_Pi - asin(num, n, k);
+}
+
+LongComplex many_value_f::atan(const LongComplex &num, long long n, long long k) {
+    auto ln_1 = std::async(std::launch::async, [&num, &n] { return ln(LongComplex::one - LongComplex::I * num, n); }),
+            ln_2 = std::async(std::launch::async, [&num, &k] { return ln(LongComplex::one + LongComplex::I * num, k); });
+    return LongComplex::half * LongComplex::I * (ln_1.get() - ln_2.get());
+}
+
+LongComplex many_value_f::actan(const LongComplex &num, long long n, long long k) {
+    auto ln_1 = std::async(std::launch::async, [&num, &n] { return ln((num - LongComplex::I) / num, n); }),
+            ln_2 = std::async(std::launch::async, [&num, &k] { return ln((num + LongComplex::I) / num, k); });
+    return LongComplex::half * LongComplex::I * (ln_1.get() - ln_2.get());
+}
+
+LongComplex many_value_f::asec(const LongComplex &num, long long n, long long k) {
+    return acos(LongComplex::one / num, n, k);
+}
+
+LongComplex many_value_f::acosec(const LongComplex &num, long long n, long long k) {
+    return asin(LongComplex::one / num, n, k);
+}
+
+LongComplex many_value_f::asinh(const LongComplex &num, long long n, long long k) {
+    return ln(sqrt(num * num + LongComplex::one, k) + num, n);
+}
+
+LongComplex many_value_f::acosh(const LongComplex &num, long long n, long long k) {
+    auto sqrt_1 = std::async(std::launch::async, [&num] { return sqrt(num + LongComplex::one); }),
+            sqrt_2 = std::async(std::launch::async, [&num] { return sqrt(num - LongComplex::one); });
+    if (k % 2 == 0)
+        return ln(sqrt_1.get() * sqrt_2.get() + num, n);
+    return ln(-sqrt_1.get() * sqrt_2.get() + num, n);
+}
+
+LongComplex many_value_f::atanh(const LongComplex &num, long long n, long long k) {
+    auto ln_1 = std::async(std::launch::async, [&num, &n] { return ln(num + LongComplex::one, n); }),
+            ln_2 = std::async(std::launch::async, [&num, &k] { return ln(LongComplex::one - num, k); });
+    return LongComplex::half * (ln_1.get() - ln_2.get());
+}
+
+LongComplex many_value_f::actanh(const LongComplex &num, long long n, long long k) {
+    auto ln_1 = std::async(std::launch::async, [&num, &n] { return ln(LongComplex::one / num + LongComplex::one, n); }),
+            ln_2 = std::async(std::launch::async, [&num, &k] { return ln(LongComplex::one - LongComplex::one / num, k); });
+    return LongComplex::half * (ln_1.get() - ln_2.get());
+}
+
+LongComplex many_value_f::asech(const LongComplex &num, long long n, long long k) {
+    return acosh(LongComplex::one / num, n, k);
+}
+
+LongComplex many_value_f::acosech(const LongComplex &num, long long n, long long k) {
+    return asinh(LongComplex::one / num, n, k);
 }
