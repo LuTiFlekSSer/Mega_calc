@@ -300,9 +300,9 @@ LongComplex exp(const LongComplex &num) {
 }
 
 LongComplex ln(const LongComplex &num) {
-    if (iscnan(num))
+    if (iscnan(num) or num == LongComplex::czero)
         return LongComplex::cnan;
-    else if (iscinf(num) or num == LongComplex::czero)
+    else if (iscinf(num))
         return LongComplex::cinf;
     auto ln_num = std::async(std::launch::async, [&num] { return ln(abs(num)); }),
             phase_num = std::async(std::launch::async, [&num] { return phase(num); });
@@ -345,12 +345,14 @@ LongComplex factorial(const LongComplex &num) {
     }
     LongComplex num_num = LongComplex(num.get_real() - floor(num.get_real()) + LongNumber::one, num.get_imag()), G_minus = LongComplex(LongNumber::G - LongNumber::half),
             y = num_num + G_minus, la1, la2;
+    auto pow_for_r = std::async(std::launch::async, [&y, &num_num] { return pow(y, num_num - LongComplex::half); }),
+            exp_y = std::async(std::launch::async, [&y] { return exp(y); });
     for (int i = 12; i >= 0; --i) {
         la2 = la2 * num_num + (LongComplex) LongNumber::lanczos_num_coeffs[i];
         la1 = la1 * num_num + (LongComplex) LongNumber::lanczos_den_coeffs[i];
     }
-    LongComplex la_rez = la2 / la1, r = la_rez / exp(y);
-    r *= pow(y, num_num - LongComplex::half);
+    LongComplex la_rez = la2 / la1, r = la_rez / exp_y.get();
+    r *= pow_for_r.get();
     for (auto i = num.get_real(); i >= LongNumber::one; --i) {
         r *= LongComplex(i, num.get_imag());
     }

@@ -47,6 +47,8 @@ public:
 
     [[nodiscard]] LongNumber get_imag() const;
 
+    [[nodiscard]] std::string to_string() const;
+
     LongComplex &operator=(const LongComplex &rhs);
 
     LongComplex &operator=(LongComplex &&rhs) noexcept;
@@ -68,8 +70,6 @@ public:
     LongComplex &operator/=(const LongComplex &rhs);
 
     LongComplex operator-() const;
-
-    [[nodiscard]] std::string to_string() const;
 
     friend std::ostream &operator<<(std::ostream &out, const LongComplex &num);
 
@@ -168,27 +168,27 @@ namespace many_value_f {
     LongComplex sqrt(const LongComplex &num, long long n);
 
     LongComplex asin(const LongComplex &num, long long n, long long k);
-    
+
     LongComplex acos(const LongComplex &num, long long n, long long k);
-    
+
     LongComplex atan(const LongComplex &num, long long n, long long k);
-    
+
     LongComplex actan(const LongComplex &num, long long n, long long k);
-    
+
     LongComplex asec(const LongComplex &num, long long n, long long k);
-    
+
     LongComplex acosec(const LongComplex &num, long long n, long long k);
-    
+
     LongComplex asinh(const LongComplex &num, long long n, long long k);
-    
+
     LongComplex acosh(const LongComplex &num, long long n, long long k);
-    
+
     LongComplex atanh(const LongComplex &num, long long n, long long k);
-    
+
     LongComplex actanh(const LongComplex &num, long long n, long long k);
-    
+
     LongComplex asech(const LongComplex &num, long long n, long long k);
-    
+
     LongComplex acosech(const LongComplex &num, long long n, long long k);
 }
 
