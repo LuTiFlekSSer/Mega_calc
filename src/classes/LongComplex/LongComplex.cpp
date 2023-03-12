@@ -617,14 +617,6 @@ LongComplex sqrt(const LongComplex &num) {
     return LongComplex{sqrt_1.get(), sqrt_2.get()};
 }
 
-std::pair<long long, long long> one2two(long long n) {
-    long long a = std::floor(std::sqrt(std::abs(n)));
-    if (a % 2 == 0)
-        return std::make_pair(std::min(n - a * a, a), n <= a * (a + 1) ? a : a - (n - a * (a + 1)));
-    else
-        return std::make_pair(n <= a * (a + 1) ? a : a - (n - a * (a + 1)), std::min(n - a * a, a));
-}
-
 LongNumber many_value_f::phase(const LongComplex &num, long long n) {
     return phase(num) + LongNumber::two_Pi * LongNumber{n};
 }
@@ -633,10 +625,9 @@ LongComplex many_value_f::ln(const LongComplex &num, long long n) {
     return ln(num) + LongComplex::I * LongComplex{LongNumber::two_Pi} * LongComplex{n};
 }
 
-LongComplex many_value_f::log(const LongComplex &num, const LongComplex &base, long long n) {
-    auto a = one2two(n);
-    auto ln_num = std::async(std::launch::async, [&num, &a] { return ln(num, a.first); }),
-            ln_base = std::async(std::launch::async, [&base, &a] { return ln(base, a.second); });
+LongComplex many_value_f::log(const LongComplex &num, const LongComplex &base, long long n, long long k) {
+    auto ln_num = std::async(std::launch::async, [&num, n] { return ln(num, n); }),
+            ln_base = std::async(std::launch::async, [&base, k] { return ln(base, k); });
     return ln_num.get() / ln_base.get();
 }
 
@@ -654,3 +645,29 @@ LongComplex many_value_f::pow(const LongComplex &num, const LongComplex &deg, lo
 LongComplex many_value_f::surd(const LongComplex &num, const LongComplex &deg, long long n) {
     return pow(num, LongComplex::one / deg, n);
 }
+
+LongComplex many_value_f::asin(const LongComplex &num, long long n) {
+
+}
+
+LongComplex many_value_f::acos(const LongComplex &num, long long n) {}
+
+LongComplex many_value_f::atan(const LongComplex &num, long long n) {}
+
+LongComplex many_value_f::actan(const LongComplex &num, long long n) {}
+
+LongComplex many_value_f::asec(const LongComplex &num, long long n) {}
+
+LongComplex many_value_f::acosec(const LongComplex &num, long long n) {}
+
+LongComplex many_value_f::asinh(const LongComplex &num, long long n) {}
+
+LongComplex many_value_f::acosh(const LongComplex &num, long long n) {}
+
+LongComplex many_value_f::atanh(const LongComplex &num, long long n) {}
+
+LongComplex many_value_f::actanh(const LongComplex &num, long long n) {}
+
+LongComplex many_value_f::asech(const LongComplex &num, long long n) {}
+
+LongComplex many_value_f::acosech(const LongComplex &num, long long n) {}
