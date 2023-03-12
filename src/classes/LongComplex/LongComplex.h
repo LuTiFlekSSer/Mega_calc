@@ -165,29 +165,31 @@ namespace many_value_f {
 
     LongComplex surd(const LongComplex &num, const LongComplex &deg, long long n);
 
-    LongComplex asin(const LongComplex &num, long long n);
+    LongComplex sqrt(const LongComplex &num, long long n);
+
+    LongComplex asin(const LongComplex &num, long long n, long long k);
     
-    LongComplex acos(const LongComplex &num, long long n);
+    LongComplex acos(const LongComplex &num, long long n, long long k);
     
-    LongComplex atan(const LongComplex &num, long long n);
+    LongComplex atan(const LongComplex &num, long long n, long long k);
     
-    LongComplex actan(const LongComplex &num, long long n);
+    LongComplex actan(const LongComplex &num, long long n, long long k);
     
-    LongComplex asec(const LongComplex &num, long long n);
+    LongComplex asec(const LongComplex &num, long long n, long long k);
     
-    LongComplex acosec(const LongComplex &num, long long n);
+    LongComplex acosec(const LongComplex &num, long long n, long long k);
     
-    LongComplex asinh(const LongComplex &num, long long n);
+    LongComplex asinh(const LongComplex &num, long long n, long long k);
     
-    LongComplex acosh(const LongComplex &num, long long n);
+    LongComplex acosh(const LongComplex &num, long long n, long long k);
     
-    LongComplex atanh(const LongComplex &num, long long n);
+    LongComplex atanh(const LongComplex &num, long long n, long long k);
     
-    LongComplex actanh(const LongComplex &num, long long n);
+    LongComplex actanh(const LongComplex &num, long long n, long long k);
     
-    LongComplex asech(const LongComplex &num, long long n);
+    LongComplex asech(const LongComplex &num, long long n, long long k);
     
-    LongComplex acosech(const LongComplex &num, long long n);
+    LongComplex acosech(const LongComplex &num, long long n, long long k);
 }
 
 #endif
