@@ -2,6 +2,7 @@
 #include "iostream"
 #include "future"
 
+static const LongNumber alpha("2.823529411"), beta("1.8823529411");
 const LongNumber LongNumber::zero = LongNumber{0};
 const LongNumber LongNumber::half = LongNumber{0.5};
 const LongNumber LongNumber::one = LongNumber{1};
@@ -16,7 +17,16 @@ const LongNumber LongNumber::eps = LongNumber{"0.00000000000000001"};
 const LongNumber LongNumber::double_eps = LongNumber::eps * LongNumber::eps;
 const LongNumber LongNumber::two_Pi = LongNumber::Pi * LongNumber::two;
 const LongNumber LongNumber::half_Pi = LongNumber::Pi * LongNumber::half;
-const LongNumber LongNumber::log_to_ln = LongNumber("2.30259");
+const LongNumber LongNumber::lns[10] = {LongNumber::zero,
+                                        LongNumber("0.6931471805599453094172321214581765680755001343602552541206800094933936219696947156058633269964186875420014810205706857336855202"),
+                                        LongNumber("1.0986122886681096913952452369225257046474905578227494517346943336374942932186089668736157548137320887879700290659578657423680042"),
+                                        LongNumber("1.3862943611198906188344642429163531361510002687205105082413600189867872439393894312117266539928373750840029620411413714673710404"),
+                                        LongNumber("1.6094379124341003746007593332261876395256013542685177219126478914741789877076577646301338780931796107999663030217155628997240052"),
+                                        LongNumber("1.7917594692280550008124773583807022727229906921830047058553743431308879151883036824794790818101507763299715100865285514760535244"),
+                                        LongNumber("1.9459101490553133051053527434431797296370847295818611884593901499375798627520692677876584985878715269930616942058511409117237522"),
+                                        LongNumber("2.0794415416798359282516963643745297042265004030807657623620400284801808659090841468175899809892560626260044430617120572010565607"),
+                                        LongNumber("2.1972245773362193827904904738450514092949811156454989034693886672749885864372179337472315096274641775759400581319157314847360084"),
+                                        LongNumber("2.3025850929940456840179914546843642076011014886287729760333279009675726096773524802359972050895982983419677840422862486334095254")};
 
 const LongNumber LongNumber::G("6.024680040776729583740234375");
 const LongNumber LongNumber::lanczos_num_coeffs[13] = {
@@ -49,7 +59,6 @@ const LongNumber LongNumber::lanczos_den_coeffs[13] = {
         LongNumber("66"),
         LongNumber("1")
 };
-static const LongNumber alpha("2.823529411"), beta("1.8823529411");
 
 LongNumber LongNumber::operator/(const LongNumber &rhs) const {
     if (isnan(*this) or isnan(rhs) or (*this == LongNumber::zero and rhs == LongNumber::zero) or ((isinf(*this) or isinfm(*this)) and (isinf(rhs) or isinfm(rhs))))
@@ -904,14 +913,15 @@ LongNumber ln(const LongNumber &num) {
         return LongNumber::inf;
     else if (num == LongNumber::zero)
         return LongNumber::infm;
-    LongNumber a = num < LongNumber::one ? num.inv() : num, x0 = LongNumber(a.exp - 1) * LongNumber::log_to_ln, buf = LongNumber::one;
-    if (isinf(a))
-        return LongNumber::infm;
+    LongNumber mnoj = LongNumber(num.exp - 1), a = num;
+    a.exp = 1;
+    a /= LongNumber(a.numbers[0]);
+    LongNumber x0 = LongNumber::zero, buf = LongNumber::one;
     while (abs(buf) > LongNumber::eps) {
         move_with_double_round(buf, a / exp(x0) - LongNumber::one);
         move_with_double_round(x0, x0 + buf);
     }
-    return num < LongNumber::one ? -x0 : x0;
+    return x0 + mnoj * LongNumber::lns[9] + LongNumber::lns[num.numbers[0] - 1];
 }
 
 LongNumber log(const LongNumber &num, const LongNumber &base) {

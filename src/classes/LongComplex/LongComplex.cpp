@@ -626,8 +626,8 @@ LongComplex many_value_f::ln(const LongComplex &num, long long n) {
 }
 
 LongComplex many_value_f::log(const LongComplex &num, const LongComplex &base, long long n, long long k) {
-    auto ln_num = std::async(std::launch::async, [&num, n] { return ln(num, n); }),
-            ln_base = std::async(std::launch::async, [&base, k] { return ln(base, k); });
+    auto ln_num = std::async(std::launch::async, [&num, &n] { return many_value_f::ln(num, n); }),
+            ln_base = std::async(std::launch::async, [&base, &k] { return many_value_f::ln(base, k); });
     return ln_num.get() / ln_base.get();
 }
 

@@ -61,8 +61,7 @@ private:
     static const LongNumber G;
     static const LongNumber lanczos_num_coeffs[13];
     static const LongNumber lanczos_den_coeffs[13];
-    static const LongNumber log_to_ln;
-
+    static const LongNumber lns[10];
 public:
     static const LongNumber zero;
     static const LongNumber half;
