@@ -30,17 +30,20 @@
 import QtQuick 6.4
 import QtQuick.Window 6.4
 import Mega_calc
+import QtQuick.Controls 6.4
 
 Window {
     width: mainScreen.width
     height: mainScreen.height
 
     visible: true
-    title: "Mega_calc"
+    minimumHeight: 480
+    minimumWidth: 640
+    title: "Калькулятор"
 
     Screen01 {
         id: mainScreen
-    }
 
+    }
 }
 

@@ -17,7 +17,7 @@ qt_add_executable(Mega_calcApp "src/main.cpp"
         "src/classes/Mat2D/Mat2D.cpp" "src/classes/Mat2D/Mat2D.h"
         "src/classes/VecND/VecND.cpp" "src/classes/VecND/VecND.h"
         "src/classes/LongNumber/LongNumber.cpp" "src/classes/LongNumber/LongNumber.h"
-        "src/classes/LongNumber/cringe class/cringe.h")
+        "src/classes/LongNumber/cringe class/cringe.h" "src/ui files/Core.cpp" "src/ui files/Core.h")
 
 qt_add_resources(Mega_calcApp "configuration"
         PREFIX "/"

@@ -103,7 +103,7 @@ Project {
     }
 
     multilanguageSupport: true
-    supportedLanguages: ["en"]
-    primaryLanguage: "en"
+    supportedLanguages: ["ru"]
+    primaryLanguage: "ru"
 
 }
