@@ -11,5 +11,39 @@ qt6_add_qml_module(content
         Screen01.ui.qml
         MyBS.qml
         App.qml
+    RESOURCES
+        Images/tanh.png
+        Images/tan.png
+        Images/surd.png
+        Images/sqrt.png
+        Images/sinh.png
+        Images/sin.png
+        Images/sech.png
+        Images/sec.png
+        Images/pow2.png
+        Images/pow.png
+        Images/min.png
+        Images/max.png
+        Images/log.png
+        Images/ln.png
+        Images/lg.png
+        Images/infm.png
+        Images/inf.png
+        Images/floor.png
+        Images/factorial.png
+        Images/exp.png
+        Images/div.png
+        Images/csch.png
+        Images/csc.png
+        Images/coth.png
+        Images/cot.png
+        Images/cosh.png
+        Images/cos.png
+        Images/ceil.png
+        Images/atan.png
+        Images/asin.png
+        Images/acot.png
+        Images/acos.png
+        Images/abs.png
 
 )

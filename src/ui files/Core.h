@@ -6,6 +6,7 @@
 #include "QObject"
 #include "QString"
 #include "unistd.h"
+#include "QInternal"
 
 class Core : public QObject {
 Q_OBJECT
@@ -14,15 +15,11 @@ public:
 
 signals:
 
-    void send_ans(QString msg);
+    void send_ans(QString ans);
 
 public slots:
 
-    void recieve_str(QString m) {
-        std::string msg = m.toStdString();
-        std::cout << msg << std::endl;
-        emit send_ans(QString("123"));
-    };
+    void solve_expr(const QString &expr);
 
 };
 

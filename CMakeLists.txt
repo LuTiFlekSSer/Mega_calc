@@ -7,17 +7,19 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_PREFIX_PATH "C:/Qt/6.4.1/mingw_64")
-
+MATH(EXPR stack_size "1024 * 1024 * 1024")
+set(CMAKE_EXE_LINKER_FLAGS "-Wl,--stack,${stack_size}")
 #set(EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/app")
 
 find_package(Qt6 COMPONENTS Gui Qml Quick)
 qt_add_executable(Mega_calcApp "src/main.cpp"
         "src/ui files/ui.cpp" "src/ui files/ui.h"
+        "src/ui files/Core.cpp" "src/ui files/Core.h"
         "src/classes/LongComplex/LongComplex.cpp" "src/classes/LongComplex/LongComplex.h"
         "src/classes/Mat2D/Mat2D.cpp" "src/classes/Mat2D/Mat2D.h"
         "src/classes/VecND/VecND.cpp" "src/classes/VecND/VecND.h"
         "src/classes/LongNumber/LongNumber.cpp" "src/classes/LongNumber/LongNumber.h"
-        "src/classes/LongNumber/cringe class/cringe.h" "src/ui files/Core.cpp" "src/ui files/Core.h")
+        "src/classes/LongNumber/cringe class/cringe.h")
 
 qt_add_resources(Mega_calcApp "configuration"
         PREFIX "/"

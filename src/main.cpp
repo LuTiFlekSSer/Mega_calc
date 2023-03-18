@@ -37,6 +37,6 @@ int main(int argc, char *argv[]) {
 //        b = factorial(a);
 //    }
 //    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n';
-//    std::cout << many_value_f::pow(a, b, 2);
+//    std::cout << factorial(a);
     return 0;
 }

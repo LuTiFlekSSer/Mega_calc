@@ -3,3 +3,7 @@
 //
 
 #include "Core.h"
+
+void Core::solve_expr(const QString &expr) {
+
+}

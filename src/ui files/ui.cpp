@@ -34,5 +34,5 @@ int start_UI(int argc, char *argv[]) {
         return -1;
     }
 
-    return app.exec();
+    return QGuiApplication::exec();
 }
