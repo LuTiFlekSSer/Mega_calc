@@ -15,13 +15,18 @@ qt6_add_qml_module(content
         Images/tanh.png
         Images/tan.png
         Images/surd.png
+        Images/sub.png
         Images/sqrt.png
         Images/sinh.png
         Images/sin.png
         Images/sech.png
         Images/sec.png
+        Images/save.png
+        Images/rtg.png
         Images/pow2.png
         Images/pow.png
+        Images/Pi.png
+        Images/mult.png
         Images/min.png
         Images/max.png
         Images/log.png
@@ -29,9 +34,12 @@ qt6_add_qml_module(content
         Images/lg.png
         Images/infm.png
         Images/inf.png
+        Images/i.png
         Images/floor.png
         Images/factorial.png
         Images/exp.png
+        Images/e.png
+        Images/dtr.png
         Images/div.png
         Images/csch.png
         Images/csc.png
@@ -40,9 +48,18 @@ qt6_add_qml_module(content
         Images/cosh.png
         Images/cos.png
         Images/ceil.png
+        Images/atanh.png
         Images/atan.png
+        Images/asinh.png
         Images/asin.png
+        Images/asech.png
+        Images/asec.png
+        Images/add.png
+        Images/acsch.png
+        Images/acsc.png
+        Images/acoth.png
         Images/acot.png
+        Images/acosh.png
         Images/acos.png
         Images/abs.png
 

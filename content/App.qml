@@ -33,8 +33,8 @@ import Mega_calc
 import QtQuick.Controls 6.4
 
 Window {
-    width: mainScreen.width
-    height: mainScreen.height
+    width: 750
+    height: 500
 
     visible: true
     minimumHeight: 480

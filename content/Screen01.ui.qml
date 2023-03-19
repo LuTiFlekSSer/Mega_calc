@@ -32,10 +32,10 @@ Rectangle {
             color: "#2b2d30"
         }
         StackLayout {
-            x: 26
-            y: 123
+            id: stackl
             width: 440
-            height: 134
+            anchors.bottom: num9.top
+            anchors.bottomMargin: 20
             anchors.top: bar.bottom
             anchors.left: input_field.left
             currentIndex: bar.currentIndex
@@ -64,6 +64,21 @@ Rectangle {
                         onClicked: input_field.insert(input_field.cursorPosition, func)
                     }
                     model: ListModel {
+                        ListElement {
+                            png_for_img: "Images/add.png"
+                            pix: 6
+                            func: "()+()"
+                        }
+                        ListElement {
+                            png_for_img: "Images/sub.png"
+                            pix: 6
+                            func: "()-()"
+                        }
+                        ListElement {
+                            png_for_img: "Images/mult.png"
+                            pix: 6
+                            func: "()*()"
+                        }
                         ListElement {
                             png: "Images/div.png"
                             pix: 7
@@ -179,6 +194,16 @@ Rectangle {
                     }
                     model: ListModel {
                         ListElement {
+                            png_for_img: "Images/dtr.png"
+                            pix: 5
+                            func: "dtr()"
+                        }
+                        ListElement {
+                            png_for_img: "Images/rtg.png"
+                            pix: 5
+                            func: "rtd()"
+                        }
+                        ListElement {
                             png_for_img: "Images/sin.png"
                             pix: 7
                             func: "sin()"
@@ -258,6 +283,46 @@ Rectangle {
                             pix: 4
                             func: "acot()"
                         }
+                        ListElement {
+                            png_for_img: "Images/asec.png"
+                            pix: 4
+                            func: "asec()"
+                        }
+                        ListElement {
+                            png_for_img: "Images/acsc.png"
+                            pix: 4
+                            func: "acsc()"
+                        }
+                        ListElement {
+                            png_for_img: "Images/asinh.png"
+                            pix: 4
+                            func: "asinh()"
+                        }
+                        ListElement {
+                            png_for_img: "Images/acosh.png"
+                            pix: 4
+                            func: "acosh()"
+                        }
+                        ListElement {
+                            png_for_img: "Images/atanh.png"
+                            pix: 4
+                            func: "atanh()"
+                        }
+                        ListElement {
+                            png_for_img: "Images/acoth.png"
+                            pix: 4
+                            func: "acoth()"
+                        }
+                        ListElement {
+                            png_for_img: "Images/asech.png"
+                            pix: 4
+                            func: "asech()"
+                        }
+                        ListElement {
+                            png_for_img: "Images/acsch.png"
+                            pix: 4
+                            func: "acsch()"
+                        }
                     }
                     cellWidth: 60
                     cellHeight: 60
@@ -267,6 +332,43 @@ Rectangle {
                 id: const_tab
                 color: "white"
                 radius: 5
+                GridView {
+                    id: const_grid
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    clip: true
+                    ScrollBar.vertical: ScrollBar {policy: ScrollBar.AlwaysOn}
+                    delegate: Button {
+                        width: 50
+                        height: 50
+                        Image {
+                            anchors.fill: parent
+                            anchors.margins: pix
+                            source: png_for_img
+                        }
+                        // @disable-check M222
+                        onClicked: input_field.insert(input_field.cursorPosition, func)
+                    }
+                    model: ListModel {
+                        ListElement {
+                            png_for_img: "Images/Pi.png"
+                            pix: 7
+                            func: "Pi"
+                        }
+                        ListElement {
+                            png_for_img: "Images/e.png"
+                            pix: 7
+                            func: "e"
+                        }
+                        ListElement {
+                            png_for_img: "Images/i.png"
+                            pix: 7
+                            func: "i"
+                        }
+                    }
+                    cellWidth: 60
+                    cellHeight: 60
+                }
             }
         }
 
@@ -278,7 +380,7 @@ Rectangle {
             rightPadding: 120
             font.pointSize: 11
             placeholderTextColor: "#80332b2b"
-            anchors.topMargin: 30
+            anchors.topMargin: 20
             anchors.left: parent.left
             anchors.leftMargin: 20
             anchors.right: parent.right
@@ -344,6 +446,334 @@ Rectangle {
                 font.pointSize: 10
                 width: implicitWidth
             }
+        }
+
+        Button {
+            id: num1
+            anchors.bottom: num0.top
+            anchors.bottomMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            width: 50
+            height: 40
+            font.pointSize: 11
+            text: qsTr("1")
+        }
+
+        Button {
+            id: num0
+            y: 423
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            width: 110
+            height: 40
+            font.pointSize: 11
+            text: qsTr("0")
+        }
+
+        Button {
+            id: numdot
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.left: num0.right
+            anchors.leftMargin: 10
+            width: 50
+            height: 40
+            text: qsTr(".")
+            bottomPadding: 20
+            font.pointSize: 30
+        }
+
+        Button {
+            id: num2
+            anchors.left: num1.right
+            anchors.leftMargin: 10
+            anchors.bottom: num0.top
+            anchors.bottomMargin: 10
+            width: 50
+            height: 40
+            text: qsTr("2")
+        }
+
+        Button {
+            id: num4
+            anchors.bottom: num1.top
+            anchors.bottomMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            width: 50
+            height: 40
+            font.pointSize: 11
+            text: qsTr("4")
+        }
+
+        Button {
+            id: num5
+            anchors.bottom: num2.top
+            anchors.bottomMargin: 10
+            anchors.left: num4.right
+            anchors.leftMargin: 10
+            width: 50
+            height: 40
+            font.pointSize: 11
+            text: qsTr("5")
+        }
+
+        Button {
+            id: num7
+            anchors.bottom: num4.top
+            anchors.bottomMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            width: 50
+            height: 40
+            font.pointSize: 11
+            text: qsTr("7")
+        }
+
+        Button {
+            id: num8
+            anchors.bottom: num4.top
+            anchors.bottomMargin: 10
+            anchors.left: num7.right
+            anchors.leftMargin: 10
+            width: 50
+            height: 40
+            font.pointSize: 11
+            text: qsTr("8")
+        }
+
+        Button {
+            id: num9
+            anchors.bottom: num6.top
+            anchors.bottomMargin: 10
+            anchors.left: num8.right
+            anchors.leftMargin: 10
+            width: 50
+            height: 40
+            font.pointSize: 11
+            text: qsTr("9")
+        }
+
+        Button {
+            id: num6
+            anchors.bottom: num3.top
+            anchors.bottomMargin: 10
+            anchors.left: num5.right
+            anchors.leftMargin: 10
+            width: 50
+            height: 40
+            font.pointSize: 11
+            text: qsTr("6")
+        }
+
+        Button {
+            id: num3
+            anchors.bottom: numdot.top
+            anchors.bottomMargin: 10
+            anchors.left: num2.right
+            anchors.leftMargin: 10
+            width: 50
+            height: 40
+            font.pointSize: 11
+            text: qsTr("3")
+        }
+
+        Button {
+            id: num_br_l
+            anchors.bottom: num_add.top
+            anchors.bottomMargin: 10
+            anchors.left: num9.right
+            anchors.leftMargin: 20
+            width: 50
+            height: 40
+            text: qsTr("(")
+            font.pointSize: 11
+        }
+
+        Button {
+            id: num_br_r
+            anchors.bottom: num_sub.top
+            anchors.bottomMargin: 10
+            anchors.left: num_br_l.right
+            anchors.leftMargin: 10
+            width: 50
+            height: 40
+            text: qsTr(")")
+            font.pointSize: 11
+        }
+
+        Button {
+            id: num_add
+            anchors.bottom: num_mult.top
+            anchors.bottomMargin: 10
+            anchors.left: num6.right
+            anchors.leftMargin: 20
+            width: 50
+            height: 40
+            text: qsTr("+")
+            font.pointSize: 11
+        }
+
+        Button {
+            id: num_sub
+            anchors.bottom: num_div.top
+            anchors.bottomMargin: 10
+            anchors.left: num_add.right
+            anchors.leftMargin: 10
+            width: 50
+            height: 40
+            text: qsTr("-")
+            font.pointSize: 11
+        }
+
+        Button {
+            id: num_mult
+            anchors.bottom: numAns.top
+            anchors.bottomMargin: 10
+            anchors.left: num3.right
+            anchors.leftMargin: 20
+            width: 50
+            height: 40
+            text: qsTr("*")
+            topPadding: 15
+            font.pointSize: 15
+        }
+
+        Button {
+            id: num_div
+            anchors.bottom: num_per.top
+            anchors.bottomMargin: 10
+            anchors.left: num_mult.right
+            anchors.leftMargin: 10
+            width: 50
+            height: 40
+            text: qsTr("/")
+            font.pointSize: 11
+        }
+
+        Button {
+            id: numAns
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.left: numdot.right
+            anchors.leftMargin: 20
+            width: 50
+            height: 40
+            text: qsTr("Ans")
+            font.pointSize: 11
+        }
+
+        Button {
+            id: num_per
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.left: numAns.right
+            anchors.leftMargin: 10
+            width: 50
+            height: 40
+            text: qsTr("%")
+            font.pointSize: 11
+        }
+
+        Rectangle {
+            id: ans_rect
+            anchors.right: parent.right
+            anchors.rightMargin: 20
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.left: stackl.right
+            anchors.leftMargin: 20
+            anchors.top: stackl.top
+            color: "#ffffff"
+            radius: 5
+            ListView {
+                id: listView
+                anchors.fill: parent
+                anchors.margins: 10
+                anchors.bottomMargin: hist_clear.height + 20
+                clip: true
+                ScrollBar.vertical: ScrollBar{policy: ScrollBar.AlwaysOn}
+                model: ListModel {
+                    id: list_model
+                    ListElement {
+                        hist_text: "456456465845634"
+                    }
+
+                }
+                delegate: TextField {
+                    height: 40
+                    width: ListView.view.width - 10
+                    readOnly: true
+                    text: hist_text
+                    Button {
+                        anchors.right: parent.right
+                        anchors.rightMargin: 8
+                        anchors.top: parent.top
+                        anchors.topMargin: 8
+                        anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 8
+                        width: height
+                        text: qsTr("")
+                        Image {
+                            anchors.fill: parent
+                            anchors.margins: 2
+                            source: "Images/save.png"
+                        }
+                    }
+                }
+            }
+
+            Button {
+                id: hist_clear
+                width: implicitWidth
+                height: 40
+                text: qsTr("Очистить")
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 10
+                font.pointSize: 11
+                // @disable-check M222
+                onClicked: list_model.clear()
+            }
+        }
+
+        Button {
+            id: ms
+            width: 50
+            height: 40
+            text: qsTr("MS")
+            anchors.left: num_sub.right
+            anchors.top: mr.bottom
+            anchors.leftMargin: 20
+            anchors.topMargin: 10
+            font.pointSize: 11
+        }
+
+        Button {
+            id: mc
+            width: 50
+            height: 40
+            text: qsTr("MC")
+            anchors.left: mr.right
+            anchors.top: ms.bottom
+            anchors.leftMargin: -50
+            anchors.topMargin: 10
+            font.pointSize: 11
+        }
+
+        Button {
+            id: mr
+            width: 50
+            height: 40
+            text: qsTr("MR")
+            anchors.left: num_br_r.right
+            anchors.top: stackl.bottom
+            anchors.leftMargin: 20
+            anchors.topMargin: 20
+            font.pointSize: 11
         }
     }
 
