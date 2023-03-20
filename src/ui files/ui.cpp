@@ -1,9 +1,12 @@
 #include "ui.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-
+#include <QQmlContext>
+#include "Core.h"
 #include "app_environment.h"
 #include "import_qml_plugins.h"
+
+
 
 int start_UI(int argc, char *argv[]) {
     set_qt_environment();
@@ -23,11 +26,13 @@ int start_UI(int argc, char *argv[]) {
     engine.addImportPath(QCoreApplication::applicationDirPath() + "/qml");
     engine.addImportPath(":/");
 
-    engine.load(url);
+    Core core;
+    engine.rootContext()->setContextProperty("Core", &core);
 
+    engine.load(url);
     if (engine.rootObjects().isEmpty()) {
         return -1;
     }
 
-    return app.exec();
+    return QGuiApplication::exec();
 }

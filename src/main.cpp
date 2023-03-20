@@ -28,15 +28,15 @@ int main(int argc, char *argv[]) {
 //    print_solve(i);
 //    v.print();
 //    (m * a).print();
-//   start_UI(argc, argv);
-    LongComplex a, b, c;
-    std::cin >> a >> b;
-    std::cout << a << '\n';
-    auto t1 = std::chrono::steady_clock::now();
-    for (int i = 0; i < 1000; ++i) {
-        b = factorial(a);
-    }
-    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n';
-    std::cout << factorial(a);
+    start_UI(argc, argv);
+//    LongComplex a, b, c;
+//    std::cin >> a >> b;
+//    std::cout << a << ' ' << b << '\n';
+//    auto t1 = std::chrono::steady_clock::now();
+//    for (int i = 0; i < 1000; ++i) {
+//        b = factorial(a);
+//    }
+//    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n';
+//    std::cout << factorial(a);
     return 0;
 }
