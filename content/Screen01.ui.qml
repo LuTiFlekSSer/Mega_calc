@@ -398,6 +398,14 @@ Rectangle {
                 width: 25
                 height: 25
                 text: qsTr("=")
+                // @disable-check M223
+                onClicked: {
+                    backgr.visible = true
+                    busyIndicator.running = true
+                    page.enabled = false
+                    // @disable-check M222
+                    Core.solve_expr(input_field.text)
+                }
             }
 
             Button {
@@ -458,6 +466,8 @@ Rectangle {
             height: 40
             font.pointSize: 11
             text: qsTr("1")
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -471,6 +481,8 @@ Rectangle {
             height: 40
             font.pointSize: 11
             text: qsTr("0")
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -484,6 +496,8 @@ Rectangle {
             text: qsTr(".")
             bottomPadding: 20
             font.pointSize: 30
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -495,6 +509,8 @@ Rectangle {
             width: 50
             height: 40
             text: qsTr("2")
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -507,6 +523,8 @@ Rectangle {
             height: 40
             font.pointSize: 11
             text: qsTr("4")
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -519,6 +537,8 @@ Rectangle {
             height: 40
             font.pointSize: 11
             text: qsTr("5")
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -531,6 +551,8 @@ Rectangle {
             height: 40
             font.pointSize: 11
             text: qsTr("7")
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -543,6 +565,8 @@ Rectangle {
             height: 40
             font.pointSize: 11
             text: qsTr("8")
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -555,6 +579,8 @@ Rectangle {
             height: 40
             font.pointSize: 11
             text: qsTr("9")
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -567,6 +593,8 @@ Rectangle {
             height: 40
             font.pointSize: 11
             text: qsTr("6")
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -579,6 +607,8 @@ Rectangle {
             height: 40
             font.pointSize: 11
             text: qsTr("3")
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -591,6 +621,8 @@ Rectangle {
             height: 40
             text: qsTr("(")
             font.pointSize: 11
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -603,6 +635,8 @@ Rectangle {
             height: 40
             text: qsTr(")")
             font.pointSize: 11
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -615,6 +649,8 @@ Rectangle {
             height: 40
             text: qsTr("+")
             font.pointSize: 11
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -627,6 +663,8 @@ Rectangle {
             height: 40
             text: qsTr("-")
             font.pointSize: 11
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -640,6 +678,8 @@ Rectangle {
             text: qsTr("*")
             topPadding: 15
             font.pointSize: 15
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
@@ -652,10 +692,13 @@ Rectangle {
             height: 40
             text: qsTr("/")
             font.pointSize: 11
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Button {
             id: numAns
+            property string buf: ""
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             anchors.left: numdot.right
@@ -664,6 +707,8 @@ Rectangle {
             height: 40
             text: qsTr("Ans")
             font.pointSize: 11
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, buf)
         }
 
         Button {
@@ -676,6 +721,8 @@ Rectangle {
             height: 40
             text: qsTr("%")
             font.pointSize: 11
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, text)
         }
 
         Rectangle {
@@ -696,12 +743,21 @@ Rectangle {
                 anchors.bottomMargin: hist_clear.height + 20
                 clip: true
                 ScrollBar.vertical: ScrollBar{policy: ScrollBar.AlwaysOn}
+                Connections {
+                    target: Core
+                    onSend_ans:(msg) => {
+                        backgr.visible = false
+                        busyIndicator.running = false
+                        page.enabled = true
+                        var new_ans = {}
+                        new_ans.hist_text = msg
+                        list_model.insert(0, new_ans)
+                        numAns.buf = msg
+                    }
+                }
+
                 model: ListModel {
                     id: list_model
-                    ListElement {
-                        hist_text: "456456465845634"
-                    }
-
                 }
                 delegate: TextField {
                     height: 40
@@ -716,7 +772,10 @@ Rectangle {
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: 8
                         width: height
+                        font.pointSize: 11
                         text: qsTr("")
+                        // @disable-check M222
+                        onClicked: input_field.insert(input_field.cursorPosition, parent.text)
                         Image {
                             anchors.fill: parent
                             anchors.margins: 2
@@ -742,6 +801,7 @@ Rectangle {
 
         Button {
             id: ms
+            property string buf: ""
             width: 50
             height: 40
             text: qsTr("MS")
@@ -750,6 +810,11 @@ Rectangle {
             anchors.leftMargin: 20
             anchors.topMargin: 10
             font.pointSize: 11
+            // @disable-check M223
+            onClicked: {
+                buf = input_field.text
+                memory_indicator.visible = true
+            }
         }
 
         Button {
@@ -762,6 +827,11 @@ Rectangle {
             anchors.leftMargin: -50
             anchors.topMargin: 10
             font.pointSize: 11
+            // @disable-check M223
+            onClicked: {
+                ms.buf = ""
+                memory_indicator.visible = false
+            }
         }
 
         Button {
@@ -774,6 +844,20 @@ Rectangle {
             anchors.leftMargin: 20
             anchors.topMargin: 20
             font.pointSize: 11
+            // @disable-check M222
+            onClicked: input_field.insert(input_field.cursorPosition, ms.buf)
+        }
+
+        Text {
+            id: memory_indicator
+            visible: false
+            color: "#ffffff"
+            anchors.bottom: input_field.top
+            anchors.left: input_field.left
+            anchors.bottomMargin: 2
+            anchors.leftMargin: 2
+            text: qsTr("M")
+            font.pixelSize: 12
         }
     }
 

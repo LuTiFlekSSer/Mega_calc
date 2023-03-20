@@ -5,13 +5,13 @@
 #include "iostream"
 #include "QObject"
 #include "QString"
-#include "unistd.h"
-#include "QInternal"
 
 class Core : public QObject {
 Q_OBJECT
 public:
     explicit Core(QObject *parent = nullptr) : QObject(parent) {}
+
+    void solve(const QString &expr);
 
 signals:
 
