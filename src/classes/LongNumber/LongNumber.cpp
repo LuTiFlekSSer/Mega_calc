@@ -92,7 +92,7 @@ LongNumber::LongNumber(std::string num) {
     if (num == "inf") {
         *this = LongNumber::inf;
         return;
-    } else if (num == "-inf") {
+    } else if (num == "-inf" or num == "infm") {
         *this = LongNumber::infm;
         return;
     }
@@ -1157,15 +1157,15 @@ LongNumber &LongNumber::operator=(LongNumber &&rhs) noexcept {
 }
 
 bool correct_long_num(const std::string &num) {
-    if (num == "inf" or num == "-inf") {
+    if (num == "inf" or num == "-inf" or num == "infm") {
         return true;
     }
     long long dot_num = 0;
     for (long long i = 0; i < num.size(); ++i) {
         if (!isdigit(num[i])) {
-            if (num[i] == '-' and i == 0) {
+            if (num[i] == '-' and i == 0 and num.size() != 1) {
                 continue;
-            } else if (num[i] == '.' and dot_num == 0) {
+            } else if (num[i] == '.' and dot_num == 0 and i != num.size() - 1) {
                 ++dot_num;
             } else {
                 return false;

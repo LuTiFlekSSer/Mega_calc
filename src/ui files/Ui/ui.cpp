@@ -2,10 +2,9 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include "Core.h"
-#include "app_environment.h"
-#include "import_qml_plugins.h"
-
+#include "../Core/Core.h"
+#include "../Headers/app_environment.h"
+#include "../Headers/import_qml_plugins.h"
 
 
 int start_UI(int argc, char *argv[]) {

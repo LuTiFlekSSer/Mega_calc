@@ -3,8 +3,9 @@
 #include "src/classes/LongComplex/LongComplex.h"
 #include "src/classes/Mat2D/Mat2D.h"
 #include "src/classes/VecND/VecND.h"
-#include "ui files/ui.h"
+#include "src/ui files/Ui/ui.h"
 #include "chrono"
+#include "src/classes/Parser/Parser.h"
 
 int main(int argc, char *argv[]) {
 //    Mat2D m(3, 5);
@@ -28,7 +29,7 @@ int main(int argc, char *argv[]) {
 //    print_solve(i);
 //    v.print();
 //    (m * a).print();
-    start_UI(argc, argv);
+//    start_UI(argc, argv);
 //    LongComplex a, b, c;
 //    std::cin >> a >> b;
 //    std::cout << a << ' ' << b << '\n';
@@ -38,5 +39,6 @@ int main(int argc, char *argv[]) {
 //    }
 //    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n';
 //    std::cout << factorial(a);
+    Parser a("),(2)");
     return 0;
 }
