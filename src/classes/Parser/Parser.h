@@ -1,7 +1,7 @@
 #ifndef MEGA_CALCAPP_PARSER_H
 #define MEGA_CALCAPP_PARSER_H
 
-#include "stack"
+#include "queue"
 #include "string"
 #include "vector"
 
@@ -27,33 +27,9 @@ struct Token {
 
 };
 
-class Parser {
-private:
-    std::stack<Token> stack;
+std::vector<Token> tokenizer(const std::string &s);
 
-public:
-    Parser() = default;
-
-    Parser(const std::string &s);
-
-    Parser(const Parser &s);
-
-    Parser(Parser &&s) noexcept;
-
-    Parser &operator=(const Parser &rhs) = default;
-
-    Parser &operator=(Parser &&rhs) noexcept;
-
-    bool empty();
-
-    Token top();
-
-    void push(const Token &s);
-
-    void pop();
-
-    ~Parser() = default;
-};
+std::queue<std::pair<Token, int>> parser(const std::string &s);
 
 
 #endif //MEGA_CALCAPP_PARSER_H

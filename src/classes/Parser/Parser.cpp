@@ -1,28 +1,15 @@
-
 #include "Parser.h"
 #include "iostream"
+#include "stack"
 #include "../LongNumber/LongNumber.h"
 #include "../LongComplex/LongComplex.h"
 
 static const std::string char_after_num = "+-*/(,)";
 static const std::string operators = "+-*/,";
+static const std::string low_priority_operators = "+-";
+static const std::string high_priority_operators = "*/";
 
-Parser::Parser(const Parser &s) {
-    stack = s.stack;
-}
-
-Parser::Parser(Parser &&s) noexcept {
-    stack = std::move(s.stack);
-}
-
-Parser &Parser::operator=(Parser &&rhs) noexcept {
-    if (this == &rhs)
-        return *this;
-    stack = std::move(rhs.stack);
-    return *this;
-}
-
-std::vector<Token> tokenizer(const std::string &s) {//обработать %
+std::vector<Token> tokenizer(const std::string &s) {
     if (s.empty())
         throw std::logic_error("Syntax error");
     long long pos = 0;
@@ -31,9 +18,7 @@ std::vector<Token> tokenizer(const std::string &s) {//обработать %
         tokens.emplace_back("0", Type::num_real);
     }
     while (pos < s.size()) {
-        if (s[pos] == '.') {
-            throw std::logic_error("Syntax error");
-        } else if (isdigit(s[pos])) {
+        if (isdigit(s[pos])) {
             std::string buf;
             while (pos < s.size() and (isdigit(s[pos]) or s[pos] == '.')) {
                 buf += s[pos++];
@@ -106,32 +91,84 @@ std::vector<Token> tokenizer(const std::string &s) {//обработать %
             if (pos < s.size() and (s[pos] == '(' or isdigit(s[pos]) or isalpha(s[pos]))) {
                 tokens.emplace_back("*", Type::oper);
             }
+        } else {
+            throw std::logic_error("Syntax error");
         }
     }
     return tokens;
 }
 
-Parser::Parser(const std::string &s) {
-    auto tokens = tokenizer(s);
-    for (auto &token: tokens) {
-        std::cout << token.token << ' ' << (char) token.type << '\n';
+std::queue<std::pair<Token, int>> parser(const std::string &s) {
+    std::string str = s;
+    std::erase(str, ' ');
+    while (str.find('%') != std::string::npos) {
+        str.replace(str.find('%'), 1, "/100");
     }
+    auto tokens = tokenizer(str);
+    std::queue<std::pair<Token, int>> out_queue;
+    std::stack<std::pair<Token, int>> stack;
+    for (auto &token: tokens) {
+        if (token.type == Type::num_real or token.type == Type::num_complex or token.type == Type::constant) {
+            out_queue.emplace(token, 0);
+        } else if (token.type == Type::func) {
+            stack.emplace(token, 0);
+        } else if (token.type == Type::separator) {
+            if (stack.empty()) {
+                throw std::logic_error("Syntax error");
+            }
+            while (stack.top().first.type != Type::open_bracket) {
+                out_queue.push(stack.top());
+                stack.pop();
+                if (stack.empty()) {
+                    throw std::logic_error("Syntax error");
+                }
+            }
+            if (stack.top().second != 0) {
+                ++stack.top().second;
+            } else {
+                throw std::logic_error("Syntax error");
+            }
+        } else if (token.type == Type::oper) {
+            if (token.token == "+" or token.token == "-") {
+                while (!stack.empty() and stack.top().first.type == Type::oper) {
+                    out_queue.push(stack.top());
+                    stack.pop();
+                }
+                stack.emplace(token, 0);
+            } else {
+                while (!stack.empty() and stack.top().first.type == Type::oper and (stack.top().first.token == "*" or stack.top().first.token == "/")) {
+                    out_queue.push(stack.top());
+                    stack.pop();
+                }
+                stack.emplace(token, 0);
+            }
+        } else if (token.type == Type::open_bracket) {
+            stack.emplace(token, (!stack.empty() and stack.top().first.type == Type::func) ? 1 : 0);
+        } else if (token.type == Type::close_bracket) {
+            if (stack.empty()) {
+                throw std::logic_error("Syntax error");
+            }
+            while (stack.top().first.type != Type::open_bracket) {
+                out_queue.push(stack.top());
+                stack.pop();
+                if (stack.empty()) {
+                    throw std::logic_error("Syntax error");
+                }
+            }
+            int tmp_counter = stack.top().second;
+            stack.pop();
+            if (!stack.empty() and stack.top().first.type == Type::func) {
+                out_queue.emplace(stack.top().first, tmp_counter);
+                stack.pop();
+            }
+        }
+    }
+    while (!stack.empty()) {
+        if (stack.top().first.type == Type::open_bracket) {
+            throw std::logic_error("Syntax error");
+        }
+        out_queue.push(stack.top());
+        stack.pop();
+    }
+    return out_queue;
 }
-
-bool Parser::empty() {
-    return stack.empty();
-}
-
-Token Parser::top() {
-    return stack.top();
-}
-
-void Parser::push(const Token &s) {
-    stack.push(s);
-}
-
-void Parser::pop() {
-    return stack.pop();
-}
-
-

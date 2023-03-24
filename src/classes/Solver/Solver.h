@@ -1,10 +1,10 @@
 #ifndef MEGA_CALCAPP_SOLVER_H
 #define MEGA_CALCAPP_SOLVER_H
 
+#include "../Parser/Parser.h"
 
-class Solver {
+using parser_queue = decltype(parser(""));
 
-};
-
+std::string solver(parser_queue &a);
 
 #endif //MEGA_CALCAPP_SOLVER_H

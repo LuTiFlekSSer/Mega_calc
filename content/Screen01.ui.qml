@@ -48,7 +48,9 @@ Rectangle {
                     anchors.fill: parent
                     anchors.margins: 10
                     clip: true
-                    ScrollBar.vertical: ScrollBar {policy: ScrollBar.AlwaysOn}
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AlwaysOn
+                    }
                     delegate: Button {
                         width: 50
                         height: 50
@@ -61,7 +63,8 @@ Rectangle {
                             source: png_for_img
                         }
                         // @disable-check M222
-                        onClicked: input_field.insert(input_field.cursorPosition, func)
+                        onClicked: input_field.insert(
+                                       input_field.cursorPosition, func)
                     }
                     model: ListModel {
                         ListElement {
@@ -178,7 +181,9 @@ Rectangle {
                     anchors.fill: parent
                     anchors.margins: 10
                     clip: true
-                    ScrollBar.vertical: ScrollBar {policy: ScrollBar.AlwaysOn}
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AlwaysOn
+                    }
                     delegate: Button {
                         width: 50
                         height: 50
@@ -190,7 +195,8 @@ Rectangle {
                             source: png_for_img
                         }
                         // @disable-check M222
-                        onClicked: input_field.insert(input_field.cursorPosition, func)
+                        onClicked: input_field.insert(
+                                       input_field.cursorPosition, func)
                     }
                     model: ListModel {
                         ListElement {
@@ -337,7 +343,9 @@ Rectangle {
                     anchors.fill: parent
                     anchors.margins: 10
                     clip: true
-                    ScrollBar.vertical: ScrollBar {policy: ScrollBar.AlwaysOn}
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AlwaysOn
+                    }
                     delegate: Button {
                         width: 50
                         height: 50
@@ -347,7 +355,8 @@ Rectangle {
                             source: png_for_img
                         }
                         // @disable-check M222
-                        onClicked: input_field.insert(input_field.cursorPosition, func)
+                        onClicked: input_field.insert(
+                                       input_field.cursorPosition, func)
                     }
                     model: ListModel {
                         ListElement {
@@ -427,7 +436,8 @@ Rectangle {
                 width: 25
                 height: 25
                 // @disable-check M222
-                onClicked: input_field.remove(input_field.cursorPosition - 1,input_field.cursorPosition)
+                onClicked: input_field.remove(input_field.cursorPosition - 1,
+                                              input_field.cursorPosition)
                 text: qsTr("⌫")
             }
         }
@@ -698,7 +708,6 @@ Rectangle {
 
         Button {
             id: numAns
-            property string buf: ""
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             anchors.left: numdot.right
@@ -708,7 +717,7 @@ Rectangle {
             text: qsTr("Ans")
             font.pointSize: 11
             // @disable-check M222
-            onClicked: input_field.insert(input_field.cursorPosition, buf)
+            onClicked: input_field.insert(input_field.cursorPosition, "Ans")
         }
 
         Button {
@@ -742,18 +751,20 @@ Rectangle {
                 anchors.margins: 10
                 anchors.bottomMargin: hist_clear.height + 20
                 clip: true
-                ScrollBar.vertical: ScrollBar{policy: ScrollBar.AlwaysOn}
+                ScrollBar.vertical: ScrollBar {
+                    policy: ScrollBar.AlwaysOn
+                }
                 Connections {
                     target: Core
-                    onSend_ans:(msg) => {
-                        backgr.visible = false
-                        busyIndicator.running = false
-                        page.enabled = true
-                        var new_ans = {}
-                        new_ans.hist_text = msg
-                        list_model.insert(0, new_ans)
-                        numAns.buf = msg
-                    }
+                    onSend_ans: msg => {
+                                    backgr.visible = false
+                                    busyIndicator.running = false
+                                    page.enabled = true
+                                    var new_ans = {}
+                                    new_ans.hist_text = msg
+                                    list_model.insert(0, new_ans)
+                                    numAns.buf = msg
+                                }
                 }
 
                 model: ListModel {
@@ -775,7 +786,8 @@ Rectangle {
                         font.pointSize: 11
                         text: qsTr("")
                         // @disable-check M222
-                        onClicked: input_field.insert(input_field.cursorPosition, parent.text)
+                        onClicked: input_field.insert(
+                                       input_field.cursorPosition, parent.text)
                         Image {
                             anchors.fill: parent
                             anchors.margins: 2
@@ -889,7 +901,7 @@ Rectangle {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}D{i:60;invisible:true}
+    D{i:0;autoSize:true;height:480;width:640}
 }
 ##^##*/
 

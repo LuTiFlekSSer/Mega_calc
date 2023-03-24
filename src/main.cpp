@@ -5,7 +5,7 @@
 #include "src/classes/VecND/VecND.h"
 #include "src/ui files/Ui/ui.h"
 #include "chrono"
-#include "src/classes/Parser/Parser.h"
+#include "src/classes/Solver/Solver.h"
 
 int main(int argc, char *argv[]) {
 //    Mat2D m(3, 5);
@@ -39,6 +39,12 @@ int main(int argc, char *argv[]) {
 //    }
 //    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n';
 //    std::cout << factorial(a);
-    Parser a("),(2)");
+    std::string s;
+    std::cin >> s;
+    auto p = parser(s);
+    while (!p.empty()) {
+        std::cout << p.front().first.token + ' ' + (char) p.front().first.type + ' ' << p.front().second << '\n';
+        p.pop();
+    }
     return 0;
 }
