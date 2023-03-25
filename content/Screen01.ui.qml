@@ -16,7 +16,6 @@ Rectangle {
     id: rectangle
     anchors.fill: parent
     color: Constants.backgroundColor
-
     Page {
         id: page
         anchors.fill: parent
@@ -763,26 +762,33 @@ Rectangle {
                                     var new_ans = {}
                                     new_ans.hist_text = msg
                                     list_model.insert(0, new_ans)
-                                    numAns.buf = msg
                                 }
+                    onSend_error: err => {
+                                      backgr.visible = false
+                                      busyIndicator.running = false
+                                      page.enabled = true
+                                      mess_dial.message = err
+                                      mess_dial.open()
+                                  }
                 }
 
                 model: ListModel {
                     id: list_model
                 }
                 delegate: TextField {
-                    height: 40
+                    height: implicitHeight + 10
                     width: ListView.view.width - 10
                     readOnly: true
                     text: hist_text
+                    rightPadding: 40
+                    wrapMode: TextInput.WrapAnywhere
                     Button {
                         anchors.right: parent.right
                         anchors.rightMargin: 8
                         anchors.top: parent.top
                         anchors.topMargin: 8
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 8
-                        width: height
+                        width: 25
+                        height: width
                         font.pointSize: 11
                         text: qsTr("")
                         // @disable-check M222

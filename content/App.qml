@@ -31,6 +31,7 @@ import QtQuick 6.4
 import QtQuick.Window 6.4
 import Mega_calc
 import QtQuick.Controls 6.4
+import QtQuick.Dialogs 6.4
 
 Window {
     width: 750
@@ -41,9 +42,16 @@ Window {
     minimumWidth: 640
     title: "Калькулятор"
 
+    MessageDialog {
+        id: mess_dial
+        property string message: "Error"
+        title: qsTr("Error")
+        text: message
+        buttons: MessageDialog.Ok | MessageDialog.Cancel
+    }
+
     Screen01 {
         id: mainScreen
-
     }
 }
 

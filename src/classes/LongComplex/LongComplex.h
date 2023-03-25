@@ -154,6 +154,14 @@ LongComplex cosech(const LongComplex &num);
 
 LongComplex acosech(const LongComplex &num);
 
+LongComplex rad_to_grad(const LongComplex &num);
+
+LongComplex grad_to_rad(const LongComplex &num);
+
+LongComplex floor(const LongComplex &num);
+
+LongComplex ceil(const LongComplex &num);
+
 namespace many_value_f {
     LongNumber phase(const LongComplex &num, long long n);
 

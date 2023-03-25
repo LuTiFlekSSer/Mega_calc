@@ -29,22 +29,5 @@ int main(int argc, char *argv[]) {
 //    print_solve(i);
 //    v.print();
 //    (m * a).print();
-//    start_UI(argc, argv);
-//    LongComplex a, b, c;
-//    std::cin >> a >> b;
-//    std::cout << a << ' ' << b << '\n';
-//    auto t1 = std::chrono::steady_clock::now();
-//    for (int i = 0; i < 1000; ++i) {
-//        b = factorial(a);
-//    }
-//    std::cout << std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count() << '\n';
-//    std::cout << factorial(a);
-    std::string s;
-    std::cin >> s;
-    auto p = parser(s);
-    while (!p.empty()) {
-        std::cout << p.front().first.token + ' ' + (char) p.front().first.type + ' ' << p.front().second << '\n';
-        p.pop();
-    }
-    return 0;
+    return start_UI(argc, argv);
 }

@@ -619,6 +619,28 @@ LongComplex sqrt(const LongComplex &num) {
     return LongComplex{sqrt_1.get(), sqrt_2.get()};
 }
 
+LongComplex rad_to_grad(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num)) {
+        return num;
+    }
+    return num * LongComplex(180) / LongComplex::Pi;
+}
+
+LongComplex grad_to_rad(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num)) {
+        return num;
+    }
+    return num * LongComplex::Pi / LongComplex(180);
+}
+
+LongComplex floor(const LongComplex &num) {
+    return LongComplex{floor(num.get_real()), floor(num.get_imag())};
+}
+
+LongComplex ceil(const LongComplex &num) {
+    return LongComplex{ceil(num.get_real()), ceil(num.get_imag())};
+}
+
 LongNumber many_value_f::phase(const LongComplex &num, long long n) {
     if (iscnan(num) or iscinf(num))
         return LongNumber::nan;
