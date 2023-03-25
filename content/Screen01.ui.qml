@@ -411,6 +411,7 @@ Rectangle {
                     backgr.visible = true
                     busyIndicator.running = true
                     page.enabled = false
+                    busyIndicator.visible = true
                     // @disable-check M222
                     Core.solve_expr(input_field.text)
                 }
@@ -761,12 +762,14 @@ Rectangle {
                                     page.enabled = true
                                     var new_ans = {}
                                     new_ans.hist_text = msg
+                                    busyIndicator.visible = false
                                     list_model.insert(0, new_ans)
                                 }
                     onSend_error: err => {
                                       backgr.visible = false
                                       busyIndicator.running = false
                                       page.enabled = true
+                                      busyIndicator.visible = false
                                       mess_dial.message = err
                                       mess_dial.open()
                                   }
@@ -896,7 +899,7 @@ Rectangle {
         y: 216
         width: 84
         height: 48
-        visible: true
+        visible: false
         anchors.centerIn: parent
         running: false
         wheelEnabled: false
