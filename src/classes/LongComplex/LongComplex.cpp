@@ -424,10 +424,8 @@ LongComplex atan(const LongComplex &num) {
 LongComplex ctan(const LongComplex &num) {
     if (iscnan(num))
         return LongComplex::cnan;
-    else if (iscinf(num))
+    else if (iscinf(num) or num == LongComplex::czero)
         return LongComplex::cinf;
-    else if (num == LongComplex::czero)
-        return LongComplex::czero;
     return LongComplex::I + LongComplex::two_I / (exp(LongComplex::two_I * num) - LongComplex::one);
 }
 

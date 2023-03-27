@@ -398,6 +398,7 @@ Rectangle {
                 color: "blue"
                 width: input_field.cursorRectangle.width
             }
+
             Button {
                 id: get_ans
                 anchors.right: parent.right

@@ -1006,7 +1006,7 @@ LongNumber sqrt(const LongNumber &num) {
         return LongNumber::inf;
     else if (num == LongNumber::zero)
         return num;
-    LongNumber x = LongNumber::inf, half = LongNumber::half, x1 = LongNumber::one, new_eps = pow(LongNumber::ten, num.exp / 2) * LongNumber::eps;
+    LongNumber x = LongNumber::inf, half = LongNumber::half, x1 = num, new_eps = pow(LongNumber::ten, num.exp / 2) * LongNumber::eps;
     while (abs(x1 - x) > new_eps) {
         copy_with_double_round(x, x1);
         move_with_double_round(x1, half * (x + num / x));
@@ -1153,6 +1153,7 @@ LongNumber &LongNumber::operator=(LongNumber &&rhs) noexcept {
     exp = rhs.exp;
     numbers = std::move(rhs.numbers);
     sign = rhs.sign;
+    this->round(LongNumber::eps);
     return *this;
 }
 
