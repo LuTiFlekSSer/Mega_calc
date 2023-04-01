@@ -6,8 +6,6 @@
 
 static const std::string char_after_num = "+-*/(,)";
 static const std::string operators = "+-*/,";
-static const std::string low_priority_operators = "+-";
-static const std::string high_priority_operators = "*/";
 
 std::vector<Token> tokenizer(const std::string &s) {
     if (s.empty())

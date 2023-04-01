@@ -1,5 +1,4 @@
 #include "Core.h"
-#include "unistd.h"
 #include "thread"
 #include "../../classes/Parser/Parser.h"
 #include "../../classes/Solver/Solver.h"

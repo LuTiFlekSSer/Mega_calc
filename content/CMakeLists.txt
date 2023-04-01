@@ -34,6 +34,7 @@ qt6_add_qml_module(content
         Images/lg.png
         Images/infm.png
         Images/inf.png
+        Images/icon.png
         Images/i.png
         Images/floor.png
         Images/factorial.png
