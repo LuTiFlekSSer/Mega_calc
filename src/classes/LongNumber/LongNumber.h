@@ -77,6 +77,7 @@ public:
     static const LongNumber double_eps;
     static const LongNumber two_Pi;
     static const LongNumber half_Pi;
+    static const LongNumber sqrt_ten;
 
     LongNumber();
 

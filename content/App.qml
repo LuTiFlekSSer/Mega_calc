@@ -40,7 +40,7 @@ Window {
     visible: true
     minimumHeight: 480
     minimumWidth: 640
-    title: "Калькулятор"
+    title: "Mega Calc"
 
     MessageDialog {
         id: mess_dial

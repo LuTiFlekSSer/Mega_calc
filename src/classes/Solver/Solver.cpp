@@ -4,6 +4,7 @@
 #include "../LongNumber/LongNumber.h"
 #include "../LongComplex/LongComplex.h"
 #include "stack"
+#include "algorithm"
 
 LongComplex max(const LongComplex &a, const LongComplex &b) {
     throw std::logic_error("Complex numbers do not support comparisons");
@@ -11,6 +12,10 @@ LongComplex max(const LongComplex &a, const LongComplex &b) {
 
 LongComplex min(const LongComplex &a, const LongComplex &b) {
     throw std::logic_error("Complex numbers do not support comparisons");
+}
+
+LongNumber phase(const LongNumber &a) {
+    return LongNumber::zero;
 }
 
 struct Number {
@@ -76,6 +81,28 @@ static const std::unordered_map<std::string, std::pair<std::function<T(const std
         {"acoth",     {[](const std::vector<T> &args) { return actanh(args[0]); },        1}},
         {"asech",     {[](const std::vector<T> &args) { return asech(args[0]); },         1}},
         {"acsch",     {[](const std::vector<T> &args) { return acosech(args[0]); },       1}},
+
+        {"phase",     {[](const std::vector<T> &args) { return T(phase(args[0])); },      1}},
+};
+static const std::unordered_map<std::string, std::pair<std::function<LongComplex(const std::vector<LongComplex> &args)>, int>> many_value_funcs = {
+        {"Mphase", {[](const std::vector<LongComplex> &args) { return LongComplex(many_value_f::phase(args[0], args[1])); },    2}},
+        {"Mln",    {[](const std::vector<LongComplex> &args) { return many_value_f::ln(args[0], args[1]); },                    2}},
+        {"Mlog",   {[](const std::vector<LongComplex> &args) { return many_value_f::log(args[0], args[1], args[2], args[3]); }, 4}},
+        {"Mpow",   {[](const std::vector<LongComplex> &args) { return many_value_f::pow(args[0], args[1], args[2]); },          3}},
+        {"Msurd",  {[](const std::vector<LongComplex> &args) { return many_value_f::surd(args[0], args[1], args[2]); },         3}},
+        {"Msqrt",  {[](const std::vector<LongComplex> &args) { return many_value_f::sqrt(args[0], args[1]); },                  2}},
+        {"Masin",  {[](const std::vector<LongComplex> &args) { return many_value_f::asin(args[0], args[1], args[2]); },         3}},
+        {"Macos",  {[](const std::vector<LongComplex> &args) { return many_value_f::acos(args[0], args[1], args[2]); },         3}},
+        {"Matan",  {[](const std::vector<LongComplex> &args) { return many_value_f::atan(args[0], args[1], args[2]); },         3}},
+        {"Macot",  {[](const std::vector<LongComplex> &args) { return many_value_f::actan(args[0], args[1], args[2]); },        3}},
+        {"Maces",  {[](const std::vector<LongComplex> &args) { return many_value_f::asec(args[0], args[1], args[2]); },         3}},
+        {"Macsc",  {[](const std::vector<LongComplex> &args) { return many_value_f::acosec(args[0], args[1], args[2]); },       3}},
+        {"Masinh", {[](const std::vector<LongComplex> &args) { return many_value_f::asinh(args[0], args[1], args[2]); },        3}},
+        {"Macosh", {[](const std::vector<LongComplex> &args) { return many_value_f::acosh(args[0], args[1], args[2]); },        3}},
+        {"Matanh", {[](const std::vector<LongComplex> &args) { return many_value_f::atanh(args[0], args[1], args[2]); },        3}},
+        {"Macoth", {[](const std::vector<LongComplex> &args) { return many_value_f::actanh(args[0], args[1], args[2]); },       3}},
+        {"Masech", {[](const std::vector<LongComplex> &args) { return many_value_f::asech(args[0], args[1], args[2]); },        3}},
+        {"Macsch", {[](const std::vector<LongComplex> &args) { return many_value_f::acosech(args[0], args[1], args[2]); },      3}},
 };
 static std::unordered_map<std::string, Number> constants = {
         {"Pi",   {LongNumber::Pi,    Type::num_real}},
@@ -115,9 +142,21 @@ std::string solver(parser_queue &a) {
             a.pop();
         } else if (a.front().first.type == Type::func) {
             if (!funcs<LongComplex>.contains(a.front().first.token)) {
-                throw std::logic_error("Function not found: " + a.front().first.token);
-            }
-            if (funcs<LongComplex>.at(a.front().first.token).second == a.front().second) {
+                if (!many_value_funcs.contains(a.front().first.token))
+                    throw std::logic_error("Function not found: " + a.front().first.token);
+                if (many_value_funcs.at(a.front().first.token).second == a.front().second) {
+                    std::vector<LongComplex> args;
+                    for (int i = 0; i < a.front().second; ++i) {
+                        args.emplace_back(solver_stack.top().lc);
+                        solver_stack.pop();
+                    }
+                    std::reverse(args.begin(), args.end());
+                    solver_stack.emplace(many_value_funcs.at(a.front().first.token).first(args), Type::num_complex);
+                    a.pop();
+                } else {
+                    throw std::logic_error("Invalid number of parameters for the function: " + a.front().first.token);
+                }
+            } else if (funcs<LongComplex>.at(a.front().first.token).second == a.front().second) {
                 std::vector<Number> tmp_vec;
                 bool all_real = true;
                 for (int i = 0; i < a.front().second; ++i) {
