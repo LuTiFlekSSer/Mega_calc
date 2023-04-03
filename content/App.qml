@@ -34,12 +34,12 @@ import QtQuick.Controls 6.4
 import QtQuick.Dialogs 6.4
 
 Window {
-    width: 750
+    width: 800
     height: 500
 
     visible: true
     minimumHeight: 480
-    minimumWidth: 640
+    minimumWidth: 750
     title: "Mega Calc"
 
     MessageDialog {

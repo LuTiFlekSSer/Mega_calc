@@ -95,7 +95,7 @@ static const std::unordered_map<std::string, std::pair<std::function<LongComplex
         {"Macos",  {[](const std::vector<LongComplex> &args) { return many_value_f::acos(args[0], args[1], args[2]); },         3}},
         {"Matan",  {[](const std::vector<LongComplex> &args) { return many_value_f::atan(args[0], args[1], args[2]); },         3}},
         {"Macot",  {[](const std::vector<LongComplex> &args) { return many_value_f::actan(args[0], args[1], args[2]); },        3}},
-        {"Maces",  {[](const std::vector<LongComplex> &args) { return many_value_f::asec(args[0], args[1], args[2]); },         3}},
+        {"Masec",  {[](const std::vector<LongComplex> &args) { return many_value_f::asec(args[0], args[1], args[2]); },         3}},
         {"Macsc",  {[](const std::vector<LongComplex> &args) { return many_value_f::acosec(args[0], args[1], args[2]); },       3}},
         {"Masinh", {[](const std::vector<LongComplex> &args) { return many_value_f::asinh(args[0], args[1], args[2]); },        3}},
         {"Macosh", {[](const std::vector<LongComplex> &args) { return many_value_f::acosh(args[0], args[1], args[2]); },        3}},

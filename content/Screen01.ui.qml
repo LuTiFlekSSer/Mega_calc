@@ -32,7 +32,7 @@ Rectangle {
         }
         StackLayout {
             id: stackl
-            width: 440
+            width: 560
             anchors.bottom: num9.top
             anchors.bottomMargin: 20
             anchors.top: bar.bottom
@@ -140,6 +140,11 @@ Rectangle {
                             png_for_img: "Images/abs.png"
                             pix: 7
                             func: "abs()"
+                        }
+                        ListElement {
+                            png_for_img: "Images/phase.png"
+                            pix: 7
+                            func: "phase()"
                         }
                         ListElement {
                             png_for_img: "Images/factorial.png"
@@ -334,6 +339,127 @@ Rectangle {
                 }
             }
             Rectangle {
+                id: many_value_tab
+                color: "white"
+                radius: 5
+                GridView {
+                    id: many_value_grid
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    clip: true
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AlwaysOn
+                    }
+                    delegate: Button {
+                        width: 50
+                        height: 50
+                        Image {
+                            anchors.fill: parent
+                            anchors.margins: pix
+                            source: png_for_img
+                        }
+                        // @disable-check M222
+                        onClicked: input_field.insert(
+                                       input_field.cursorPosition, func)
+                    }
+                    model: ListModel {
+                        ListElement {
+                            png_for_img: "Images/Mphase.png"
+                            pix: 5
+                            func: "Mphase(,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Mln.png"
+                            pix: 5
+                            func: "Mln(,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Mlog.png"
+                            pix: 5
+                            func: "Mlog(,,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Mpow.png"
+                            pix: 5
+                            func: "Mpow(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Msqrt.png"
+                            pix: 5
+                            func: "Msqrt(,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Msurd.png"
+                            pix: 5
+                            func: "Msurd(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Masin.png"
+                            pix: 5
+                            func: "Masin(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macos.png"
+                            pix: 5
+                            func: "Macos(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Matan.png"
+                            pix: 5
+                            func: "Matan(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macot.png"
+                            pix: 5
+                            func: "Macot(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Masec.png"
+                            pix: 5
+                            func: "Masec(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macsc.png"
+                            pix: 5
+                            func: "Macsc(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Masinh.png"
+                            pix: 5
+                            func: "Masinh(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macosh.png"
+                            pix: 5
+                            func: "Macosh(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Matanh.png"
+                            pix: 5
+                            func: "Matanh(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macoth.png"
+                            pix: 5
+                            func: "Macoth(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Masech.png"
+                            pix: 5
+                            func: "Masech(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macsch.png"
+                            pix: 5
+                            func: "Macsch(,,)"
+                        }
+                    }
+                    cellWidth: 60
+                    cellHeight: 60
+                }
+            }
+
+            Rectangle {
                 id: const_tab
                 color: "white"
                 radius: 5
@@ -457,6 +583,11 @@ Rectangle {
             }
             TabButton {
                 text: qsTr("Тригонометрические")
+                font.pointSize: 10
+                width: implicitWidth
+            }
+            TabButton {
+                text: qsTr("Многозначные")
                 font.pointSize: 10
                 width: implicitWidth
             }
