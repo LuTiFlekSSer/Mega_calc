@@ -26,14 +26,34 @@ qt6_add_qml_module(content
         Images/pow2.png
         Images/pow.png
         Images/Pi.png
+        Images/phase.png
         Images/mult.png
+        Images/Msurd.png
+        Images/Msqrt.png
+        Images/Mpow.png
+        Images/Mphase.png
+        Images/Mlog.png
+        Images/Mln.png
         Images/min.png
         Images/max.png
+        Images/Matanh.png
+        Images/Matan.png
+        Images/Masinh.png
+        Images/Masin.png
+        Images/Masech.png
+        Images/Masec.png
+        Images/Macsch.png
+        Images/Macsc.png
+        Images/Macoth.png
+        Images/Macot.png
+        Images/Macosh.png
+        Images/Macos.png
         Images/log.png
         Images/ln.png
         Images/lg.png
         Images/infm.png
         Images/inf.png
+        Images/icon.png
         Images/i.png
         Images/floor.png
         Images/factorial.png

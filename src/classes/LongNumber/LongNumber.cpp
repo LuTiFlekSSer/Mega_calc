@@ -29,7 +29,7 @@ const LongNumber LongNumber::lns[10] = {
         LongNumber("2.1972245773362193827904904738450514092949811156454989034693886672749885864372179337472315096274641775759400581319157314847360084"),
         LongNumber("2.3025850929940456840179914546843642076011014886287729760333279009675726096773524802359972050895982983419677840422862486334095254")
 };
-
+const LongNumber LongNumber::sqrt_ten = LongNumber("3.1622776601683793319988935444327185337195551393252168268575048527925944386392382213442481083793002951");
 const LongNumber LongNumber::G("6.024680040776729583740234375");
 const LongNumber LongNumber::lanczos_num_coeffs[13] = {
         LongNumber("23531376880.410759688572007674451636754734846804940"),
@@ -92,7 +92,7 @@ LongNumber::LongNumber(std::string num) {
     if (num == "inf") {
         *this = LongNumber::inf;
         return;
-    } else if (num == "-inf") {
+    } else if (num == "-inf" or num == "infm") {
         *this = LongNumber::infm;
         return;
     }
@@ -1006,12 +1006,17 @@ LongNumber sqrt(const LongNumber &num) {
         return LongNumber::inf;
     else if (num == LongNumber::zero)
         return num;
-    LongNumber x = LongNumber::inf, half = LongNumber::half, x1 = LongNumber::one, new_eps = pow(LongNumber::ten, num.exp / 2) * LongNumber::eps;
-    while (abs(x1 - x) > new_eps) {
-        copy_with_double_round(x, x1);
-        move_with_double_round(x1, half * (x + num / x));
+    LongNumber mnoj = pow(LongNumber::ten, num.exp / 2), tmp_num = num;
+    tmp_num.exp = 0;
+    if (num.exp % 2 != 0) {
+        move_with_double_round(mnoj, num.exp > 0 ? mnoj * LongNumber::sqrt_ten : mnoj * LongNumber::sqrt_ten / LongNumber::ten);
     }
-    return x;
+    LongNumber x = LongNumber::inf, x1 = tmp_num;
+    while (abs(x1 - x) > LongNumber::eps) {
+        copy_with_double_round(x, x1);
+        move_with_double_round(x1, LongNumber::half * (x + tmp_num / x));
+    }
+    return x * mnoj;
 }
 
 LongNumber surd(const LongNumber &num, const LongNumber &deg) {
@@ -1153,19 +1158,20 @@ LongNumber &LongNumber::operator=(LongNumber &&rhs) noexcept {
     exp = rhs.exp;
     numbers = std::move(rhs.numbers);
     sign = rhs.sign;
+    this->round(LongNumber::eps);
     return *this;
 }
 
 bool correct_long_num(const std::string &num) {
-    if (num == "inf" or num == "-inf") {
+    if (num == "inf" or num == "-inf" or num == "infm") {
         return true;
     }
     long long dot_num = 0;
     for (long long i = 0; i < num.size(); ++i) {
         if (!isdigit(num[i])) {
-            if (num[i] == '-' and i == 0) {
+            if (num[i] == '-' and i == 0 and num.size() != 1) {
                 continue;
-            } else if (num[i] == '.' and dot_num == 0) {
+            } else if (num[i] == '.' and dot_num == 0 and i != num.size() - 1) {
                 ++dot_num;
             } else {
                 return false;

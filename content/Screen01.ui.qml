@@ -16,7 +16,6 @@ Rectangle {
     id: rectangle
     anchors.fill: parent
     color: Constants.backgroundColor
-
     Page {
         id: page
         anchors.fill: parent
@@ -33,7 +32,7 @@ Rectangle {
         }
         StackLayout {
             id: stackl
-            width: 440
+            width: 560
             anchors.bottom: num9.top
             anchors.bottomMargin: 20
             anchors.top: bar.bottom
@@ -48,7 +47,9 @@ Rectangle {
                     anchors.fill: parent
                     anchors.margins: 10
                     clip: true
-                    ScrollBar.vertical: ScrollBar {policy: ScrollBar.AlwaysOn}
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AlwaysOn
+                    }
                     delegate: Button {
                         width: 50
                         height: 50
@@ -61,7 +62,8 @@ Rectangle {
                             source: png_for_img
                         }
                         // @disable-check M222
-                        onClicked: input_field.insert(input_field.cursorPosition, func)
+                        onClicked: input_field.insert(
+                                       input_field.cursorPosition, func)
                     }
                     model: ListModel {
                         ListElement {
@@ -140,6 +142,11 @@ Rectangle {
                             func: "abs()"
                         }
                         ListElement {
+                            png_for_img: "Images/phase.png"
+                            pix: 7
+                            func: "phase()"
+                        }
+                        ListElement {
                             png_for_img: "Images/factorial.png"
                             pix: 7
                             func: "factorial()"
@@ -178,7 +185,9 @@ Rectangle {
                     anchors.fill: parent
                     anchors.margins: 10
                     clip: true
-                    ScrollBar.vertical: ScrollBar {policy: ScrollBar.AlwaysOn}
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AlwaysOn
+                    }
                     delegate: Button {
                         width: 50
                         height: 50
@@ -190,7 +199,8 @@ Rectangle {
                             source: png_for_img
                         }
                         // @disable-check M222
-                        onClicked: input_field.insert(input_field.cursorPosition, func)
+                        onClicked: input_field.insert(
+                                       input_field.cursorPosition, func)
                     }
                     model: ListModel {
                         ListElement {
@@ -329,15 +339,17 @@ Rectangle {
                 }
             }
             Rectangle {
-                id: const_tab
+                id: many_value_tab
                 color: "white"
                 radius: 5
                 GridView {
-                    id: const_grid
+                    id: many_value_grid
                     anchors.fill: parent
                     anchors.margins: 10
                     clip: true
-                    ScrollBar.vertical: ScrollBar {policy: ScrollBar.AlwaysOn}
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AlwaysOn
+                    }
                     delegate: Button {
                         width: 50
                         height: 50
@@ -347,7 +359,129 @@ Rectangle {
                             source: png_for_img
                         }
                         // @disable-check M222
-                        onClicked: input_field.insert(input_field.cursorPosition, func)
+                        onClicked: input_field.insert(
+                                       input_field.cursorPosition, func)
+                    }
+                    model: ListModel {
+                        ListElement {
+                            png_for_img: "Images/Mphase.png"
+                            pix: 5
+                            func: "Mphase(,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Mln.png"
+                            pix: 5
+                            func: "Mln(,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Mlog.png"
+                            pix: 5
+                            func: "Mlog(,,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Mpow.png"
+                            pix: 5
+                            func: "Mpow(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Msqrt.png"
+                            pix: 5
+                            func: "Msqrt(,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Msurd.png"
+                            pix: 5
+                            func: "Msurd(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Masin.png"
+                            pix: 5
+                            func: "Masin(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macos.png"
+                            pix: 5
+                            func: "Macos(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Matan.png"
+                            pix: 5
+                            func: "Matan(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macot.png"
+                            pix: 5
+                            func: "Macot(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Masec.png"
+                            pix: 5
+                            func: "Masec(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macsc.png"
+                            pix: 5
+                            func: "Macsc(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Masinh.png"
+                            pix: 5
+                            func: "Masinh(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macosh.png"
+                            pix: 5
+                            func: "Macosh(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Matanh.png"
+                            pix: 5
+                            func: "Matanh(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macoth.png"
+                            pix: 5
+                            func: "Macoth(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Masech.png"
+                            pix: 5
+                            func: "Masech(,,)"
+                        }
+                        ListElement {
+                            png_for_img: "Images/Macsch.png"
+                            pix: 5
+                            func: "Macsch(,,)"
+                        }
+                    }
+                    cellWidth: 60
+                    cellHeight: 60
+                }
+            }
+
+            Rectangle {
+                id: const_tab
+                color: "white"
+                radius: 5
+                GridView {
+                    id: const_grid
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    clip: true
+                    ScrollBar.vertical: ScrollBar {
+                        policy: ScrollBar.AlwaysOn
+                    }
+                    delegate: Button {
+                        width: 50
+                        height: 50
+                        Image {
+                            anchors.fill: parent
+                            anchors.margins: pix
+                            source: png_for_img
+                        }
+                        // @disable-check M222
+                        onClicked: input_field.insert(
+                                       input_field.cursorPosition, func)
                     }
                     model: ListModel {
                         ListElement {
@@ -390,6 +524,7 @@ Rectangle {
                 color: "blue"
                 width: input_field.cursorRectangle.width
             }
+
             Button {
                 id: get_ans
                 anchors.right: parent.right
@@ -403,6 +538,7 @@ Rectangle {
                     backgr.visible = true
                     busyIndicator.running = true
                     page.enabled = false
+                    busyIndicator.visible = true
                     // @disable-check M222
                     Core.solve_expr(input_field.text)
                 }
@@ -427,7 +563,8 @@ Rectangle {
                 width: 25
                 height: 25
                 // @disable-check M222
-                onClicked: input_field.remove(input_field.cursorPosition - 1,input_field.cursorPosition)
+                onClicked: input_field.remove(input_field.cursorPosition - 1,
+                                              input_field.cursorPosition)
                 text: qsTr("⌫")
             }
         }
@@ -446,6 +583,11 @@ Rectangle {
             }
             TabButton {
                 text: qsTr("Тригонометрические")
+                font.pointSize: 10
+                width: implicitWidth
+            }
+            TabButton {
+                text: qsTr("Многозначные")
                 font.pointSize: 10
                 width: implicitWidth
             }
@@ -698,7 +840,6 @@ Rectangle {
 
         Button {
             id: numAns
-            property string buf: ""
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             anchors.left: numdot.right
@@ -708,7 +849,7 @@ Rectangle {
             text: qsTr("Ans")
             font.pointSize: 11
             // @disable-check M222
-            onClicked: input_field.insert(input_field.cursorPosition, buf)
+            onClicked: input_field.insert(input_field.cursorPosition, "Ans")
         }
 
         Button {
@@ -742,40 +883,52 @@ Rectangle {
                 anchors.margins: 10
                 anchors.bottomMargin: hist_clear.height + 20
                 clip: true
-                ScrollBar.vertical: ScrollBar{policy: ScrollBar.AlwaysOn}
+                ScrollBar.vertical: ScrollBar {
+                    policy: ScrollBar.AlwaysOn
+                }
                 Connections {
                     target: Core
-                    onSend_ans:(msg) => {
-                        backgr.visible = false
-                        busyIndicator.running = false
-                        page.enabled = true
-                        var new_ans = {}
-                        new_ans.hist_text = msg
-                        list_model.insert(0, new_ans)
-                        numAns.buf = msg
-                    }
+                    onSend_ans: msg => {
+                                    backgr.visible = false
+                                    busyIndicator.running = false
+                                    page.enabled = true
+                                    var new_ans = {}
+                                    new_ans.hist_text = msg
+                                    busyIndicator.visible = false
+                                    list_model.insert(0, new_ans)
+                                }
+                    onSend_error: err => {
+                                      backgr.visible = false
+                                      busyIndicator.running = false
+                                      page.enabled = true
+                                      busyIndicator.visible = false
+                                      mess_dial.message = err
+                                      mess_dial.open()
+                                  }
                 }
 
                 model: ListModel {
                     id: list_model
                 }
                 delegate: TextField {
-                    height: 40
+                    height: implicitHeight + 10
                     width: ListView.view.width - 10
                     readOnly: true
                     text: hist_text
+                    rightPadding: 40
+                    wrapMode: TextInput.WrapAnywhere
                     Button {
                         anchors.right: parent.right
                         anchors.rightMargin: 8
                         anchors.top: parent.top
                         anchors.topMargin: 8
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 8
-                        width: height
+                        width: 25
+                        height: width
                         font.pointSize: 11
                         text: qsTr("")
                         // @disable-check M222
-                        onClicked: input_field.insert(input_field.cursorPosition, parent.text)
+                        onClicked: input_field.insert(
+                                       input_field.cursorPosition, parent.text)
                         Image {
                             anchors.fill: parent
                             anchors.margins: 2
@@ -878,7 +1031,7 @@ Rectangle {
         y: 216
         width: 84
         height: 48
-        visible: true
+        visible: false
         anchors.centerIn: parent
         running: false
         wheelEnabled: false
@@ -889,7 +1042,7 @@ Rectangle {
 
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}D{i:60;invisible:true}
+    D{i:0;autoSize:true;height:480;width:640}
 }
 ##^##*/
 

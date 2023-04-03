@@ -1,4 +1,7 @@
 # Project exclude paths
 /cmake-build-debug-mingw-for-qt/
+/cmake-build-release-mingw-for-qt/
 /.idea/
 /app/
+/installer/
+1.psd

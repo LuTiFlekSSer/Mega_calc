@@ -12,9 +12,11 @@ set(CMAKE_EXE_LINKER_FLAGS "-Wl,--stack,${stack_size}")
 #set(EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/app")
 
 find_package(Qt6 COMPONENTS Gui Qml Quick)
-qt_add_executable(Mega_calcApp "src/main.cpp"
-        "src/ui files/ui.cpp" "src/ui files/ui.h"
-        "src/ui files/Core.cpp" "src/ui files/Core.h"
+qt_add_executable(Mega_calcApp icon.rc "src/main.cpp"
+        "src/ui files/Ui/ui.cpp" "src/ui files/Ui/ui.h"
+        "src/ui files/Core/Core.cpp" "src/ui files/Core/Core.h"
+        "src/classes/Solver/Solver.cpp" "src/classes/Solver/Solver.h"
+        "src/classes/Parser/Parser.cpp" "src/classes/Parser/Parser.h"
         "src/classes/LongComplex/LongComplex.cpp" "src/classes/LongComplex/LongComplex.h"
         "src/classes/Mat2D/Mat2D.cpp" "src/classes/Mat2D/Mat2D.h"
         "src/classes/VecND/VecND.cpp" "src/classes/VecND/VecND.h"

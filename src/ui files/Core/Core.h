@@ -15,6 +15,8 @@ public:
 
 signals:
 
+    void send_error(QString err);
+
     void send_ans(QString ans);
 
 public slots:

@@ -154,42 +154,50 @@ LongComplex cosech(const LongComplex &num);
 
 LongComplex acosech(const LongComplex &num);
 
+LongComplex rad_to_grad(const LongComplex &num);
+
+LongComplex grad_to_rad(const LongComplex &num);
+
+LongComplex floor(const LongComplex &num);
+
+LongComplex ceil(const LongComplex &num);
+
 namespace many_value_f {
-    LongNumber phase(const LongComplex &num, long long n);
+    LongNumber phase(const LongComplex &num, const LongComplex &n);
 
-    LongComplex ln(const LongComplex &num, long long n);
+    LongComplex ln(const LongComplex &num, const LongComplex &n);
 
-    LongComplex log(const LongComplex &num, const LongComplex &base, long long n, long long k);
+    LongComplex log(const LongComplex &num, const LongComplex &base, const LongComplex &n, const LongComplex &k);
 
-    LongComplex pow(const LongComplex &num, const LongComplex &deg, long long n);
+    LongComplex pow(const LongComplex &num, const LongComplex &deg, const LongComplex &n);
 
-    LongComplex surd(const LongComplex &num, const LongComplex &deg, long long n);
+    LongComplex surd(const LongComplex &num, const LongComplex &deg, const LongComplex &n);
 
-    LongComplex sqrt(const LongComplex &num, long long n);
+    LongComplex sqrt(const LongComplex &num, const LongComplex &n);
 
-    LongComplex asin(const LongComplex &num, long long n, long long k);
+    LongComplex asin(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 
-    LongComplex acos(const LongComplex &num, long long n, long long k);
+    LongComplex acos(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 
-    LongComplex atan(const LongComplex &num, long long n, long long k);
+    LongComplex atan(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 
-    LongComplex actan(const LongComplex &num, long long n, long long k);
+    LongComplex actan(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 
-    LongComplex asec(const LongComplex &num, long long n, long long k);
+    LongComplex asec(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 
-    LongComplex acosec(const LongComplex &num, long long n, long long k);
+    LongComplex acosec(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 
-    LongComplex asinh(const LongComplex &num, long long n, long long k);
+    LongComplex asinh(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 
-    LongComplex acosh(const LongComplex &num, long long n, long long k);
+    LongComplex acosh(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 
-    LongComplex atanh(const LongComplex &num, long long n, long long k);
+    LongComplex atanh(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 
-    LongComplex actanh(const LongComplex &num, long long n, long long k);
+    LongComplex actanh(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 
-    LongComplex asech(const LongComplex &num, long long n, long long k);
+    LongComplex asech(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 
-    LongComplex acosech(const LongComplex &num, long long n, long long k);
+    LongComplex acosech(const LongComplex &num, const LongComplex &n, const LongComplex &k);
 }
 
 #endif

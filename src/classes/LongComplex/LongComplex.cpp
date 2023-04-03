@@ -424,10 +424,8 @@ LongComplex atan(const LongComplex &num) {
 LongComplex ctan(const LongComplex &num) {
     if (iscnan(num))
         return LongComplex::cnan;
-    else if (iscinf(num))
+    else if (iscinf(num) or num == LongComplex::czero)
         return LongComplex::cinf;
-    else if (num == LongComplex::czero)
-        return LongComplex::czero;
     return LongComplex::I + LongComplex::two_I / (exp(LongComplex::two_I * num) - LongComplex::one);
 }
 
@@ -619,13 +617,39 @@ LongComplex sqrt(const LongComplex &num) {
     return LongComplex{sqrt_1.get(), sqrt_2.get()};
 }
 
-LongNumber many_value_f::phase(const LongComplex &num, long long n) {
-    if (iscnan(num) or iscinf(num))
-        return LongNumber::nan;
-    return phase(num) + LongNumber::two_Pi * LongNumber{n};
+LongComplex rad_to_grad(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num)) {
+        return num;
+    }
+    return num * LongComplex(180) / LongComplex::Pi;
 }
 
-LongComplex many_value_f::ln(const LongComplex &num, long long n) {
+LongComplex grad_to_rad(const LongComplex &num) {
+    if (iscnan(num) or iscinf(num)) {
+        return num;
+    }
+    return num * LongComplex::Pi / LongComplex(180);
+}
+
+LongComplex floor(const LongComplex &num) {
+    return LongComplex{floor(num.get_real()), floor(num.get_imag())};
+}
+
+LongComplex ceil(const LongComplex &num) {
+    return LongComplex{ceil(num.get_real()), ceil(num.get_imag())};
+}
+
+LongNumber many_value_f::phase(const LongComplex &num, const LongComplex &n) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (iscnan(num) or iscinf(num))
+        return LongNumber::nan;
+    return phase(num) + LongNumber::two_Pi * n.get_real();
+}
+
+LongComplex many_value_f::ln(const LongComplex &num, const LongComplex &n) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num) or num == LongComplex::czero)
         return LongComplex::cnan;
     else if (iscinf(num))
@@ -633,7 +657,11 @@ LongComplex many_value_f::ln(const LongComplex &num, long long n) {
     return ln(num) + LongComplex::I * LongComplex{LongNumber::two_Pi} * LongComplex{n};
 }
 
-LongComplex many_value_f::log(const LongComplex &num, const LongComplex &base, long long n, long long k) {
+LongComplex many_value_f::log(const LongComplex &num, const LongComplex &base, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num) or iscnan(base))
         return LongComplex::cnan;
     auto ln_num = std::async(std::launch::async, [&num, &n] { return many_value_f::ln(num, n); }),
@@ -641,14 +669,16 @@ LongComplex many_value_f::log(const LongComplex &num, const LongComplex &base, l
     return ln_num.get() / ln_base.get();
 }
 
-LongComplex many_value_f::pow(const LongComplex &num, const LongComplex &deg, long long n) {
+LongComplex many_value_f::pow(const LongComplex &num, const LongComplex &deg, const LongComplex &n) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num) or iscnan(deg) or ((num == LongComplex::czero or iscinf(num)) and deg == LongComplex::czero) or (iscinf(deg) and abs(num) == LongNumber::one))
         return LongComplex::cnan;
     else if (iscinf(deg) and (iscinf(num) or abs(num) > LongNumber::one))
         return LongComplex::cinf;
     else if ((iscinf(deg) and abs(num) < LongNumber::one) or num == LongComplex::czero)
         return LongComplex::czero;
-    LongNumber abs_num = abs(num), phase_num = phase(num), N = LongNumber(n);
+    LongNumber abs_num = abs(num), phase_num = phase(num), N = n.get_real();
     auto pow_r = std::async(std::launch::async, [&abs_num, &deg] { return pow(abs_num, deg.get_real()); }),
             exp_r = std::async(std::launch::async, [&phase_num, &deg, &N] { return exp(-deg.get_imag() * (phase_num + LongNumber::two_Pi * N)); }),
             ln_p = std::async(std::launch::async, [&abs_num] { return ln(abs_num); });
@@ -658,7 +688,9 @@ LongComplex many_value_f::pow(const LongComplex &num, const LongComplex &deg, lo
     return LongComplex{r * cos_p.get(), r * sin_p.get()};
 }
 
-LongComplex many_value_f::surd(const LongComplex &num, const LongComplex &deg, long long n) {
+LongComplex many_value_f::surd(const LongComplex &num, const LongComplex &deg, const LongComplex &n) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num) or iscnan(deg) or deg == LongComplex::czero or (iscinf(deg) and (iscinf(num) or num == LongComplex::czero)))
         return LongComplex::cnan;
     else if (iscinf(num))
@@ -672,19 +704,25 @@ LongComplex many_value_f::surd(const LongComplex &num, const LongComplex &deg, l
     return pow(num, LongComplex::one / deg, n);
 }
 
-LongComplex many_value_f::sqrt(const LongComplex &num, long long n) {
+LongComplex many_value_f::sqrt(const LongComplex &num, const LongComplex &n) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num))
         return LongComplex::cnan;
     else if (iscinf(num))
         return LongComplex::cinf;
     else if (num == LongComplex::czero)
         return LongComplex::czero;
-    if (n % 2 == 0)
+    if (std::stoll(n.get_real().to_string()) % 2 == 0)
         return sqrt(num);
     return -sqrt(num);
 }
 
-LongComplex many_value_f::asin(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::asin(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num))
         return LongComplex::cnan;
     else if (iscinf(num))
@@ -694,7 +732,11 @@ LongComplex many_value_f::asin(const LongComplex &num, long long n, long long k)
     return ln(sqrt(num * num + LongComplex::one, k) + num, n);
 }
 
-LongComplex many_value_f::acos(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::acos(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num))
         return LongComplex::cnan;
     else if (iscinf(num))
@@ -704,7 +746,11 @@ LongComplex many_value_f::acos(const LongComplex &num, long long n, long long k)
     return LongComplex::half_Pi - asin(num, n, k);
 }
 
-LongComplex many_value_f::atan(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::atan(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num) or iscinf(num))
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
@@ -714,7 +760,11 @@ LongComplex many_value_f::atan(const LongComplex &num, long long n, long long k)
     return LongComplex::half * LongComplex::I * (ln_1.get() - ln_2.get());
 }
 
-LongComplex many_value_f::actan(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::actan(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num) or iscinf(num))
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
@@ -724,7 +774,11 @@ LongComplex many_value_f::actan(const LongComplex &num, long long n, long long k
     return LongComplex::half * LongComplex::I * (ln_1.get() - ln_2.get());
 }
 
-LongComplex many_value_f::asec(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::asec(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num))
         return LongComplex::cnan;
     else if (iscinf(num))
@@ -734,7 +788,11 @@ LongComplex many_value_f::asec(const LongComplex &num, long long n, long long k)
     return acos(LongComplex::one / num, n, k);
 }
 
-LongComplex many_value_f::acosec(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::acosec(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num))
         return LongComplex::cnan;
     else if (iscinf(num))
@@ -744,7 +802,11 @@ LongComplex many_value_f::acosec(const LongComplex &num, long long n, long long 
     return asin(LongComplex::one / num, n, k);
 }
 
-LongComplex many_value_f::asinh(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::asinh(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num))
         return LongComplex::cnan;
     else if (iscinf(num))
@@ -754,7 +816,11 @@ LongComplex many_value_f::asinh(const LongComplex &num, long long n, long long k
     return ln(sqrt(num * num + LongComplex::one, k) + num, n);
 }
 
-LongComplex many_value_f::acosh(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::acosh(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num))
         return LongComplex::cnan;
     else if (iscinf(num))
@@ -763,12 +829,16 @@ LongComplex many_value_f::acosh(const LongComplex &num, long long n, long long k
         return LongComplex::half_Pi * LongComplex::I;
     auto sqrt_1 = std::async(std::launch::async, [&num] { return sqrt(num + LongComplex::one); }),
             sqrt_2 = std::async(std::launch::async, [&num] { return sqrt(num - LongComplex::one); });
-    if (k % 2 == 0)
+    if (std::stoll(k.get_real().to_string()) % 2 == 0)
         return ln(sqrt_1.get() * sqrt_2.get() + num, n);
     return ln(-sqrt_1.get() * sqrt_2.get() + num, n);
 }
 
-LongComplex many_value_f::atanh(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::atanh(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num) or iscinf(num))
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
@@ -778,7 +848,11 @@ LongComplex many_value_f::atanh(const LongComplex &num, long long n, long long k
     return LongComplex::half * (ln_1.get() - ln_2.get());
 }
 
-LongComplex many_value_f::actanh(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::actanh(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num))
         return LongComplex::cnan;
     else if (iscinf(num))
@@ -790,7 +864,11 @@ LongComplex many_value_f::actanh(const LongComplex &num, long long n, long long 
     return LongComplex::half * (ln_1.get() - ln_2.get());
 }
 
-LongComplex many_value_f::asech(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::asech(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num) or iscinf(num))
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
@@ -798,7 +876,11 @@ LongComplex many_value_f::asech(const LongComplex &num, long long n, long long k
     return acosh(LongComplex::one / num, n, k);
 }
 
-LongComplex many_value_f::acosech(const LongComplex &num, long long n, long long k) {
+LongComplex many_value_f::acosech(const LongComplex &num, const LongComplex &n, const LongComplex &k) {
+    if (n.get_imag() != LongNumber::zero or n.get_real() != floor(n.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
+    if (k.get_imag() != LongNumber::zero or k.get_real() != floor(k.get_real()))
+        throw std::logic_error("In multi-digit functions, the argument number must be an integer");
     if (iscnan(num) or iscinf(num))
         return LongComplex::cnan;
     else if (num == LongComplex::czero)
