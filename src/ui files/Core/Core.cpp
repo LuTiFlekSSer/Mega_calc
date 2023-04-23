@@ -2,7 +2,7 @@
 #include "thread"
 #include "../../classes/Parser/Parser.h"
 #include "../../classes/Solver/Solver.h"
-#include "../../classes/Mat2D/Mat2D.h"
+#include "src/classes/Mat2D/Mat2D_LN.h"
 
 void Core::solve(const QString &expr) {
     try {
@@ -21,7 +21,7 @@ void Core::solve_expr(const QString &expr) {
 
 void Core::mult(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2) {
     try {
-        Mat2D a((int) m1.size(), (int) m1[0].size()), b((int) m2.size(), (int) m2[0].size());
+        Mat2D_LN a((int) m1.size(), (int) m1[0].size()), b((int) m2.size(), (int) m2[0].size());
         for (int i = 0; i < a.size(); ++i) {
             for (int j = 0; j < a[0].size(); ++j) {
                 a[i][j] = LongNumber(m1[i][j].toStdString());
@@ -32,7 +32,7 @@ void Core::mult(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2
                 b[i][j] = LongNumber(m2[i][j].toStdString());
             }
         }
-        Mat2D c = a * b;
+        Mat2D_LN c = a * b;
         QList<QList<QString>> result(c.size());
         for (int i = 0; i < c.size(); ++i) {
             result[i].resize(c[0].size());

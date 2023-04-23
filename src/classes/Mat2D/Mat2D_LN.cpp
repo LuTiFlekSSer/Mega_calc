@@ -1,15 +1,15 @@
-#include "Mat2D.h"
+#include "Mat2D_LN.h"
 #include "cmath"
 
 
-Mat2D::Mat2D(int x_, int y_) {
+Mat2D_LN::Mat2D_LN(int x_, int y_) {
     mat.resize(x_);
     for (int i = 0; i < x_; ++i) {
-        mat[i] = VecND(y_);
+        mat[i] = VecND_LN(y_);
     }
 }
 
-void Mat2D::print() {
+void Mat2D_LN::print() {
     std::cout << '(';
     for (int i = 0; i < mat.size(); ++i) {
         std::cout << '(';
@@ -26,47 +26,47 @@ void Mat2D::print() {
     std::cout << "))\n";
 }
 
-VecND &Mat2D::operator[](int index) {
+VecND_LN &Mat2D_LN::operator[](int index) {
     if (index < this->mat.size()) {
         return mat[index];
     }
     throw std::length_error("Matrix: invalid index");
 }
 
-Mat2D Mat2D::operator+(const Mat2D &rhs) {
+Mat2D_LN Mat2D_LN::operator+(const Mat2D_LN &rhs) {
     if (this->mat.size() == rhs.mat.size() and this->mat[0].vec.size() == rhs.mat[0].vec.size()) {
-        Mat2D tmp((int) mat.size(), (int) mat[0].vec.size());
+        Mat2D_LN tmp((int) mat.size(), (int) mat[0].vec.size());
         for (int i = 0; i < mat.size(); ++i) {
             for (int j = 0; j < mat[0].vec.size(); ++j) {
                 tmp[i][j] = mat[i][j] + rhs.mat[i].vec[j];
             }
         }
-        return Mat2D{tmp};
+        return Mat2D_LN{tmp};
     }
     throw std::length_error("Incorrect addition: different dimensions of matrix");
 }
 
-Mat2D Mat2D::operator-(const Mat2D &rhs) {
+Mat2D_LN Mat2D_LN::operator-(const Mat2D_LN &rhs) {
     if (this->mat.size() == rhs.mat.size() and this->mat[0].vec.size() == rhs.mat[0].vec.size()) {
-        Mat2D tmp((int) mat.size(), (int) mat[0].vec.size());
+        Mat2D_LN tmp((int) mat.size(), (int) mat[0].vec.size());
         for (int i = 0; i < mat.size(); ++i) {
             for (int j = 0; j < mat[0].vec.size(); ++j) {
                 tmp[i][j] = mat[i][j] - rhs.mat[i].vec[j];
             }
         }
-        return Mat2D{tmp};
+        return Mat2D_LN{tmp};
     }
     throw std::length_error("Incorrect subtraction: different dimensions of matrix");
 }
 
-Mat2D::Mat2D(const Mat2D &el) {
+Mat2D_LN::Mat2D_LN(const Mat2D_LN &el) {
     mat.resize(el.mat.size());
     for (int i = 0; i < mat.size(); ++i) {
         mat[i] = el.mat[i];
     }
 }
 
-Mat2D &Mat2D::operator=(const Mat2D &rhs) {
+Mat2D_LN &Mat2D_LN::operator=(const Mat2D_LN &rhs) {
     mat.resize(rhs.mat.size());
     for (int i = 0; i < mat.size(); ++i) {
         mat[i] = rhs.mat[i];
@@ -74,9 +74,9 @@ Mat2D &Mat2D::operator=(const Mat2D &rhs) {
     return *this;
 }
 
-Mat2D Mat2D::operator*(const Mat2D &rhs) {
+Mat2D_LN Mat2D_LN::operator*(const Mat2D_LN &rhs) {
     if (this->mat[0].vec.size() == rhs.mat.size()) {
-        Mat2D tmp((int) mat.size(), (int) rhs.mat[0].vec.size());
+        Mat2D_LN tmp((int) mat.size(), (int) rhs.mat[0].vec.size());
         for (int i = 0; i < mat.size(); ++i) {
             for (int j = 0; j < rhs.mat[0].vec.size(); ++j) {
                 for (int k = 0; k < mat[0].vec.size(); ++k) {
@@ -84,25 +84,25 @@ Mat2D Mat2D::operator*(const Mat2D &rhs) {
                 }
             }
         }
-        return Mat2D{tmp};
+        return Mat2D_LN{tmp};
     }
     throw std::length_error("Incorrect multiplication: different matrix sizes");
 }
 
-Mat2D Mat2D::T() {
-    Mat2D tmp((int) this->mat[0].vec.size(), (int) this->mat.size());
+Mat2D_LN Mat2D_LN::T() {
+    Mat2D_LN tmp((int) this->mat[0].vec.size(), (int) this->mat.size());
     for (int i = 0; i < mat.size(); ++i) {
         for (int j = 0; j < mat[0].vec.size(); ++j) {
             tmp[j][i] = this->mat[i][j];
         }
     }
-    return Mat2D{tmp};
+    return Mat2D_LN{tmp};
 }
 
-LongNumber Mat2D::det() {
+LongNumber Mat2D_LN::det() {
     if (this->mat.size() == this->mat[0].vec.size()) {
         auto pluq = (*this).lu_decomposition();
-        VecND liner_p((int) std::get<0>(pluq).mat.size());
+        VecND_LN liner_p((int) std::get<0>(pluq).mat.size());
         for (int i = 0; i < std::get<0>(pluq).mat.size(); ++i) {
             for (int j = 0; j < std::get<0>(pluq).mat.size(); ++j) {
                 if (std::get<0>(pluq)[i][j] == LongNumber(1)) {
@@ -111,7 +111,7 @@ LongNumber Mat2D::det() {
                 }
             }
         }
-        VecND liner_q((int) std::get<3>(pluq).mat.size());
+        VecND_LN liner_q((int) std::get<3>(pluq).mat.size());
         for (int i = 0; i < std::get<3>(pluq).mat.size(); ++i) {
             for (int j = 0; j < std::get<3>(pluq).mat.size(); ++j) {
                 if (std::get<3>(pluq)[i][j] == LongNumber(1)) {
@@ -142,52 +142,52 @@ LongNumber Mat2D::det() {
     throw std::length_error("Incorrect determinant: the matrix is not square");
 }
 
-VecND Mat2D::operator*(const VecND &rhs) {
+VecND_LN Mat2D_LN::operator*(const VecND_LN &rhs) {
     if (this->mat[0].vec.size() == rhs.vec.size()) {
-        Mat2D tmp(1, (int) rhs.vec.size()), rhs_mat(1, (int) rhs.vec.size());
+        Mat2D_LN tmp(1, (int) rhs.vec.size()), rhs_mat(1, (int) rhs.vec.size());
         rhs_mat[0] = rhs;
         tmp = *this * rhs_mat.T();
-        return VecND{tmp.T()[0]};
+        return VecND_LN{tmp.T()[0]};
     }
     throw std::length_error("Incorrect multiplication: different matrix and vector sizes");
 }
 
-Mat2D &Mat2D::operator=(const VecND &rhs) {
+Mat2D_LN &Mat2D_LN::operator=(const VecND_LN &rhs) {
     mat.resize(1);
     mat[0] = rhs;
     return *this;
 }
 
-Mat2D::Mat2D() = default;
+Mat2D_LN::Mat2D_LN() = default;
 
-Mat2D Mat2D::operator*(const LongNumber &rhs) {
-    Mat2D tmp(*this);
+Mat2D_LN Mat2D_LN::operator*(const LongNumber &rhs) {
+    Mat2D_LN tmp(*this);
     for (int i = 0; i < mat.size(); ++i) {
         for (int j = 0; j < mat[0].vec.size(); ++j) {
             tmp[i][j] *= rhs;
         }
     }
-    return Mat2D{tmp};
+    return Mat2D_LN{tmp};
 }
 
-Mat2D eye(int size) {
-    Mat2D tmp(size, size);
+Mat2D_LN eye(int size) {
+    Mat2D_LN tmp(size, size);
     for (int i = 0; i < size; ++i) {
         tmp[i][i] = LongNumber(1);
     }
-    return Mat2D{tmp};
+    return Mat2D_LN{tmp};
 }
 
-std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
+std::tuple<VecND_LN, Mat2D_LN> Mat2D_LN::solve(VecND_LN &b) {
     if (this->mat.size() == b.vec.size()) {
         auto pluq = (*this).lu_decomposition();
-        VecND pb = std::get<0>(pluq) * b;
-        Mat2D c((int) std::get<2>(pluq).mat[0].vec.size(), (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
+        VecND_LN pb = std::get<0>(pluq) * b;
+        Mat2D_LN c((int) std::get<2>(pluq).mat[0].vec.size(), (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
         for (int i = (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i >= 0; --i) {
             c[i + (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size())][i] = LongNumber(1);
         }
-        VecND y((int) std::get<2>(pluq).mat.size());
-        Mat2D yc((int) std::get<2>(pluq).mat.size(), (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
+        VecND_LN y((int) std::get<2>(pluq).mat.size());
+        Mat2D_LN yc((int) std::get<2>(pluq).mat.size(), (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
         for (int i = 0; i < std::get<2>(pluq).mat.size(); ++i) {
             LongNumber sum = LongNumber::zero;
             for (int j = 0; j < i; ++j) {
@@ -199,7 +199,7 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
         for (int i = (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i >= 0; --i) {
             if (abs(std::get<2>(pluq)[i][i]) < LongNumber::eps) {
                 if (abs(y[i]) > LongNumber::eps)
-                    return std::make_tuple(VecND(0), Mat2D(0));
+                    return std::make_tuple(VecND_LN(0), Mat2D_LN(0));
             } else {
                 index_first_not_null = i;
                 break;
@@ -207,8 +207,8 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
         }
         for (int i = (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i < std::get<2>(pluq).mat.size(); ++i)
             if (abs(std::get<2>(pluq)[i][(int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1]) < LongNumber::eps and abs(y[i]) > LongNumber::eps)
-                return std::make_tuple(VecND(0), Mat2D(0));
-        VecND x((int) std::get<2>(pluq).mat[0].vec.size());
+                return std::make_tuple(VecND_LN(0), Mat2D_LN(0));
+        VecND_LN x((int) std::get<2>(pluq).mat[0].vec.size());
         for (int i = index_first_not_null; i >= 0; --i) {
             LongNumber sum(0);
             for (int j = index_first_not_null; j > i; --j) {
@@ -240,14 +240,14 @@ std::tuple<VecND, Mat2D> Mat2D::solve(VecND &b) {
             }
         }
         if (index_first_not_null == std::max(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1)
-            return std::make_tuple(VecND(std::get<3>(pluq) * x), Mat2D(0));
+            return std::make_tuple(VecND_LN(std::get<3>(pluq) * x), Mat2D_LN(0));
         else
-            return std::make_tuple(VecND(std::get<3>(pluq) * x), Mat2D(std::get<3>(pluq) * c));
+            return std::make_tuple(VecND_LN(std::get<3>(pluq) * x), Mat2D_LN(std::get<3>(pluq) * c));
     }
     throw std::length_error("Incorrect solve: matrix does not match the size of the vector");
 }
 
-std::tuple<int, int, LongNumber> Mat2D::max_elem(Mat2D &matrix, int index) {
+std::tuple<int, int, LongNumber> Mat2D_LN::max_elem(Mat2D_LN &matrix, int index) {
     int x = index, y = index;
     LongNumber max = matrix[index][index];
     for (int i = index; i < matrix.mat.size(); ++i) {
@@ -263,9 +263,9 @@ std::tuple<int, int, LongNumber> Mat2D::max_elem(Mat2D &matrix, int index) {
     return std::make_tuple(x, y, max);
 }
 
-std::tuple<Mat2D, Mat2D, Mat2D, Mat2D> Mat2D::lu_decomposition() {
-    Mat2D u(*this);
-    Mat2D p = eye((int) this->mat.size()), q = eye((int) this->mat[0].vec.size()), l((int) this->mat.size());
+std::tuple<Mat2D_LN, Mat2D_LN, Mat2D_LN, Mat2D_LN> Mat2D_LN::lu_decomposition() {
+    Mat2D_LN u(*this);
+    Mat2D_LN p = eye((int) this->mat.size()), q = eye((int) this->mat[0].vec.size()), l((int) this->mat.size());
     for (int i = 0; i < std::min(this->mat.size(), this->mat[0].vec.size()); ++i) {
         auto maximum = max_elem(u, i);
         int index_row = std::get<0>(maximum), index_column = std::get<1>(maximum);
@@ -286,7 +286,7 @@ std::tuple<Mat2D, Mat2D, Mat2D, Mat2D> Mat2D::lu_decomposition() {
         if (abs(elem) > LongNumber::eps) {
             for (int j = i + 1; j < this->mat.size(); ++j) {
                 l[j][i] = u[j][i] / u[i][i];
-                VecND v1((int) this->mat[0].vec.size());
+                VecND_LN v1((int) this->mat[0].vec.size());
                 for (int k = 0; k < this->mat[0].vec.size(); ++k)
                     v1[k] = u[j][k] - u[i][k] * u[j][i] / u[i][i];
                 u[j] = v1;
@@ -296,38 +296,38 @@ std::tuple<Mat2D, Mat2D, Mat2D, Mat2D> Mat2D::lu_decomposition() {
     for (int i = 0; i < this->mat.size(); ++i) {
         l[i][i] = LongNumber(1);
     }
-    return std::make_tuple(Mat2D(p), Mat2D(l), Mat2D(u), Mat2D(q));
+    return std::make_tuple(Mat2D_LN(p), Mat2D_LN(l), Mat2D_LN(u), Mat2D_LN(q));
 }
 
-Mat2D::Mat2D(int x_) {
+Mat2D_LN::Mat2D_LN(int x_) {
     mat.resize(x_);
     for (int i = 0; i < x_; ++i) {
-        mat[i] = VecND(x_);
+        mat[i] = VecND_LN(x_);
     }
 }
 
-int Mat2D::size() {
+int Mat2D_LN::size() {
     return (int) mat.size();
 }
 
-Mat2D::Mat2D(Mat2D &&el) noexcept {
+Mat2D_LN::Mat2D_LN(Mat2D_LN &&el) noexcept {
     mat = std::move(el.mat);
 }
 
-Mat2D &Mat2D::operator=(Mat2D &&rhs) noexcept {
+Mat2D_LN &Mat2D_LN::operator=(Mat2D_LN &&rhs) noexcept {
     if (this == &rhs)
         return *this;
     mat = std::move(rhs.mat);
     return *this;
 }
 
-Mat2D &Mat2D::operator=(VecND &&rhs) noexcept {
+Mat2D_LN &Mat2D_LN::operator=(VecND_LN &&rhs) noexcept {
     mat.resize(1);
     mat[0] = std::move(rhs);
     return *this;
 }
 
-void print_solve(std::tuple<VecND, Mat2D> xc) {
+void print_solve(std::tuple<VecND_LN, Mat2D_LN> xc) {
     if (std::get<0>(xc).size() == 0)
         std::cout << "No solution\n";
     else if (std::get<1>(xc).size() == 0 or std::get<1>(xc)[0].size() == 0) {

@@ -1,57 +1,57 @@
-#include "VecND.h"
+#include "VecND_LC.h"
 
-VecND::VecND(int x_) {
+VecND_LC::VecND_LC(int x_) {
     for (int i = 0; i < x_; ++i) {
-        vec.push_back(LongNumber::zero);
+        vec.push_back(LongComplex::czero);
     }
 }
 
-VecND::VecND() = default;
+VecND_LC::VecND_LC() = default;
 
-VecND::VecND(const VecND &el) {
+VecND_LC::VecND_LC(const VecND_LC &el) {
     vec = el.vec;
 }
 
-VecND VecND::operator+(const VecND &rhs) const {
+VecND_LC VecND_LC::operator+(const VecND_LC &rhs) const {
     if (this->vec.size() == rhs.vec.size()) {
-        VecND tmp((int) rhs.vec.size());
+        VecND_LC tmp((int) rhs.vec.size());
         for (int i = 0; i < rhs.vec.size(); ++i) {
             tmp.vec[i] = this->vec[i] + rhs.vec[i];
         }
-        return VecND{tmp};
+        return VecND_LC{tmp};
     }
     throw std::length_error("Incorrect addition: different length of vectors");
 }
 
-VecND VecND::operator-(const VecND &rhs) const {
+VecND_LC VecND_LC::operator-(const VecND_LC &rhs) const {
     if (this->vec.size() == rhs.vec.size()) {
-        VecND tmp((int) rhs.vec.size());
+        VecND_LC tmp((int) rhs.vec.size());
         for (int i = 0; i < rhs.vec.size(); ++i) {
             tmp.vec[i] = this->vec[i] - rhs.vec[i];
         }
-        return VecND{tmp};
+        return VecND_LC{tmp};
     }
     throw std::length_error("Incorrect subtraction: different length of vectors");
 }
 
-VecND &VecND::operator=(const VecND &rhs) = default;
+VecND_LC &VecND_LC::operator=(const VecND_LC &rhs) = default;
 
-VecND VecND::operator*(const LongNumber &rhs) const {
-    VecND tmp((int) vec.size());
+VecND_LC VecND_LC::operator*(const LongComplex &rhs) const {
+    VecND_LC tmp((int) vec.size());
     for (int i = 0; i < vec.size(); ++i) {
         tmp.vec[i] = this->vec[i] * rhs;
     }
-    return VecND{tmp};
+    return VecND_LC{tmp};
 }
 
-VecND &VecND::operator*=(const LongNumber &rhs) {
+VecND_LC &VecND_LC::operator*=(const LongComplex &rhs) {
     for (int i = 0; i < vec.size(); ++i) {
         this->vec[i] = this->vec[i] * rhs;
     }
     return *this;
 }
 
-void VecND::print() {
+void VecND_LC::print() {
     std::cout << '(';
     for (int i = 0; i < vec.size(); ++i) {
         std::cout << vec[i];
@@ -61,22 +61,22 @@ void VecND::print() {
     std::cout << ")\n";
 }
 
-LongNumber &VecND::operator[](int index) {
+LongComplex &VecND_LC::operator[](int index) {
     if (index < this->vec.size()) {
         return vec[index];
     }
     throw std::length_error("Vector: Invalid index");
 }
 
-int VecND::size() {
+int VecND_LC::size() {
     return (int) vec.size();
 }
 
-VecND::VecND(VecND &&el) noexcept {
+VecND_LC::VecND_LC(VecND_LC &&el) noexcept {
     vec = std::move(el.vec);
 }
 
-VecND &VecND::operator=(VecND &&rhs) noexcept {
+VecND_LC &VecND_LC::operator=(VecND_LC &&rhs) noexcept {
     if (this == &rhs)
         return *this;
     vec = std::move(rhs.vec);
