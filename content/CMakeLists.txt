@@ -10,6 +10,8 @@ qt6_add_qml_module(content
     QML_FILES
         Screen01.ui.qml
         MyBS.qml
+        Matrix_page.ui.qml
+        Calc_page.ui.qml
         App.qml
     RESOURCES
         Images/tanh.png

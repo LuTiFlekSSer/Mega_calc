@@ -38,7 +38,7 @@ Window {
     height: 500
 
     visible: true
-    minimumHeight: 480
+    minimumHeight: 544
     minimumWidth: 750
     title: "Mega Calc"
 
