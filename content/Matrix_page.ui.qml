@@ -16,7 +16,7 @@ Page {
     property var matrix_B
     property var matrix_C
     signal changeMode
-    signal mult_m
+    signal wait
     // @disable-check M222
     function quick_error(msg) {
         mess_dial.message = msg
@@ -354,6 +354,7 @@ Page {
             target: mat_swap
             onClicked: {
                 if (mat_A.elem_x > 0 && mat_A.elem_y > 0 && mat_B.elem_x > 0 && mat_B.elem_y > 0){
+                    matrix_page.wait()
                     Core.swap_matrix(matrix_page.matrix_A, matrix_page.matrix_B)
                 } else {
                     quick_error("Can't swap empty matrixes")
@@ -372,8 +373,18 @@ Page {
         anchors.top: mat_dif.bottom
         anchors.topMargin: 10
         anchors.left: mat_dif.left
-        // @disable-check M222
-        onClicked: mat_A.elem_x > 0 && mat_A.elem_y > 0 && mat_B.elem_x > 0 && mat_B.elem_y ? matrix_page.mult_m() : quick_error("Matrix sizes cannot be 0")
+        Connections {
+            target: mat_mult
+            onClicked: {
+                if (mat_A.elem_x > 0 && mat_A.elem_y > 0 && mat_B.elem_x > 0 && mat_B.elem_y){
+                    matrix_page.wait()
+                    Core.mult_matrix(matrix_page.matrix_A, matrix_page.matrix_B)
+                } else {
+                    quick_error("Matrix sizes cannot be 0")
+                }
+            }
+        }
+
         text: qsTr("*")
     }
 
@@ -385,6 +396,17 @@ Page {
         font.pointSize: 11
         anchors.topMargin: 10
         anchors.left: mat_sum.left
+        Connections {
+            target: mat_dif
+            onClicked: {
+                if (mat_A.elem_x > 0 && mat_A.elem_y > 0 && mat_B.elem_x > 0 && mat_B.elem_y){
+                    matrix_page.wait()
+                    Core.dif_matrix(matrix_page.matrix_A, matrix_page.matrix_B)
+                } else {
+                    quick_error("Matrix sizes cannot be 0")
+                }
+            }
+        }
         text: qsTr("-")
     }
 
@@ -396,6 +418,17 @@ Page {
         font.pointSize: 11
         anchors.topMargin: 10
         anchors.left: mat_swap.left
+        Connections {
+            target: mat_sum
+            onClicked: {
+                if (mat_A.elem_x > 0 && mat_A.elem_y > 0 && mat_B.elem_x > 0 && mat_B.elem_y){
+                    matrix_page.wait()
+                    Core.sum_matrix(matrix_page.matrix_A, matrix_page.matrix_B)
+                } else {
+                    quick_error("Matrix sizes cannot be 0")
+                }
+            }
+        }
         text: qsTr("+")
     }
 
@@ -420,7 +453,8 @@ Page {
         Connections {
             target: mat_A_T
             onClicked: {
-                if (mat_A.elem_x > 0 && mat_A.elem_y > 0 ) {
+                if (mat_A.elem_x > 0 && mat_A.elem_y > 0) {
+                    matrix_page.wait()
                     Core.transpose_matrix(matrix_page.matrix_A, 0)
                 } else {
                     quick_error("Can't transpose empty matrix")
@@ -440,6 +474,18 @@ Page {
         anchors.top: clear_A.bottom
         font.pointSize: 11
         anchors.topMargin: 10
+        Connections {
+            target: mat_A_M
+            onClicked: {
+                if (mat_A.elem_x > 0 && mat_A.elem_y > 0) {
+                    matrix_page.wait()
+                    Core.mult_matrix_on_num(matrix_page.matrix_A, mat_A_M_N.text, 0)
+                } else {
+                    quick_error("Matrix size cannot be 0")
+                }
+            }
+        }
+
         text: qsTr("Умножить на")
     }
 
@@ -452,6 +498,17 @@ Page {
         anchors.top: mat_A_M.bottom
         font.pointSize: 11
         anchors.topMargin: 10
+        Connections {
+            target: mat_A_P
+            onClicked: {
+                if (mat_A.elem_x > 0 && mat_A.elem_y > 0) {
+                    matrix_page.wait()
+                    Core.pow_matrix_in_num(matrix_page.matrix_A, mat_A_P_N.text, 0)
+                } else {
+                    quick_error("Matrix size cannot be 0")
+                }
+            }
+        }
         text: qsTr("Возвести в")
     }
 
@@ -463,6 +520,17 @@ Page {
         anchors.top: mat_A_P_N.bottom
         font.pointSize: 11
         anchors.topMargin: 10
+        Connections {
+            target: mat_A_D
+            onClicked: {
+                if (mat_A.elem_x > 0 && mat_A.elem_y > 0) {
+                    matrix_page.wait()
+                    Core.determinant(matrix_page.matrix_A)
+                } else {
+                    quick_error("Matrix size cannot be 0")
+                }
+            }
+        }
         text: qsTr("Определитель")
     }
 
@@ -623,9 +691,6 @@ Page {
         anchors.topMargin: 10
         anchors.left: mat_swap.right
         anchors.leftMargin: 15
-        validator: RegularExpressionValidator {
-            regularExpression: /[0-9]{4}/
-        }
         Connections {
             target: mat_B_Y
             onTextEdited: generateItems_B()
@@ -656,9 +721,6 @@ Page {
         leftPadding: 10
         font.pointSize: 11
         anchors.topMargin: 10
-        validator: RegularExpressionValidator {
-            regularExpression: /^[1-9]\d{13}/
-        }
         placeholderText: qsTr("Степень")
     }
 
@@ -696,6 +758,7 @@ Page {
             target: mat_B_T
             onClicked: {
                 if (mat_B.elem_x > 0 && mat_B.elem_y > 0 ) {
+                    matrix_page.wait()
                     Core.transpose_matrix(matrix_page.matrix_B, 1)
                 } else {
                     quick_error("Can't transpose empty matrix")
@@ -713,6 +776,17 @@ Page {
         anchors.top: clear_B.bottom
         font.pointSize: 11
         anchors.topMargin: 10
+        Connections {
+            target: mat_B_M
+            onClicked: {
+                if (mat_B.elem_x > 0 && mat_B.elem_y > 0) {
+                    matrix_page.wait()
+                    Core.mult_matrix_on_num(matrix_page.matrix_B, mat_B_M_N.text, 1)
+                } else {
+                    quick_error("Matrix size cannot be 0")
+                }
+            }
+        }
         text: qsTr("Умножить на")
     }
 
@@ -723,6 +797,17 @@ Page {
         anchors.top: mat_B_M.bottom
         font.pointSize: 11
         anchors.topMargin: 10
+        Connections {
+            target: mat_B_P
+            onClicked: {
+                if (mat_B.elem_x > 0 && mat_B.elem_y > 0) {
+                    matrix_page.wait()
+                    Core.pow_matrix_in_num(matrix_page.matrix_B, mat_B_P_N.text, 1)
+                } else {
+                    quick_error("Matrix size cannot be 0")
+                }
+            }
+        }
         text: qsTr("Возвести в")
     }
 
@@ -736,6 +821,17 @@ Page {
         anchors.topMargin: 10
         anchors.left: mat_B_I.right
         anchors.leftMargin: 10
+        Connections {
+            target: mat_B_D
+            onClicked: {
+                if (mat_B.elem_x > 0 && mat_B.elem_y > 0) {
+                    matrix_page.wait()
+                    Core.determinant(matrix_page.matrix_B)
+                } else {
+                    quick_error("Matrix size cannot be 0")
+                }
+            }
+        }
         text: qsTr("Определитель")
     }
 
@@ -786,9 +882,6 @@ Page {
         anchors.topMargin: 10
         anchors.left: mat_B_P.right
         anchors.leftMargin: 10
-        validator: RegularExpressionValidator {
-            regularExpression: /^[1-9]\d{13}/
-        }
         placeholderText: qsTr("Степень")
     }
 

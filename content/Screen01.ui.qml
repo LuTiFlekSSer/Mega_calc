@@ -34,16 +34,15 @@ Rectangle {
 
     Matrix_page {
         id: matrix_page
-        // @disable-check M222
-        onChangeMode: stackView.pop()
-        // @disable-check M223
-        onMult_m: {
-            backgr.visible = true
-            busyIndicator.running = true
-            stackView.enabled = false
-            busyIndicator.visible = true
-            // @disable-check M222
-            Core.mult_matrix(matrix_page.matrix_A, matrix_page.matrix_B)
+        Connections {
+            target: matrix_page
+            onChangeMode: stackView.pop()
+            onWait: {
+                backgr.visible = true
+                busyIndicator.running = true
+                stackView.enabled = false
+                busyIndicator.visible = true
+            }
         }
     }
 

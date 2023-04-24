@@ -20,6 +20,16 @@ public:
 
     void transpose(const QList<QList<QString>> &m1, int index);
 
+    void sum(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
+
+    void dif(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
+
+    void mult_on_num(const QList<QList<QString>> &m1, const QString &num, int index);
+
+    void pow_in_num(const QList<QList<QString>> &m1, const QString &num, int index);
+
+    void det(const QList<QList<QString>> &m1);
+
 signals:
 
     void send_error(QString err);
@@ -35,15 +45,18 @@ public slots:
     void swap_matrix(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
 
     void transpose_matrix(const QList<QList<QString>> &m1, int index);
-//    void sum_matrix(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
-//
-//    void dif_matrix(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
-//
+
+    void sum_matrix(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
+
+    void dif_matrix(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
+
 //    void solve_matrix(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
-//
-//    void mult_matrix_on_num(const QList<QList<QString>> &m1, int num, int index);
-//
-//    void pow_matrix_in_num(const QList<QList<QString>> &m1, int num, int index);
+
+    void mult_matrix_on_num(const QList<QList<QString>> &m1, const QString &num, int index);
+
+    void pow_matrix_in_num(const QList<QList<QString>> &m1, const QString &num, int index);
+
+    void determinant(const QList<QList<QString>> &m1);
 
     void solve_expr(const QString &expr);
 

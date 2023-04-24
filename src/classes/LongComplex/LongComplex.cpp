@@ -226,7 +226,7 @@ std::string LongComplex::to_string() const {
     else if (iscinf(*this))
         return "cinf";
     std::string tmp;
-    tmp += this->real.to_string() + (this->imag.sign ? "" : "+") + this->imag.to_string() + "*i";
+    tmp += this->real.to_string() + (this->imag.sign ? "" : "+") + this->imag.to_string() + "i";
     return tmp;
 }
 
