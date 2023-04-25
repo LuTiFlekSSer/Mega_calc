@@ -34,7 +34,13 @@ VecND_LN VecND_LN::operator-(const VecND_LN &rhs) const {
     throw std::length_error("Incorrect subtraction: different length of vectors");
 }
 
-VecND_LN &VecND_LN::operator=(const VecND_LN &rhs) = default;
+VecND_LN &VecND_LN::operator=(const VecND_LN &rhs) {
+    this->vec.resize(rhs.vec.size());
+    for (int i = 0; i < rhs.vec.size(); ++i) {
+        copy_with_double_round(this->vec[i], rhs.vec[i]);
+    }
+    return *this;
+}
 
 VecND_LN VecND_LN::operator*(const LongNumber &rhs) const {
     VecND_LN tmp((int) vec.size());
@@ -68,7 +74,14 @@ LongNumber &VecND_LN::operator[](int index) {
     throw std::length_error("Vector: Invalid index");
 }
 
-int VecND_LN::size() {
+const LongNumber &VecND_LN::operator[](int index) const {
+    if (index < this->vec.size()) {
+        return vec[index];
+    }
+    throw std::length_error("Vector: Invalid index");
+}
+
+int VecND_LN::size() const {
     return (int) vec.size();
 }
 

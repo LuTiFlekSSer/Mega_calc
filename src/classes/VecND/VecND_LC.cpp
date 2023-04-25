@@ -34,7 +34,13 @@ VecND_LC VecND_LC::operator-(const VecND_LC &rhs) const {
     throw std::length_error("Incorrect subtraction: different length of vectors");
 }
 
-VecND_LC &VecND_LC::operator=(const VecND_LC &rhs) = default;
+VecND_LC &VecND_LC::operator=(const VecND_LC &rhs) {
+    this->vec.resize(rhs.vec.size());
+    for (int i = 0; i < rhs.vec.size(); ++i) {
+        copy_with_double_round(this->vec[i], rhs.vec[i]);
+    }
+    return *this;
+}
 
 VecND_LC VecND_LC::operator*(const LongComplex &rhs) const {
     VecND_LC tmp((int) vec.size());
@@ -68,7 +74,14 @@ LongComplex &VecND_LC::operator[](int index) {
     throw std::length_error("Vector: Invalid index");
 }
 
-int VecND_LC::size() {
+const LongComplex &VecND_LC::operator[](int index) const {
+    if (index < this->vec.size()) {
+        return vec[index];
+    }
+    throw std::length_error("Vector: Invalid index");
+}
+
+int VecND_LC::size() const {
     return (int) vec.size();
 }
 

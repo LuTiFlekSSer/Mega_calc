@@ -33,6 +33,13 @@ VecND_LC &Mat2D_LC::operator[](int index) {
     throw std::length_error("Matrix: invalid index");
 }
 
+const VecND_LC &Mat2D_LC::operator[](int index) const {
+    if (index < this->mat.size()) {
+        return mat[index];
+    }
+    throw std::length_error("Matrix: invalid index");
+}
+
 Mat2D_LC Mat2D_LC::operator+(const Mat2D_LC &rhs) {
     if (this->mat.size() == rhs.mat.size() and this->mat[0].vec.size() == rhs.mat[0].vec.size()) {
         Mat2D_LC tmp((int) mat.size(), (int) mat[0].vec.size());
@@ -99,8 +106,36 @@ Mat2D_LC Mat2D_LC::T() {
     return Mat2D_LC{tmp};
 }
 
+LongComplex rec_det(const Mat2D_LC &m) {
+    if (m.size() == 1) {
+        return m[0][0];
+    } else if (m.size() == 2) {
+        return m[0][0] * m[1][1] - m[0][1] * m[1][0];
+    } else {
+        LongComplex result;
+        for (int i = 0; i < m.size(); ++i) {
+            Mat2D_LC minor(m.size() - 1, m.size() - 1);
+            int x = 0, y = 0;
+            for (int j = 1; j < m.size(); ++j) {
+                for (int k = 0; k < m[0].size(); ++k) {
+                    if (k == i)
+                        continue;
+                    minor[x][y++] = m[j][k];
+                }
+                y = 0;
+                ++x;
+            }
+            result += rec_det(minor) * pow(-LongComplex::one, LongComplex(i)) * m[0][i];
+        }
+        return result;
+    }
+}
+
 LongComplex Mat2D_LC::det() {
     if (this->mat.size() == this->mat[0].vec.size()) {
+        if (this->mat.size() < 8) {
+            return rec_det(*this);
+        }
         auto pluq = (*this).lu_decomposition();
         VecND_LC liner_p((int) std::get<0>(pluq).mat.size());
         for (int i = 0; i < std::get<0>(pluq).mat.size(); ++i) {
@@ -277,7 +312,9 @@ std::tuple<Mat2D_LC, Mat2D_LC, Mat2D_LC, Mat2D_LC> Mat2D_LC::lu_decomposition() 
         }
         if (index_column != i) {
             for (int j = 0; j < this->mat.size(); ++j) {
-                std::swap(u[j][i], u[j][index_column]);
+                auto tmp = u[j][i];
+                move_with_double_round(u[j][i], std::move(u[j][index_column]));
+                move_with_double_round(u[j][index_column], std::move(tmp));
             }
             for (int j = 0; j < this->mat[0].vec.size(); ++j) {
                 std::swap(q[j][i], q[j][index_column]);
@@ -285,16 +322,22 @@ std::tuple<Mat2D_LC, Mat2D_LC, Mat2D_LC, Mat2D_LC> Mat2D_LC::lu_decomposition() 
         }
         if (abs(elem) > LongNumber::eps) {
             for (int j = i + 1; j < this->mat.size(); ++j) {
-                l[j][i] = u[j][i] / u[i][i];
+                move_with_double_round(l[j][i], u[j][i] / u[i][i]);
                 VecND_LC v1((int) this->mat[0].vec.size());
                 for (int k = 0; k < this->mat[0].vec.size(); ++k)
-                    v1[k] = u[j][k] - u[i][k] * u[j][i] / u[i][i];
+                    move_with_double_round(v1[k], u[j][k] - u[i][k] * u[j][i] / u[i][i]);
                 u[j] = v1;
             }
         }
     }
     for (int i = 0; i < this->mat.size(); ++i) {
         l[i][i] = LongComplex(1);
+    }
+    for (int i = 0; i < u.size(); ++i) {
+        for (int j = 0; j < u[0].size(); ++j) {
+            u[i][j] = u[i][j];
+            l[i][j] = l[i][j];
+        }
     }
     return std::make_tuple(Mat2D_LC(p), Mat2D_LC(l), Mat2D_LC(u), Mat2D_LC(q));
 }
@@ -306,7 +349,7 @@ Mat2D_LC::Mat2D_LC(int x_) {
     }
 }
 
-int Mat2D_LC::size() {
+int Mat2D_LC::size() const {
     return (int) mat.size();
 }
 

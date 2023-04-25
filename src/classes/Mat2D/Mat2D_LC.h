@@ -55,7 +55,9 @@ public:
 
     VecND_LC &operator[](int index);
 
-    int size();
+    const VecND_LC &operator[](int index) const;
+
+    [[nodiscard]] int size() const;
 };
 
 Mat2D_LC c_eye(int size);

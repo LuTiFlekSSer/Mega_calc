@@ -23,6 +23,8 @@ public:
 
     LongComplex &operator[](int index);
 
+    const LongComplex &operator[](int index) const;
+
     VecND_LC operator+(const VecND_LC &rhs) const;
 
     VecND_LC operator-(const VecND_LC &rhs) const;
@@ -35,7 +37,7 @@ public:
 
     VecND_LC &operator=(VecND_LC &&rhs) noexcept;
 
-    int size();
+    [[nodiscard]] int size() const;
 };
 
 

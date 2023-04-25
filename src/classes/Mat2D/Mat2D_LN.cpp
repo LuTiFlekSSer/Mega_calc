@@ -26,6 +26,13 @@ void Mat2D_LN::print() {
     std::cout << "))\n";
 }
 
+const VecND_LN &Mat2D_LN::operator[](int index) const {
+    if (index < this->mat.size()) {
+        return mat[index];
+    }
+    throw std::length_error("Matrix: invalid index");
+}
+
 VecND_LN &Mat2D_LN::operator[](int index) {
     if (index < this->mat.size()) {
         return mat[index];
@@ -99,13 +106,41 @@ Mat2D_LN Mat2D_LN::T() {
     return Mat2D_LN{tmp};
 }
 
+LongNumber rec_det(const Mat2D_LN &m) {
+    if (m.size() == 1) {
+        return m[0][0];
+    } else if (m.size() == 2) {
+        return m[0][0] * m[1][1] - m[0][1] * m[1][0];
+    } else {
+        LongNumber result;
+        for (int i = 0; i < m.size(); ++i) {
+            Mat2D_LN minor(m.size() - 1, m.size() - 1);
+            int x = 0, y = 0;
+            for (int j = 1; j < m.size(); ++j) {
+                for (int k = 0; k < m[0].size(); ++k) {
+                    if (k == i)
+                        continue;
+                    minor[x][y++] = m[j][k];
+                }
+                y = 0;
+                ++x;
+            }
+            result += rec_det(minor) * pow(-LongNumber::one, i) * m[0][i];
+        }
+        return result;
+    }
+}
+
 LongNumber Mat2D_LN::det() {
     if (this->mat.size() == this->mat[0].vec.size()) {
+        if (this->mat.size() < 8) {
+            return rec_det(*this);
+        }
         auto pluq = (*this).lu_decomposition();
         VecND_LN liner_p((int) std::get<0>(pluq).mat.size());
         for (int i = 0; i < std::get<0>(pluq).mat.size(); ++i) {
             for (int j = 0; j < std::get<0>(pluq).mat.size(); ++j) {
-                if (std::get<0>(pluq)[i][j] == LongNumber(1)) {
+                if (std::get<0>(pluq)[i][j] == LongNumber::one) {
                     liner_p[i] = LongNumber(j);
                     break;
                 }
@@ -114,7 +149,7 @@ LongNumber Mat2D_LN::det() {
         VecND_LN liner_q((int) std::get<3>(pluq).mat.size());
         for (int i = 0; i < std::get<3>(pluq).mat.size(); ++i) {
             for (int j = 0; j < std::get<3>(pluq).mat.size(); ++j) {
-                if (std::get<3>(pluq)[i][j] == LongNumber(1)) {
+                if (std::get<3>(pluq)[i][j] == LongNumber::one) {
                     liner_q[i] = LongNumber(j);
                     break;
                 }
@@ -133,7 +168,7 @@ LongNumber Mat2D_LN::det() {
                     ++res;
             }
         }
-        LongNumber determ(1);
+        LongNumber determ = LongNumber::one;
         for (int i = 0; i < std::get<2>(pluq).mat.size(); ++i) {
             determ *= std::get<2>(pluq)[i][i];
         }
@@ -173,7 +208,7 @@ Mat2D_LN Mat2D_LN::operator*(const LongNumber &rhs) {
 Mat2D_LN eye(int size) {
     Mat2D_LN tmp(size, size);
     for (int i = 0; i < size; ++i) {
-        tmp[i][i] = LongNumber(1);
+        tmp[i][i] = LongNumber::one;
     }
     return Mat2D_LN{tmp};
 }
@@ -184,7 +219,7 @@ std::tuple<VecND_LN, Mat2D_LN> Mat2D_LN::solve(VecND_LN &b) {
         VecND_LN pb = std::get<0>(pluq) * b;
         Mat2D_LN c((int) std::get<2>(pluq).mat[0].vec.size(), (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
         for (int i = (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i >= 0; --i) {
-            c[i + (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size())][i] = LongNumber(1);
+            c[i + (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size())][i] = LongNumber::one;
         }
         VecND_LN y((int) std::get<2>(pluq).mat.size());
         Mat2D_LN yc((int) std::get<2>(pluq).mat.size(), (int) std::get<2>(pluq).mat[0].vec.size() - (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()));
@@ -233,7 +268,7 @@ std::tuple<VecND_LN, Mat2D_LN> Mat2D_LN::solve(VecND_LN &b) {
                     if (abs(sum) < LongNumber::eps)
                         c[j][i] = LongNumber::zero;
                     else {
-                        c[j][i] = LongNumber(1);
+                        c[j][i] = LongNumber::one;
                         c[(int) std::get<2>(pluq).mat.size() + i][i] = LongNumber::zero;
                     }
                 }
@@ -277,7 +312,9 @@ std::tuple<Mat2D_LN, Mat2D_LN, Mat2D_LN, Mat2D_LN> Mat2D_LN::lu_decomposition() 
         }
         if (index_column != i) {
             for (int j = 0; j < this->mat.size(); ++j) {
-                std::swap(u[j][i], u[j][index_column]);
+                auto tmp = u[j][i];
+                move_with_double_round(u[j][i], std::move(u[j][index_column]));
+                move_with_double_round(u[j][index_column], std::move(tmp));
             }
             for (int j = 0; j < this->mat[0].vec.size(); ++j) {
                 std::swap(q[j][i], q[j][index_column]);
@@ -285,16 +322,22 @@ std::tuple<Mat2D_LN, Mat2D_LN, Mat2D_LN, Mat2D_LN> Mat2D_LN::lu_decomposition() 
         }
         if (abs(elem) > LongNumber::eps) {
             for (int j = i + 1; j < this->mat.size(); ++j) {
-                l[j][i] = u[j][i] / u[i][i];
+                move_with_double_round(l[j][i], u[j][i] / u[i][i]);
                 VecND_LN v1((int) this->mat[0].vec.size());
                 for (int k = 0; k < this->mat[0].vec.size(); ++k)
-                    v1[k] = u[j][k] - u[i][k] * u[j][i] / u[i][i];
+                    move_with_double_round(v1[k], u[j][k] - u[i][k] * u[j][i] / u[i][i]);
                 u[j] = v1;
             }
         }
     }
     for (int i = 0; i < this->mat.size(); ++i) {
-        l[i][i] = LongNumber(1);
+        l[i][i] = LongNumber::one;
+    }
+    for (int i = 0; i < u.size(); ++i) {
+        for (int j = 0; j < u[0].size(); ++j) {
+            u[i][j] = u[i][j];
+            l[i][j] = l[i][j];
+        }
     }
     return std::make_tuple(Mat2D_LN(p), Mat2D_LN(l), Mat2D_LN(u), Mat2D_LN(q));
 }
@@ -306,7 +349,7 @@ Mat2D_LN::Mat2D_LN(int x_) {
     }
 }
 
-int Mat2D_LN::size() {
+int Mat2D_LN::size() const {
     return (int) mat.size();
 }
 

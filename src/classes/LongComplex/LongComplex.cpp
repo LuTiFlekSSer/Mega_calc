@@ -269,6 +269,16 @@ LongComplex &LongComplex::operator=(LongComplex &&rhs) noexcept {
     return *this;
 }
 
+void copy_with_double_round(LongComplex &to_change, const LongComplex &new_num) {
+    copy_with_double_round(to_change.real, new_num.real);
+    copy_with_double_round(to_change.imag, new_num.imag);
+}
+
+void move_with_double_round(LongComplex &to_change, LongComplex &&new_num) {
+    move_with_double_round(to_change.real, std::move(new_num.real));
+    move_with_double_round(to_change.imag, std::move(new_num.imag));
+}
+
 LongNumber abs(const LongComplex &num) {
     if (iscnan(num) or iscinf(num))
         return LongNumber::nan;
@@ -324,6 +334,8 @@ LongComplex pow(const LongComplex &num, const LongComplex &deg) {
         return LongComplex::cinf;
     else if ((iscinf(deg) and abs(num) < LongNumber::one) or num == LongComplex::czero)
         return LongComplex::czero;
+    else if (deg == LongComplex::czero)
+        return LongComplex::one;
     else if (deg.get_imag() == LongNumber::zero and deg.get_real() == floor(deg.get_real())) {
         LongComplex tmp = deg.get_real() >= LongNumber::zero ? num : LongComplex::one / num, tmp1 = tmp;
         for (auto i = LongNumber::one; i < abs(deg.get_real()); ++i) {

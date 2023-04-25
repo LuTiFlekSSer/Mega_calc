@@ -13,9 +13,9 @@ private:
 
     std::tuple<int, int, LongNumber> max_elem(Mat2D_LN &matrix, int index);
 
+public:
     std::tuple<Mat2D_LN, Mat2D_LN, Mat2D_LN, Mat2D_LN> lu_decomposition();
 
-public:
     Mat2D_LN(int x_, int y_);
 
     explicit Mat2D_LN(int x_);
@@ -54,7 +54,9 @@ public:
 
     VecND_LN &operator[](int index);
 
-    int size();
+    const VecND_LN &operator[](int index) const;
+
+    [[nodiscard]] int size() const;
 };
 
 Mat2D_LN eye(int size);

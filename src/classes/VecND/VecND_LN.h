@@ -23,6 +23,8 @@ public:
 
     LongNumber &operator[](int index);
 
+    const LongNumber &operator[](int index) const;
+
     VecND_LN operator+(const VecND_LN &rhs) const;
 
     VecND_LN operator-(const VecND_LN &rhs) const;
@@ -35,7 +37,7 @@ public:
 
     VecND_LN &operator=(VecND_LN &&rhs) noexcept;
 
-    int size();
+    [[nodiscard]] int size() const;
 };
 
 

@@ -326,7 +326,7 @@ void Core::pow_in_num(const QList<QList<QString>> &m1, const QString &num, int i
             }
             auto deg = LongNumber(s);
             auto c = a;
-            for (auto i = LongNumber::zero; i < deg; ++i) {
+            for (auto i = LongNumber::one; i < deg; ++i) {
                 c = c * a;
             }
 
@@ -348,7 +348,7 @@ void Core::pow_in_num(const QList<QList<QString>> &m1, const QString &num, int i
 
             auto deg = LongNumber(s);
             auto c = a;
-            for (auto i = LongNumber::zero; i < deg; ++i) {
+            for (auto i = LongNumber::one; i < deg; ++i) {
                 c = c * a;
             }
 

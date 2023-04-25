@@ -8,6 +8,11 @@ class LongComplex {
 private:
     LongNumber real;
     LongNumber imag;
+
+    friend void copy_with_double_round(LongComplex &to_change, const LongComplex &new_num);
+
+    friend void move_with_double_round(LongComplex &to_change, LongComplex &&new_num);
+
 public:
     static const LongComplex czero;
     static const LongComplex cnan;
@@ -81,6 +86,10 @@ public:
 
     ~LongComplex() = default;
 };
+
+void copy_with_double_round(LongComplex &to_change, const LongComplex &new_num);
+
+void move_with_double_round(LongComplex &to_change, LongComplex &&new_num);
 
 bool iscnan(const LongComplex &num);
 
