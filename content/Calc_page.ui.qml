@@ -3,6 +3,7 @@ import QtQuick.Controls 6.4
 import Mega_calc
 import QtQuick.Dialogs 6.4
 import QtQuick.Layouts 6.4
+import QtMultimedia 6.3
 
 Page {
     id: calc_page
@@ -993,6 +994,19 @@ Page {
         anchors.topMargin: 10
         // @disable-check M222
         onClicked: calc_page.changeMode()
+    }
+
+    Connections {
+        target: Core
+        onEvent: {
+            dead_inside_player.stop()
+            dead_inside_player.play()
+        }
+    }
+
+    SoundEffect {
+        id: dead_inside_player
+        source: "Music/123.wav"
     }
 }
 

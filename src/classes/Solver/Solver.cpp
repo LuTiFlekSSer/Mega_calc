@@ -171,7 +171,17 @@ std::string solver(parser_queue &a) {
                     for (long long i = (long long) tmp_vec.size() - 1; i >= 0; --i) {
                         args.emplace_back(tmp_vec[i].ll);
                     }
-                    solver_stack.emplace(funcs<LongNumber>.at(a.front().first.token).first(args), Type::num_real);
+                    auto tmp_res = funcs<LongNumber>.at(a.front().first.token).first(args);
+                    if (isnan(tmp_res)) {
+                        std::vector<LongComplex> cargs;
+                        cargs.reserve(args.size());
+                        for (const auto &i: args) {
+                            cargs.emplace_back(i);
+                        }
+                        solver_stack.emplace(funcs<LongComplex>.at(a.front().first.token).first(cargs), Type::num_complex);
+                    } else {
+                        solver_stack.emplace(tmp_res, Type::num_real);
+                    }
                 } else {
                     std::vector<LongComplex> args;
                     for (long long i = (long long) tmp_vec.size() - 1; i >= 0; --i) {

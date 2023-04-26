@@ -7,6 +7,9 @@
 
 void Core::solve(const QString &expr) {
     try {
+        if (expr == QString::fromStdString("1000-7")) {
+            emit event();
+        }
         auto p = parser(expr.toStdString());
         auto s = solver(p);
         emit send_ans(QString::fromStdString(s));
@@ -551,6 +554,108 @@ void Core::inv(const QList<QList<QString>> &m1) {
 
 void Core::matrix_inv(const QList<QList<QString>> &m1) {
     std::thread t([m1, this] { inv(m1); });
+    t.detach();
+}
+
+void Core::solve(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2) {
+    try {
+        if (m2[0].size() != 1) {
+            throw std::logic_error("Matrix B must be a vector");
+        }
+        auto m1_parse = calculate_matrix(m1), m2_parse = calculate_matrix(m2);
+        auto m1_str = std::get<0>(m1_parse), m2_str = std::get<0>(m2_parse);
+        auto m1_real = std::get<1>(m1_parse), m2_real = std::get<1>(m2_parse);
+
+        if (m1_real and m2_real) {
+            Mat2D_LN a((int) m1_str.size(), (int) m1[0].size()), b((int) m2_str.size(), (int) m2[0].size());
+            for (int i = 0; i < a.size(); ++i) {
+                for (int j = 0; j < a[0].size(); ++j) {
+                    move_with_double_round(a[i][j], LongNumber(m1_str[i][j]));
+                }
+            }
+
+            for (int i = 0; i < b.size(); ++i) {
+                for (int j = 0; j < b[0].size(); ++j) {
+                    move_with_double_round(b[i][j], LongNumber(m2_str[i][j]));
+                }
+            }
+            auto xc = a.solve(b.T()[0]);
+            if (std::get<0>(xc).size() == 0) {
+                QList<QList<QString>> result(1);
+                result[0][0] = QString::fromStdString("No solution");
+                emit send_matrix(result, 1, 1, 2);
+            } else if (std::get<1>(xc).size() == 0 or std::get<1>(xc)[0].size() == 0) {
+                QList<QList<QString>> result(std::get<0>(xc).size());
+                for (int i = 0; i < std::get<0>(xc).size(); ++i) {
+                    result[i].resize(1);
+                    LongNumber tmp;
+                    tmp = std::get<0>(xc)[i];
+                    result[i][0] = QString::fromStdString(tmp.to_string());
+                }
+                emit send_matrix(result, (int) result.size(), 1, 2);
+            } else {
+                QList<QList<QString>> result(std::get<0>(xc).size());
+                for (int i = 0; i < std::get<0>(xc).size(); ++i) {
+                    result[i].resize(1);
+                    LongNumber tmp;
+                    tmp = std::get<0>(xc)[i];
+                    result[i][0] = QString::fromStdString(tmp.to_string());
+                    for (int j = 0; j < std::get<1>(xc)[0].size(); ++j) {
+                        tmp = std::get<1>(xc)[i][j];
+                        result[i][0] += QString::fromStdString(" + (" + tmp.to_string() + ") * C" + std::to_string(j + 1));
+                    }
+                }
+                emit send_matrix(result, (int) result.size(), 1, 2);
+            }
+        } else {
+            Mat2D_LC a((int) m1_str.size(), (int) m1[0].size()), b((int) m2_str.size(), (int) m2[0].size());
+            for (int i = 0; i < a.size(); ++i) {
+                for (int j = 0; j < a[0].size(); ++j) {
+                    move_with_double_round(a[i][j], LongComplex(m1_str[i][j]));
+                }
+            }
+
+            for (int i = 0; i < b.size(); ++i) {
+                for (int j = 0; j < b[0].size(); ++j) {
+                    move_with_double_round(b[i][j], LongComplex(m2_str[i][j]));
+                }
+            }
+            auto xc = a.solve(b.T()[0]);
+            if (std::get<0>(xc).size() == 0) {
+                QList<QList<QString>> result(1);
+                result[0][0] = QString::fromStdString("No solution");
+                emit send_matrix(result, 1, 1, 2);
+            } else if (std::get<1>(xc).size() == 0 or std::get<1>(xc)[0].size() == 0) {
+                QList<QList<QString>> result(std::get<0>(xc).size());
+                for (int i = 0; i < std::get<0>(xc).size(); ++i) {
+                    result[i].resize(1);
+                    LongComplex tmp;
+                    tmp = std::get<0>(xc)[i];
+                    result[i][0] = QString::fromStdString(tmp.to_string());
+                }
+                emit send_matrix(result, (int) result.size(), 1, 2);
+            } else {
+                QList<QList<QString>> result(std::get<0>(xc).size());
+                for (int i = 0; i < std::get<0>(xc).size(); ++i) {
+                    result[i].resize(1);
+                    LongComplex tmp;
+                    tmp = std::get<0>(xc)[i];
+                    result[i][0] = QString::fromStdString(tmp.to_string());
+                    for (int j = 0; j < std::get<1>(xc)[0].size(); ++j) {
+                        tmp = std::get<1>(xc)[i][j];
+                        result[i][0] += QString::fromStdString(" + (" + tmp.to_string() + ") * C" + std::to_string(j + 1));
+                    }
+                }
+                emit send_matrix(result, (int) result.size(), 1, 2);
+            }
+        }
+    } catch (std::exception &e) {
+        emit send_error(QString(e.what()));
+    }
+}
+
+void Core::solve_matrix(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2) {
+    std::thread t([m1, m2, this] { solve(m1, m2); });
     t.detach();
 }
 

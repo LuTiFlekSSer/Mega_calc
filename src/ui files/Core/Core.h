@@ -34,7 +34,11 @@ public:
 
     void inv(const QList<QList<QString>> &m1);
 
+    void solve(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
+
 signals:
+
+    void event();
 
     void send_error(QString err);
 
@@ -54,7 +58,7 @@ public slots:
 
     void dif_matrix(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
 
-//    void solve_matrix(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
+    void solve_matrix(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2);
 
     void mult_matrix_on_num(const QList<QList<QString>> &m1, const QString &num, int index);
 
