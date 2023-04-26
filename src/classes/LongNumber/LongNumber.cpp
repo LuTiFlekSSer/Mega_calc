@@ -167,7 +167,7 @@ std::string LongNumber::to_string() const {
         str.push_back('-');
     if (this->exp <= 0) {
         str.append("0.");
-        for (int i = 0; i < -exp; ++i) {
+        for (long long i = 0; i < -exp; ++i) {
             str.push_back('0');
         }
         for (char i: this->numbers) {

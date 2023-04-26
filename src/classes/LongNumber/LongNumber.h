@@ -137,6 +137,10 @@ public:
     ~LongNumber();
 };
 
+void copy_with_double_round(LongNumber &to_change, const LongNumber &new_num);
+
+void move_with_double_round(LongNumber &to_change, LongNumber &&new_num);
+
 bool isnan(const LongNumber &num);
 
 bool isinf(const LongNumber &num);

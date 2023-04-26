@@ -10,8 +10,11 @@ qt6_add_qml_module(content
     QML_FILES
         Screen01.ui.qml
         MyBS.qml
+        Matrix_page.ui.qml
+        Calc_page.ui.qml
         App.qml
     RESOURCES
+        Music/123.wav
         Images/tanh.png
         Images/tan.png
         Images/surd.png
@@ -70,6 +73,7 @@ qt6_add_qml_module(content
         Images/ceil.png
         Images/atanh.png
         Images/atan.png
+        Images/as_txt.png
         Images/asinh.png
         Images/asin.png
         Images/asech.png

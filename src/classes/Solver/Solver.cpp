@@ -24,13 +24,13 @@ struct Number {
     Type type;
 
     Number(const LongComplex &lc_, Type type_) {
-        lc = lc_;
+        copy_with_double_round(lc, lc_);
         type = type_;
     }
 
     Number(const LongNumber &ll_, Type type_) {
-        ll = ll_;
-        lc = LongComplex(ll);
+        copy_with_double_round(ll, ll_);
+        copy_with_double_round(lc, LongComplex(ll));
         type = type_;
     }
 };
@@ -52,7 +52,7 @@ static const std::unordered_map<std::string, std::pair<std::function<T(const std
         {"abs",       {[](const std::vector<T> &args) { return T(abs(args[0])); },        1}},
         {"factorial", {[](const std::vector<T> &args) { return factorial(args[0]); },     1}},
         {"max",       {[](const std::vector<T> &args) { return max(args[0], args[1]); },  2}},
-        {"min",       {[](const std::vector<T> &args) { return max(args[0], args[1]); },  2}},
+        {"min",       {[](const std::vector<T> &args) { return min(args[0], args[1]); },  2}},
         {"floor",     {[](const std::vector<T> &args) { return floor(args[0]); },         1}},
         {"ceil",      {[](const std::vector<T> &args) { return ceil(args[0]); },          1}},
         {"dtr",       {[](const std::vector<T> &args) { return grad_to_rad(args[0]); },   1}},
@@ -171,7 +171,17 @@ std::string solver(parser_queue &a) {
                     for (long long i = (long long) tmp_vec.size() - 1; i >= 0; --i) {
                         args.emplace_back(tmp_vec[i].ll);
                     }
-                    solver_stack.emplace(funcs<LongNumber>.at(a.front().first.token).first(args), Type::num_real);
+                    auto tmp_res = funcs<LongNumber>.at(a.front().first.token).first(args);
+                    if (isnan(tmp_res)) {
+                        std::vector<LongComplex> cargs;
+                        cargs.reserve(args.size());
+                        for (const auto &i: args) {
+                            cargs.emplace_back(i);
+                        }
+                        solver_stack.emplace(funcs<LongComplex>.at(a.front().first.token).first(cargs), Type::num_complex);
+                    } else {
+                        solver_stack.emplace(tmp_res, Type::num_real);
+                    }
                 } else {
                     std::vector<LongComplex> args;
                     for (long long i = (long long) tmp_vec.size() - 1; i >= 0; --i) {

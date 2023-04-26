@@ -27,14 +27,24 @@ void not_num_converter(LongComplex &num) {
 }
 
 LongComplex::LongComplex(const LongNumber &real_, const LongNumber &imag_) {
-    this->real = real_;
-    this->imag = imag_;
+    this->real.sign = real_.sign;
+    this->real.exp = real_.exp;
+    this->real.numbers = real_.numbers;
+
+    this->imag.sign = imag_.sign;
+    this->imag.exp = imag_.exp;
+    this->imag.numbers = imag_.numbers;
     not_num_converter(*this);
 }
 
 LongComplex::LongComplex(const LongComplex &num) {
-    this->real = num.real;
-    this->imag = num.imag;
+    this->real.sign = num.real.sign;
+    this->real.exp = num.real.exp;
+    this->real.numbers = num.real.numbers;
+
+    this->imag.sign = num.imag.sign;
+    this->imag.exp = num.imag.exp;
+    this->imag.numbers = num.imag.numbers;
 }
 
 LongComplex::LongComplex(std::string s) {
@@ -76,8 +86,16 @@ LongComplex::LongComplex(std::string s) {
         }
         imag_ += s[i];
     }
-    this->real = LongNumber(real_);
-    this->imag = LongNumber(imag_);
+    auto r = LongNumber(real_);
+    auto i = LongNumber(imag_);
+
+    this->real.sign = r.sign;
+    this->real.exp = r.exp;
+    this->real.numbers = r.numbers;
+
+    this->imag.sign = i.sign;
+    this->imag.exp = i.exp;
+    this->imag.numbers = i.numbers;
     not_num_converter(*this);
 }
 
@@ -226,7 +244,7 @@ std::string LongComplex::to_string() const {
     else if (iscinf(*this))
         return "cinf";
     std::string tmp;
-    tmp += this->real.to_string() + (this->imag.sign ? "" : "+") + this->imag.to_string() + "*i";
+    tmp += this->real.to_string() + (this->imag.sign ? "" : "+") + this->imag.to_string() + "i";
     return tmp;
 }
 
@@ -257,8 +275,13 @@ LongNumber LongComplex::get_imag() const {
 }
 
 LongComplex::LongComplex(LongComplex &&num) noexcept {
-    real = std::move(num.real);
-    imag = std::move(num.imag);
+    this->real.sign = num.real.sign;
+    this->real.exp = num.real.exp;
+    this->real.numbers = std::move(num.real.numbers);
+
+    this->imag.sign = num.imag.sign;
+    this->imag.exp = num.imag.exp;
+    this->imag.numbers = std::move(num.imag.numbers);
 }
 
 LongComplex &LongComplex::operator=(LongComplex &&rhs) noexcept {
@@ -267,6 +290,16 @@ LongComplex &LongComplex::operator=(LongComplex &&rhs) noexcept {
     real = std::move(rhs.real);
     imag = std::move(rhs.imag);
     return *this;
+}
+
+void copy_with_double_round(LongComplex &to_change, const LongComplex &new_num) {
+    copy_with_double_round(to_change.real, new_num.real);
+    copy_with_double_round(to_change.imag, new_num.imag);
+}
+
+void move_with_double_round(LongComplex &to_change, LongComplex &&new_num) {
+    move_with_double_round(to_change.real, std::move(new_num.real));
+    move_with_double_round(to_change.imag, std::move(new_num.imag));
 }
 
 LongNumber abs(const LongComplex &num) {
@@ -324,6 +357,8 @@ LongComplex pow(const LongComplex &num, const LongComplex &deg) {
         return LongComplex::cinf;
     else if ((iscinf(deg) and abs(num) < LongNumber::one) or num == LongComplex::czero)
         return LongComplex::czero;
+    else if (deg == LongComplex::czero)
+        return LongComplex::one;
     else if (deg.get_imag() == LongNumber::zero and deg.get_real() == floor(deg.get_real())) {
         LongComplex tmp = deg.get_real() >= LongNumber::zero ? num : LongComplex::one / num, tmp1 = tmp;
         for (auto i = LongNumber::one; i < abs(deg.get_real()); ++i) {

@@ -1,4 +1,3 @@
-#include <iostream>
 #include "src/ui files/Ui/ui.h"
 
 int main(int argc, char *argv[]) {
