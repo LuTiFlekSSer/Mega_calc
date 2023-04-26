@@ -19,7 +19,7 @@ public:
 
     VecND_LC(VecND_LC &&el) noexcept;
 
-    void print();
+    void print() const;
 
     LongComplex &operator[](int index);
 

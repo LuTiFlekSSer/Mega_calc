@@ -46,13 +46,13 @@ void Core::mult(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2
             Mat2D_LN a((int) m1_str.size(), (int) m1[0].size()), b((int) m2_str.size(), (int) m2[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongNumber(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongNumber(m1_str[i][j]));
                 }
             }
 
             for (int i = 0; i < b.size(); ++i) {
                 for (int j = 0; j < b[0].size(); ++j) {
-                    b[i][j] = LongNumber(m2_str[i][j]);
+                    move_with_double_round(b[i][j], LongNumber(m2_str[i][j]));
                 }
             }
 
@@ -61,7 +61,9 @@ void Core::mult(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2
             for (int i = 0; i < c.size(); ++i) {
                 result[i].resize(c[0].size());
                 for (int j = 0; j < c[0].size(); ++j) {
-                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                    LongNumber tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
                 }
             }
             emit send_matrix(result, c.size(), c[0].size(), 2);
@@ -69,13 +71,13 @@ void Core::mult(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2
             Mat2D_LC a((int) m1_str.size(), (int) m1[0].size()), b((int) m2_str.size(), (int) m2[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongComplex(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongComplex(m1_str[i][j]));
                 }
             }
 
             for (int i = 0; i < b.size(); ++i) {
                 for (int j = 0; j < b[0].size(); ++j) {
-                    b[i][j] = LongComplex(m2_str[i][j]);
+                    move_with_double_round(b[i][j], LongComplex(m2_str[i][j]));
                 }
             }
 
@@ -84,7 +86,9 @@ void Core::mult(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2
             for (int i = 0; i < c.size(); ++i) {
                 result[i].resize(c[0].size());
                 for (int j = 0; j < c[0].size(); ++j) {
-                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                    LongComplex tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
                 }
             }
             emit send_matrix(result, c.size(), c[0].size(), 2);
@@ -135,13 +139,13 @@ void Core::sum(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2)
             Mat2D_LN a((int) m1_str.size(), (int) m1[0].size()), b((int) m2_str.size(), (int) m2[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongNumber(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongNumber(m1_str[i][j]));
                 }
             }
 
             for (int i = 0; i < b.size(); ++i) {
                 for (int j = 0; j < b[0].size(); ++j) {
-                    b[i][j] = LongNumber(m2_str[i][j]);
+                    move_with_double_round(b[i][j], LongNumber(m2_str[i][j]));
                 }
             }
 
@@ -150,7 +154,9 @@ void Core::sum(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2)
             for (int i = 0; i < c.size(); ++i) {
                 result[i].resize(c[0].size());
                 for (int j = 0; j < c[0].size(); ++j) {
-                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                    LongNumber tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
                 }
             }
             emit send_matrix(result, c.size(), c[0].size(), 2);
@@ -158,13 +164,13 @@ void Core::sum(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2)
             Mat2D_LC a((int) m1_str.size(), (int) m1[0].size()), b((int) m2_str.size(), (int) m2[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongComplex(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongComplex(m1_str[i][j]));
                 }
             }
 
             for (int i = 0; i < b.size(); ++i) {
                 for (int j = 0; j < b[0].size(); ++j) {
-                    b[i][j] = LongComplex(m2_str[i][j]);
+                    move_with_double_round(b[i][j], LongComplex(m2_str[i][j]));
                 }
             }
 
@@ -173,7 +179,9 @@ void Core::sum(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2)
             for (int i = 0; i < c.size(); ++i) {
                 result[i].resize(c[0].size());
                 for (int j = 0; j < c[0].size(); ++j) {
-                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                    LongComplex tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
                 }
             }
             emit send_matrix(result, c.size(), c[0].size(), 2);
@@ -199,13 +207,13 @@ void Core::dif(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2)
             Mat2D_LN a((int) m1_str.size(), (int) m1[0].size()), b((int) m2_str.size(), (int) m2[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongNumber(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongNumber(m1_str[i][j]));
                 }
             }
 
             for (int i = 0; i < b.size(); ++i) {
                 for (int j = 0; j < b[0].size(); ++j) {
-                    b[i][j] = LongNumber(m2_str[i][j]);
+                    move_with_double_round(b[i][j], LongNumber(m2_str[i][j]));
                 }
             }
 
@@ -214,7 +222,9 @@ void Core::dif(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2)
             for (int i = 0; i < c.size(); ++i) {
                 result[i].resize(c[0].size());
                 for (int j = 0; j < c[0].size(); ++j) {
-                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                    LongNumber tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
                 }
             }
             emit send_matrix(result, c.size(), c[0].size(), 2);
@@ -222,13 +232,13 @@ void Core::dif(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2)
             Mat2D_LC a((int) m1_str.size(), (int) m1[0].size()), b((int) m2_str.size(), (int) m2[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongComplex(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongComplex(m1_str[i][j]));
                 }
             }
 
             for (int i = 0; i < b.size(); ++i) {
                 for (int j = 0; j < b[0].size(); ++j) {
-                    b[i][j] = LongComplex(m2_str[i][j]);
+                    move_with_double_round(b[i][j], LongComplex(m2_str[i][j]));
                 }
             }
 
@@ -237,7 +247,9 @@ void Core::dif(const QList<QList<QString>> &m1, const QList<QList<QString>> &m2)
             for (int i = 0; i < c.size(); ++i) {
                 result[i].resize(c[0].size());
                 for (int j = 0; j < c[0].size(); ++j) {
-                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                    LongComplex tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
                 }
             }
             emit send_matrix(result, c.size(), c[0].size(), 2);
@@ -264,7 +276,7 @@ void Core::mult_on_num(const QList<QList<QString>> &m1, const QString &num, int 
             Mat2D_LN a((int) m1_str.size(), (int) m1[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongNumber(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongNumber(m1_str[i][j]));
                 }
             }
 
@@ -273,7 +285,9 @@ void Core::mult_on_num(const QList<QList<QString>> &m1, const QString &num, int 
             for (int i = 0; i < c.size(); ++i) {
                 result[i].resize(c[0].size());
                 for (int j = 0; j < c[0].size(); ++j) {
-                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                    LongNumber tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
                 }
             }
             emit send_matrix(result, c.size(), c[0].size(), index);
@@ -281,7 +295,7 @@ void Core::mult_on_num(const QList<QList<QString>> &m1, const QString &num, int 
             Mat2D_LC a((int) m1_str.size(), (int) m1[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongComplex(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongComplex(m1_str[i][j]));
                 }
             }
 
@@ -290,7 +304,9 @@ void Core::mult_on_num(const QList<QList<QString>> &m1, const QString &num, int 
             for (int i = 0; i < c.size(); ++i) {
                 result[i].resize(c[0].size());
                 for (int j = 0; j < c[0].size(); ++j) {
-                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                    LongComplex tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
                 }
             }
             emit send_matrix(result, c.size(), c[0].size(), index);
@@ -321,7 +337,7 @@ void Core::pow_in_num(const QList<QList<QString>> &m1, const QString &num, int i
             Mat2D_LN a((int) m1_str.size(), (int) m1[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongNumber(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongNumber(m1_str[i][j]));
                 }
             }
             auto deg = LongNumber(s);
@@ -334,7 +350,9 @@ void Core::pow_in_num(const QList<QList<QString>> &m1, const QString &num, int i
             for (int i = 0; i < c.size(); ++i) {
                 result[i].resize(c[0].size());
                 for (int j = 0; j < c[0].size(); ++j) {
-                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                    LongNumber tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
                 }
             }
             emit send_matrix(result, c.size(), c[0].size(), index);
@@ -342,7 +360,7 @@ void Core::pow_in_num(const QList<QList<QString>> &m1, const QString &num, int i
             Mat2D_LC a((int) m1_str.size(), (int) m1[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongComplex(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongComplex(m1_str[i][j]));
                 }
             }
 
@@ -356,7 +374,9 @@ void Core::pow_in_num(const QList<QList<QString>> &m1, const QString &num, int i
             for (int i = 0; i < c.size(); ++i) {
                 result[i].resize(c[0].size());
                 for (int j = 0; j < c[0].size(); ++j) {
-                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                    LongComplex tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
                 }
             }
             emit send_matrix(result, c.size(), c[0].size(), index);
@@ -381,7 +401,7 @@ void Core::det(const QList<QList<QString>> &m1) {
             Mat2D_LN a((int) m1_str.size(), (int) m1[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongNumber(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongNumber(m1_str[i][j]));
                 }
             }
 
@@ -399,7 +419,7 @@ void Core::det(const QList<QList<QString>> &m1) {
             Mat2D_LC a((int) m1_str.size(), (int) m1[0].size());
             for (int i = 0; i < a.size(); ++i) {
                 for (int j = 0; j < a[0].size(); ++j) {
-                    a[i][j] = LongComplex(m1_str[i][j]);
+                    move_with_double_round(a[i][j], LongComplex(m1_str[i][j]));
                 }
             }
 
@@ -423,5 +443,117 @@ void Core::determinant(const QList<QList<QString>> &m1) {
     std::thread t([m1, this] { det(m1); });
     t.detach();
 }
+
+void Core::rang(const QList<QList<QString>> &m1) {
+    try {
+        auto m1_parse = calculate_matrix(m1);
+        auto m1_str = std::get<0>(m1_parse);
+        auto m1_real = std::get<1>(m1_parse);
+
+        if (m1_real) {
+            Mat2D_LN a((int) m1_str.size(), (int) m1[0].size());
+            for (int i = 0; i < a.size(); ++i) {
+                for (int j = 0; j < a[0].size(); ++j) {
+                    move_with_double_round(a[i][j], LongNumber(m1_str[i][j]));
+                }
+            }
+
+            Mat2D_LN c(1, 1);
+            c[0][0] = a.rang();
+            QList<QList<QString>> result(c.size());
+            for (int i = 0; i < c.size(); ++i) {
+                result[i].resize(c[0].size());
+                for (int j = 0; j < c[0].size(); ++j) {
+                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                }
+            }
+            emit send_matrix(result, c.size(), c[0].size(), 2);
+        } else {
+            Mat2D_LC a((int) m1_str.size(), (int) m1[0].size());
+            for (int i = 0; i < a.size(); ++i) {
+                for (int j = 0; j < a[0].size(); ++j) {
+                    move_with_double_round(a[i][j], LongComplex(m1_str[i][j]));
+                }
+            }
+
+            Mat2D_LN c(1, 1);
+            c[0][0] = a.rang();
+            QList<QList<QString>> result(c.size());
+            for (int i = 0; i < c.size(); ++i) {
+                result[i].resize(c[0].size());
+                for (int j = 0; j < c[0].size(); ++j) {
+                    result[i][j] = QString::fromStdString(c[i][j].to_string());
+                }
+            }
+            emit send_matrix(result, c.size(), c[0].size(), 2);
+        }
+    } catch (std::exception &e) {
+        emit send_error(QString(e.what()));
+    }
+}
+
+void Core::matrix_rang(const QList<QList<QString>> &m1) {
+    std::thread t([m1, this] { rang(m1); });
+    t.detach();
+}
+
+void Core::inv(const QList<QList<QString>> &m1) {
+    try {
+        auto m1_parse = calculate_matrix(m1);
+        auto m1_str = std::get<0>(m1_parse);
+        auto m1_real = std::get<1>(m1_parse);
+
+        if (m1_real) {
+            Mat2D_LN a((int) m1_str.size(), (int) m1[0].size());
+            for (int i = 0; i < a.size(); ++i) {
+                for (int j = 0; j < a[0].size(); ++j) {
+                    move_with_double_round(a[i][j], LongNumber(m1_str[i][j]));
+                }
+            }
+
+            Mat2D_LN c(a.size());
+            c = a.inv();
+            QList<QList<QString>> result(c.size());
+            for (int i = 0; i < c.size(); ++i) {
+                result[i].resize(c[0].size());
+                for (int j = 0; j < c[0].size(); ++j) {
+                    LongNumber tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
+                }
+            }
+            emit send_matrix(result, c.size(), c[0].size(), 2);
+        } else {
+            Mat2D_LC a((int) m1_str.size(), (int) m1[0].size());
+            for (int i = 0; i < a.size(); ++i) {
+                for (int j = 0; j < a[0].size(); ++j) {
+                    move_with_double_round(a[i][j], LongComplex(m1_str[i][j]));
+                }
+            }
+
+            Mat2D_LC c(a.size());
+            c = a.inv();
+            QList<QList<QString>> result(c.size());
+            for (int i = 0; i < c.size(); ++i) {
+                result[i].resize(c[0].size());
+                for (int j = 0; j < c[0].size(); ++j) {
+                    LongComplex tmp;
+                    tmp = c[i][j];
+                    result[i][j] = QString::fromStdString(tmp.to_string());
+                }
+            }
+            emit send_matrix(result, c.size(), c[0].size(), 2);
+        }
+    } catch (std::exception &e) {
+        emit send_error(QString(e.what()));
+    }
+}
+
+void Core::matrix_inv(const QList<QList<QString>> &m1) {
+    std::thread t([m1, this] { inv(m1); });
+    t.detach();
+}
+
+
 
 

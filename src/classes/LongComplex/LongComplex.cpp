@@ -27,14 +27,24 @@ void not_num_converter(LongComplex &num) {
 }
 
 LongComplex::LongComplex(const LongNumber &real_, const LongNumber &imag_) {
-    this->real = real_;
-    this->imag = imag_;
+    this->real.sign = real_.sign;
+    this->real.exp = real_.exp;
+    this->real.numbers = real_.numbers;
+
+    this->imag.sign = imag_.sign;
+    this->imag.exp = imag_.exp;
+    this->imag.numbers = imag_.numbers;
     not_num_converter(*this);
 }
 
 LongComplex::LongComplex(const LongComplex &num) {
-    this->real = num.real;
-    this->imag = num.imag;
+    this->real.sign = num.real.sign;
+    this->real.exp = num.real.exp;
+    this->real.numbers = num.real.numbers;
+
+    this->imag.sign = num.imag.sign;
+    this->imag.exp = num.imag.exp;
+    this->imag.numbers = num.imag.numbers;
 }
 
 LongComplex::LongComplex(std::string s) {
@@ -76,8 +86,16 @@ LongComplex::LongComplex(std::string s) {
         }
         imag_ += s[i];
     }
-    this->real = LongNumber(real_);
-    this->imag = LongNumber(imag_);
+    auto r = LongNumber(real_);
+    auto i = LongNumber(imag_);
+
+    this->real.sign = r.sign;
+    this->real.exp = r.exp;
+    this->real.numbers = r.numbers;
+
+    this->imag.sign = i.sign;
+    this->imag.exp = i.exp;
+    this->imag.numbers = i.numbers;
     not_num_converter(*this);
 }
 
@@ -257,8 +275,13 @@ LongNumber LongComplex::get_imag() const {
 }
 
 LongComplex::LongComplex(LongComplex &&num) noexcept {
-    real = std::move(num.real);
-    imag = std::move(num.imag);
+    this->real.sign = num.real.sign;
+    this->real.exp = num.real.exp;
+    this->real.numbers = std::move(num.real.numbers);
+
+    this->imag.sign = num.imag.sign;
+    this->imag.exp = num.imag.exp;
+    this->imag.numbers = std::move(num.imag.numbers);
 }
 
 LongComplex &LongComplex::operator=(LongComplex &&rhs) noexcept {

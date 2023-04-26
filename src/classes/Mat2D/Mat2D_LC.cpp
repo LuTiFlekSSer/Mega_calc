@@ -9,7 +9,7 @@ Mat2D_LC::Mat2D_LC(int x_, int y_) {
     }
 }
 
-void Mat2D_LC::print() {
+void Mat2D_LC::print() const {
     std::cout << '(';
     for (int i = 0; i < mat.size(); ++i) {
         std::cout << '(';
@@ -45,7 +45,7 @@ Mat2D_LC Mat2D_LC::operator+(const Mat2D_LC &rhs) {
         Mat2D_LC tmp((int) mat.size(), (int) mat[0].vec.size());
         for (int i = 0; i < mat.size(); ++i) {
             for (int j = 0; j < mat[0].vec.size(); ++j) {
-                tmp[i][j] = mat[i][j] + rhs.mat[i].vec[j];
+                move_with_double_round(tmp[i][j], mat[i][j] + rhs.mat[i].vec[j]);
             }
         }
         return Mat2D_LC{tmp};
@@ -58,7 +58,7 @@ Mat2D_LC Mat2D_LC::operator-(const Mat2D_LC &rhs) {
         Mat2D_LC tmp((int) mat.size(), (int) mat[0].vec.size());
         for (int i = 0; i < mat.size(); ++i) {
             for (int j = 0; j < mat[0].vec.size(); ++j) {
-                tmp[i][j] = mat[i][j] - rhs.mat[i].vec[j];
+                move_with_double_round(tmp[i][j], mat[i][j] - rhs.mat[i].vec[j]);
             }
         }
         return Mat2D_LC{tmp};
@@ -87,7 +87,7 @@ Mat2D_LC Mat2D_LC::operator*(const Mat2D_LC &rhs) {
         for (int i = 0; i < mat.size(); ++i) {
             for (int j = 0; j < rhs.mat[0].vec.size(); ++j) {
                 for (int k = 0; k < mat[0].vec.size(); ++k) {
-                    tmp[i][j] += mat[i][k] * rhs.mat[k].vec[j];
+                    move_with_double_round(tmp[i][j], tmp[i][j] + mat[i][k] * rhs.mat[k].vec[j]);
                 }
             }
         }
@@ -96,11 +96,11 @@ Mat2D_LC Mat2D_LC::operator*(const Mat2D_LC &rhs) {
     throw std::length_error("Incorrect multiplication: different matrix sizes");
 }
 
-Mat2D_LC Mat2D_LC::T() {
+Mat2D_LC Mat2D_LC::T() const {
     Mat2D_LC tmp((int) this->mat[0].vec.size(), (int) this->mat.size());
     for (int i = 0; i < mat.size(); ++i) {
         for (int j = 0; j < mat[0].vec.size(); ++j) {
-            tmp[j][i] = this->mat[i][j];
+            copy_with_double_round(tmp[j][i], this->mat[i][j]);
         }
     }
     return Mat2D_LC{tmp};
@@ -120,18 +120,18 @@ LongComplex rec_det(const Mat2D_LC &m) {
                 for (int k = 0; k < m[0].size(); ++k) {
                     if (k == i)
                         continue;
-                    minor[x][y++] = m[j][k];
+                    copy_with_double_round(minor[x][y++], m[j][k]);
                 }
                 y = 0;
                 ++x;
             }
-            result += rec_det(minor) * pow(-LongComplex::one, LongComplex(i)) * m[0][i];
+            move_with_double_round(result, result + rec_det(minor) * pow(-LongComplex::one, LongComplex(i)) * m[0][i]);
         }
         return result;
     }
 }
 
-LongComplex Mat2D_LC::det() {
+LongComplex Mat2D_LC::det() const {
     if (this->mat.size() == this->mat[0].vec.size()) {
         if (this->mat.size() < 8) {
             return rec_det(*this);
@@ -170,7 +170,7 @@ LongComplex Mat2D_LC::det() {
         }
         LongComplex determ(1);
         for (int i = 0; i < std::get<2>(pluq).mat.size(); ++i) {
-            determ *= std::get<2>(pluq)[i][i];
+            move_with_double_round(determ, determ * std::get<2>(pluq)[i][i]);
         }
         return determ * LongComplex(pow(-1, res));
     }
@@ -199,7 +199,7 @@ Mat2D_LC Mat2D_LC::operator*(const LongComplex &rhs) {
     Mat2D_LC tmp(*this);
     for (int i = 0; i < mat.size(); ++i) {
         for (int j = 0; j < mat[0].vec.size(); ++j) {
-            tmp[i][j] *= rhs;
+            move_with_double_round(tmp[i][j], tmp[i][j] * rhs);
         }
     }
     return Mat2D_LC{tmp};
@@ -213,7 +213,7 @@ Mat2D_LC c_eye(int size) {
     return Mat2D_LC{tmp};
 }
 
-std::tuple<VecND_LC, Mat2D_LC> Mat2D_LC::solve(VecND_LC &b) {
+std::tuple<VecND_LC, Mat2D_LC> Mat2D_LC::solve(const VecND_LC &b) const {
     if (this->mat.size() == b.vec.size()) {
         auto pluq = (*this).lu_decomposition();
         VecND_LC pb = std::get<0>(pluq) * b;
@@ -226,9 +226,9 @@ std::tuple<VecND_LC, Mat2D_LC> Mat2D_LC::solve(VecND_LC &b) {
         for (int i = 0; i < std::get<2>(pluq).mat.size(); ++i) {
             LongComplex sum = LongComplex::czero;
             for (int j = 0; j < i; ++j) {
-                sum += y[j] * std::get<1>(pluq)[i][j];
+                move_with_double_round(sum, sum + y[j] * std::get<1>(pluq)[i][j]);
             }
-            y[i] = pb[i] - sum;
+            move_with_double_round(y[i], pb[i] - sum);
         }
         int index_first_not_null = -1;
         for (int i = (int) std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()) - 1; i >= 0; --i) {
@@ -245,23 +245,23 @@ std::tuple<VecND_LC, Mat2D_LC> Mat2D_LC::solve(VecND_LC &b) {
                 return std::make_tuple(VecND_LC(0), Mat2D_LC(0));
         VecND_LC x((int) std::get<2>(pluq).mat[0].vec.size());
         for (int i = index_first_not_null; i >= 0; --i) {
-            LongComplex sum(0);
+            LongComplex sum = LongComplex::czero;
             for (int j = index_first_not_null; j > i; --j) {
-                sum += x[j] * std::get<2>(pluq)[i][j];
+                move_with_double_round(sum, sum + x[j] * std::get<2>(pluq)[i][j]);
             }
             if (abs((y[i] - sum) / std::get<2>(pluq)[i][i]) > LongNumber::eps)
-                x[i] = (y[i] - sum) / std::get<2>(pluq)[i][i];
+                move_with_double_round(x[i], (y[i] - sum) / std::get<2>(pluq)[i][i]);
         }
         for (int i = 0; i < std::get<2>(pluq).mat[0].vec.size() -
                             std::min(std::get<2>(pluq).mat.size(), std::get<2>(pluq).mat[0].vec.size()); ++i) {
             for (int j = (int) std::get<2>(pluq).mat.size() - 1; j >= 0; --j) {
-                LongComplex sum(0);
+                LongComplex sum = LongComplex::czero;
                 for (int k = (int) std::get<2>(pluq).mat[0].vec.size() - 1; k > j; --k) {
-                    sum += std::get<2>(pluq)[j][k] * c[k][i];
+                    move_with_double_round(sum, sum + std::get<2>(pluq)[j][k] * c[k][i]);
                 }
                 //хуйня! зато какая ↓
                 if (abs(std::get<2>(pluq)[j][j]) > LongNumber::eps) {
-                    c[j][i] = (-sum) / std::get<2>(pluq)[j][j];
+                    move_with_double_round(c[j][i], (-sum) / std::get<2>(pluq)[j][j]);
                     if (abs(c[j][i]) < LongNumber::eps)
                         c[j][i] = LongComplex::czero;
                 } else {
@@ -282,7 +282,7 @@ std::tuple<VecND_LC, Mat2D_LC> Mat2D_LC::solve(VecND_LC &b) {
     throw std::length_error("Incorrect solve: matrix does not match the size of the vector");
 }
 
-std::tuple<int, int, LongComplex> Mat2D_LC::max_elem(Mat2D_LC &matrix, int index) {
+std::tuple<int, int, LongComplex> Mat2D_LC::max_elem(const Mat2D_LC &matrix, int index) const {
     int x = index, y = index;
     LongComplex max = matrix[index][index];
     for (int i = index; i < matrix.mat.size(); ++i) {
@@ -290,15 +290,14 @@ std::tuple<int, int, LongComplex> Mat2D_LC::max_elem(Mat2D_LC &matrix, int index
             if (abs(matrix[i][j]) > abs(max)) {
                 x = i;
                 y = j;
-                max = matrix[i][j];
+                copy_with_double_round(max, matrix[i][j]);
             }
         }
-
     }
     return std::make_tuple(x, y, max);
 }
 
-std::tuple<Mat2D_LC, Mat2D_LC, Mat2D_LC, Mat2D_LC> Mat2D_LC::lu_decomposition() {
+std::tuple<Mat2D_LC, Mat2D_LC, Mat2D_LC, Mat2D_LC> Mat2D_LC::lu_decomposition() const {
     Mat2D_LC u(*this);
     Mat2D_LC p = c_eye((int) this->mat.size()), q = c_eye((int) this->mat[0].vec.size()), l((int) this->mat.size());
     for (int i = 0; i < std::min(this->mat.size(), this->mat[0].vec.size()); ++i) {
@@ -331,13 +330,7 @@ std::tuple<Mat2D_LC, Mat2D_LC, Mat2D_LC, Mat2D_LC> Mat2D_LC::lu_decomposition() 
         }
     }
     for (int i = 0; i < this->mat.size(); ++i) {
-        l[i][i] = LongComplex(1);
-    }
-    for (int i = 0; i < u.size(); ++i) {
-        for (int j = 0; j < u[0].size(); ++j) {
-            u[i][j] = u[i][j];
-            l[i][j] = l[i][j];
-        }
+        l[i][i] = LongComplex::one;
     }
     return std::make_tuple(Mat2D_LC(p), Mat2D_LC(l), Mat2D_LC(u), Mat2D_LC(q));
 }
@@ -370,7 +363,54 @@ Mat2D_LC &Mat2D_LC::operator=(VecND_LC &&rhs) noexcept {
     return *this;
 }
 
-void print_solve(std::tuple<VecND_LC, Mat2D_LC> xc) {
+LongNumber Mat2D_LC::rang() const {
+    auto pluq = (*this).lu_decomposition();
+    int min_size = std::min(std::get<2>(pluq).size(), std::get<2>(pluq)[0].size());
+    LongNumber R(min_size);
+    for (int i = min_size - 1; i >= 0; --i) {
+        if (abs(std::get<2>(pluq)[i][i]) <= LongNumber::eps) {
+            --R;
+        } else {
+            break;
+        }
+    }
+    return R;
+}
+
+Mat2D_LC Mat2D_LC::inv() const {
+    if (this->size() == this->operator[](0).size()) {
+        auto pluq = (*this).lu_decomposition();
+        if (abs(std::get<2>(pluq)[this->size() - 1][this->size() - 1]) <= LongNumber::eps) {
+            throw std::logic_error("The determinant must not be equal to 0");
+        }
+        Mat2D_LC p = std::get<0>(pluq).T();
+        Mat2D_LC y(this->size());
+        for (int k = 0; k < this->size(); ++k) {
+            for (int i = 0; i < this->size(); ++i) {
+                LongComplex sum = LongComplex::czero;
+                for (int j = 0; j < i; ++j) {
+                    move_with_double_round(sum, sum + y[j][k] * std::get<1>(pluq)[i][j]);
+                }
+                move_with_double_round(y[i][k], p[k][i] - sum);
+            }
+        }
+        Mat2D_LC x(this->size());
+        for (int k = 0; k < this->size(); ++k) {
+            for (int i = this->size() - 1; i >= 0; --i) {
+                LongComplex sum = LongComplex::czero;
+                for (int j = this->size() - 1; j > i; --j) {
+                    move_with_double_round(sum, sum + x[j][k] * std::get<2>(pluq)[i][j]);
+                }
+                if (abs((y[i][k] - sum) / std::get<2>(pluq)[i][i]) > LongNumber::eps)
+                    move_with_double_round(x[i][k], (y[i][k] - sum) / std::get<2>(pluq)[i][i]);
+            }
+        }
+        return std::get<3>(pluq) * x;
+    }
+    throw std::logic_error("Incorrect inversion: the matrix is not square");
+}
+
+void print_solve(const std::tuple<VecND_LC, Mat2D_LC> &xc) {
     if (std::get<0>(xc).size() == 0)
         std::cout << "No solution\n";
     else if (std::get<1>(xc).size() == 0 or std::get<1>(xc)[0].size() == 0) {

@@ -30,6 +30,10 @@ public:
 
     void det(const QList<QList<QString>> &m1);
 
+    void rang(const QList<QList<QString>> &m1);
+
+    void inv(const QList<QList<QString>> &m1);
+
 signals:
 
     void send_error(QString err);
@@ -57,6 +61,10 @@ public slots:
     void pow_matrix_in_num(const QList<QList<QString>> &m1, const QString &num, int index);
 
     void determinant(const QList<QList<QString>> &m1);
+
+    void matrix_rang(const QList<QList<QString>> &m1);
+
+    void matrix_inv(const QList<QList<QString>> &m1);
 
     void solve_expr(const QString &expr);
 

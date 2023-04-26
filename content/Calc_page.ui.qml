@@ -54,8 +54,7 @@ Page {
                         source: png_for_img
                     }
                     // @disable-check M222
-                    onClicked: input_field.insert(input_field.cursorPosition,
-                                                  func)
+                    onClicked: input_field.insert(input_field.cursorPosition, func)
                 }
                 model: ListModel {
                     ListElement {

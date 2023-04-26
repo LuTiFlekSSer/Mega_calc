@@ -371,6 +371,8 @@ Page {
         height: 35
         width: 70
         anchors.top: mat_dif.bottom
+        topPadding: 12
+        font.pointSize: 19
         anchors.topMargin: 10
         anchors.left: mat_dif.left
         Connections {
@@ -393,7 +395,8 @@ Page {
         height: 35
         width: 70
         anchors.top: mat_sum.bottom
-        font.pointSize: 11
+        topPadding: 2
+        font.pointSize: 16
         anchors.topMargin: 10
         anchors.left: mat_sum.left
         Connections {
@@ -415,7 +418,7 @@ Page {
         height: 35
         width: 70
         anchors.top: mat_swap.bottom
-        font.pointSize: 11
+        font.pointSize: 14
         anchors.topMargin: 10
         anchors.left: mat_swap.left
         Connections {
@@ -543,6 +546,18 @@ Page {
         anchors.top: mat_A_I.bottom
         font.pointSize: 11
         anchors.topMargin: 10
+        Connections {
+            target: mat_A_R
+            onClicked: {
+                if (mat_A.elem_x > 0 && mat_A.elem_y > 0) {
+                    matrix_page.wait()
+                    Core.matrix_rang(matrix_page.matrix_A)
+                } else {
+                    quick_error("Matrix size cannot be 0")
+                }
+            }
+        }
+
         text: qsTr("Ранг")
     }
 
@@ -555,6 +570,17 @@ Page {
         anchors.top: mat_A_P.bottom
         font.pointSize: 11
         anchors.topMargin: 10
+        Connections {
+            target: mat_A_I
+            onClicked: {
+                if (mat_A.elem_x > 0 && mat_A.elem_y > 0) {
+                    matrix_page.wait()
+                    Core.matrix_inv(matrix_page.matrix_A)
+                } else {
+                    quick_error("Matrix size cannot be 0")
+                }
+            }
+        }
         text: qsTr("Обратная")
     }
 
@@ -844,6 +870,17 @@ Page {
         anchors.top: mat_B_D.bottom
         font.pointSize: 11
         anchors.topMargin: 10
+        Connections {
+            target: mat_B_R
+            onClicked: {
+                if (mat_B.elem_x > 0 && mat_B.elem_y > 0) {
+                    matrix_page.wait()
+                    Core.matrix_rang(matrix_page.matrix_B)
+                } else {
+                    quick_error("Matrix size cannot be 0")
+                }
+            }
+        }
         text: qsTr("Ранг")
     }
 
@@ -854,6 +891,18 @@ Page {
         anchors.top: mat_B_P.bottom
         font.pointSize: 11
         anchors.topMargin: 10
+        Connections {
+            target: mat_B_I
+            onClicked: {
+                if (mat_B.elem_x > 0 && mat_B.elem_y > 0) {
+                    matrix_page.wait()
+                    Core.matrix_inv(matrix_page.matrix_B)
+                } else {
+                    quick_error("Matrix size cannot be 0")
+                }
+            }
+        }
+
         text: qsTr("Обратная")
     }
 

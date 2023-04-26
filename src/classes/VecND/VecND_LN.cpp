@@ -9,14 +9,17 @@ VecND_LN::VecND_LN(int x_) {
 VecND_LN::VecND_LN() = default;
 
 VecND_LN::VecND_LN(const VecND_LN &el) {
-    vec = el.vec;
+    this->vec.resize(el.vec.size());
+    for (int i = 0; i < el.vec.size(); ++i) {
+        copy_with_double_round(this->vec[i], el.vec[i]);
+    }
 }
 
 VecND_LN VecND_LN::operator+(const VecND_LN &rhs) const {
     if (this->vec.size() == rhs.vec.size()) {
         VecND_LN tmp((int) rhs.vec.size());
         for (int i = 0; i < rhs.vec.size(); ++i) {
-            tmp.vec[i] = this->vec[i] + rhs.vec[i];
+            move_with_double_round(tmp.vec[i], this->vec[i] + rhs.vec[i]);
         }
         return VecND_LN{tmp};
     }
@@ -27,7 +30,7 @@ VecND_LN VecND_LN::operator-(const VecND_LN &rhs) const {
     if (this->vec.size() == rhs.vec.size()) {
         VecND_LN tmp((int) rhs.vec.size());
         for (int i = 0; i < rhs.vec.size(); ++i) {
-            tmp.vec[i] = this->vec[i] - rhs.vec[i];
+            move_with_double_round(tmp.vec[i], this->vec[i] - rhs.vec[i]);
         }
         return VecND_LN{tmp};
     }
@@ -45,19 +48,19 @@ VecND_LN &VecND_LN::operator=(const VecND_LN &rhs) {
 VecND_LN VecND_LN::operator*(const LongNumber &rhs) const {
     VecND_LN tmp((int) vec.size());
     for (int i = 0; i < vec.size(); ++i) {
-        tmp.vec[i] = this->vec[i] * rhs;
+        move_with_double_round(tmp.vec[i], this->vec[i] * rhs);
     }
     return VecND_LN{tmp};
 }
 
 VecND_LN &VecND_LN::operator*=(const LongNumber &rhs) {
     for (int i = 0; i < vec.size(); ++i) {
-        this->vec[i] = this->vec[i] * rhs;
+        move_with_double_round(this->vec[i], this->vec[i] * rhs);
     }
     return *this;
 }
 
-void VecND_LN::print() {
+void VecND_LN::print() const {
     std::cout << '(';
     for (int i = 0; i < vec.size(); ++i) {
         std::cout << vec[i];

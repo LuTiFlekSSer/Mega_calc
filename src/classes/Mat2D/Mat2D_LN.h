@@ -11,10 +11,11 @@ class Mat2D_LN {
 private:
     std::vector<VecND_LN> mat;
 
-    std::tuple<int, int, LongNumber> max_elem(Mat2D_LN &matrix, int index);
+    [[nodiscard]] std::tuple<int, int, LongNumber> max_elem(const Mat2D_LN &matrix, int index) const;
+
+    [[nodiscard]] std::tuple<Mat2D_LN, Mat2D_LN, Mat2D_LN, Mat2D_LN> lu_decomposition() const;
 
 public:
-    std::tuple<Mat2D_LN, Mat2D_LN, Mat2D_LN, Mat2D_LN> lu_decomposition();
 
     Mat2D_LN(int x_, int y_);
 
@@ -26,7 +27,7 @@ public:
 
     Mat2D_LN();
 
-    void print();
+    void print() const;
 
     Mat2D_LN operator+(const Mat2D_LN &rhs);
 
@@ -46,11 +47,15 @@ public:
 
     Mat2D_LN &operator=(VecND_LN &&rhs) noexcept;
 
-    std::tuple<VecND_LN, Mat2D_LN> solve(VecND_LN &b);
+    [[nodiscard]] std::tuple<VecND_LN, Mat2D_LN> solve(const VecND_LN &b) const;
 
-    Mat2D_LN T();
+    [[nodiscard]] Mat2D_LN T() const;
 
-    LongNumber det();
+    [[nodiscard]] LongNumber det() const;
+
+    [[nodiscard]] LongNumber rang() const;
+
+    [[nodiscard]] Mat2D_LN inv() const;
 
     VecND_LN &operator[](int index);
 
@@ -61,6 +66,6 @@ public:
 
 Mat2D_LN eye(int size);
 
-void print_solve(std::tuple<VecND_LN, Mat2D_LN> xc);
+void print_solve(const std::tuple<VecND_LN, Mat2D_LN> &xc);
 
 #endif

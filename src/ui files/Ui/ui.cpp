@@ -12,7 +12,6 @@ int start_UI(int argc, char *argv[]) {
 
     QGuiApplication app(argc, argv);
 
-
     QQmlApplicationEngine engine;
     const QUrl url(u"qrc:Main/main.qml"_qs);
     QGuiApplication::setWindowIcon(QIcon(":content/Images/icon.png"));

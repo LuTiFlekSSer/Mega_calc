@@ -19,7 +19,7 @@ public:
 
     VecND_LN(VecND_LN &&el) noexcept;
 
-    void print();
+    void print() const;
 
     LongNumber &operator[](int index);
 
