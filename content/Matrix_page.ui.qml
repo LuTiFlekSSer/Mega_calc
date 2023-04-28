@@ -48,6 +48,7 @@ Page {
                     list_element.tmp_x = i
                     list_element.tmp_y = j
                     list_element.txt = ""
+                    list_element.pos = 0
                     // @disable-check M222
                     mat_A_Elems.append(list_element)
                 }
@@ -82,6 +83,7 @@ Page {
                     list_element.tmp_x = i
                     list_element.tmp_y = j
                     list_element.txt = ""
+                    list_element.pos = 0
                     // @disable-check M222
                     mat_B_Elems.append(list_element)
                 }
@@ -111,6 +113,7 @@ Page {
                 list_element.tmp_x = i
                 list_element.tmp_y = j
                 list_element.txt = mat[i][j]
+                list_element.pos = 0
                 // @disable-check M222
                 mat_A_Elems.append(list_element)
             }
@@ -136,6 +139,7 @@ Page {
                 list_element.tmp_x = i
                 list_element.tmp_y = j
                 list_element.txt = mat[i][j]
+                list_element.pos = 0
                 // @disable-check M222
                 mat_B_Elems.append(list_element)
             }
@@ -157,6 +161,7 @@ Page {
                 matrix_page.matrix_C[i][j] = mat[i][j]
                 var list_element = {}
                 list_element.txt = mat[i][j]
+                list_element.pos = 0
                 // @disable-check M222
                 mat_C_Elems.append(list_element)
             }
@@ -209,6 +214,7 @@ Page {
                     height: gw_A.elem_height
                     placeholderText: '0'
                     text: txt
+                    cursorPosition: pos
                     onTextEdited: matrix_page.matrix_A[x_c][y_c] = text
                 }
                 cellWidth: elem_width
@@ -260,6 +266,7 @@ Page {
                     height: gw_C.elem_height
                     text: txt
                     readOnly: true
+                    cursorPosition: pos
                 }
                 cellWidth: elem_width
                 cellHeight: elem_height
@@ -341,6 +348,7 @@ Page {
                     height: gw_B.elem_height
                     placeholderText: '0'
                     text: txt
+                    cursorPosition: pos
                     onTextEdited: matrix_page.matrix_B[x_c][y_c] = text
                 }
                 cellWidth: elem_width
