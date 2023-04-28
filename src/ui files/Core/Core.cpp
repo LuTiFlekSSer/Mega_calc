@@ -624,6 +624,7 @@ void Core::solve(const QList<QList<QString>> &m1, const QList<QList<QString>> &m
             auto xc = a.solve(b.T()[0]);
             if (std::get<0>(xc).size() == 0) {
                 QList<QList<QString>> result(1);
+                result[0].resize(1);
                 result[0][0] = QString::fromStdString("No solution");
                 emit send_matrix(result, 1, 1, 2);
             } else if (std::get<1>(xc).size() == 0 or std::get<1>(xc)[0].size() == 0) {
