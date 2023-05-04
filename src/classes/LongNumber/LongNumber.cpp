@@ -944,7 +944,11 @@ LongNumber log(const LongNumber &num, const LongNumber &base) {
 LongNumber rec_fact(const LongNumber &num) {
     if (num == LongNumber::zero)
         return LongNumber::one;
-    return num * rec_fact(num - LongNumber::one);
+    LongNumber tmp = LongNumber::one;
+    for (LongNumber i = LongNumber::two; i <= num; ++i) {
+        tmp *= i;
+    }
+    return tmp;
 }
 
 LongNumber factorial(const LongNumber &num) {
