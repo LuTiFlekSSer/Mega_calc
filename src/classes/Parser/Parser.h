@@ -20,6 +20,8 @@ struct Token {
     std::string token;
     Type type;
 
+    Token() = default;
+
     Token(const std::string &token_, Type type_) {
         type = type_;
         token = token_;
