@@ -117,8 +117,6 @@ LongNumber::LongNumber(std::string num) {
     if (num.find('.') != std::string::npos)
         while (num[num.size() - 1] == '0') {
             num.erase(num.end() - 1);
-            if (num.empty())
-                num.insert(num.begin(), '.');
         }
     else
         while (num[num.size() - 1] == '0') {

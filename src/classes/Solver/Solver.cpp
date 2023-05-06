@@ -5,7 +5,6 @@
 #include "../LongComplex/LongComplex.h"
 #include "stack"
 #include "algorithm"
-#include "deque"
 
 LongComplex max(const LongComplex &a, const LongComplex &b) {
     throw std::logic_error("Complex numbers do not support comparisons");
@@ -207,59 +206,4 @@ std::string solver(parser_queue &a) {
         constants.insert_or_assign("Ans", Number{tmp_c, Type::num_complex});
         return tmp_c.to_string();
     }
-}
-//
-//std::unordered_map<std::string, std::pair<std::vector<Token>, std::vector<Token>>> derivatives = {
-//        {"Mphase", {{}, {Token("0", Type::num_real),}}},
-//        {"Mln",},
-//        {"Mlog",},
-//        {"Mpow",},
-//        {"Msurd",},
-//        {"Msqrt",},
-//        {"Masin",},
-//        {"Macos",},
-//        {"Matan",},
-//        {"Macot",},
-//        {"Masec",},
-//        {"Macsc",},
-//        {"Masinh",},
-//        {"Macosh",},
-//        {"Matanh",},
-//        {"Macoth",},
-//        {"Masech",},
-//        {"Macsch",},
-//};
-//
-std::string derivative_solver(parser_queue &a) {
-    size_t ss = a.size();
-    std::deque<std::pair<Token, int>> deque(ss);
-    for (size_t i = 0; i < ss; ++i) {
-        deque[i] = a.front();
-        a.pop();
-    }
-    for (const auto &i: deque) {
-        std::cout << i.first.token + '\n';
-    }
-//    while (!deque.empty()) {
-//        if (deque.back().first.type == Type::func or deque.back().first.type == Type::oper) {
-//            if (!funcs<LongComplex>.contains(a.front().first.token)) {
-//                if (!many_value_funcs.contains(a.front().first.token))
-//                    throw std::logic_error("Function not found: " + a.front().first.token);
-//                if (many_value_funcs.at(a.front().first.token).second == a.front().second) {
-//                    std::vector<LongComplex> args;
-//                    for (int i = 0; i < a.front().second; ++i) {
-//                        args.emplace_back(solver_stack.top().lc);
-//                        solver_stack.pop();
-//                    }
-//                    std::reverse(args.begin(), args.end());
-//                    solver_stack.emplace(many_value_funcs.at(a.front().first.token).first(args), Type::num_complex);
-//                    a.pop();
-//                } else {
-//                    throw std::logic_error("Invalid number of parameters for the function: " + a.front().first.token);
-//                }
-//            }
-//
-//
-//        }
-//    }
 }
