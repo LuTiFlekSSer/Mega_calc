@@ -117,8 +117,6 @@ LongNumber::LongNumber(std::string num) {
     if (num.find('.') != std::string::npos)
         while (num[num.size() - 1] == '0') {
             num.erase(num.end() - 1);
-            if (num.empty())
-                num.insert(num.begin(), '.');
         }
     else
         while (num[num.size() - 1] == '0') {
@@ -944,7 +942,11 @@ LongNumber log(const LongNumber &num, const LongNumber &base) {
 LongNumber rec_fact(const LongNumber &num) {
     if (num == LongNumber::zero)
         return LongNumber::one;
-    return num * rec_fact(num - LongNumber::one);
+    LongNumber tmp = LongNumber::one;
+    for (LongNumber i = LongNumber::two; i <= num; ++i) {
+        tmp *= i;
+    }
+    return tmp;
 }
 
 LongNumber factorial(const LongNumber &num) {
@@ -966,10 +968,10 @@ LongNumber factorial(const LongNumber &num) {
     }
     LongNumber la_rez = la2 / la1, r = la_rez / exp_y.get();
     r *= pow_for_r.get();
-    for (auto i = num; i >= LongNumber::one; --i) {
+    for (auto i = num; i > LongNumber::one; --i) {
         r *= i;
     }
-    for (auto i = num + LongNumber::one; i <= LongNumber::one; ++i) {
+    for (auto i = num + LongNumber::one; i < LongNumber::one; ++i) {
         r /= i;
     }
     return r;

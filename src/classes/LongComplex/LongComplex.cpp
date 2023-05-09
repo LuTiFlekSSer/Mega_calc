@@ -391,7 +391,7 @@ LongComplex factorial(const LongComplex &num) {
     for (auto i = num.get_real(); i >= LongNumber::one; --i) {
         r *= LongComplex(i, num.get_imag());
     }
-    for (auto i = num.get_real() + LongNumber::one; i <= LongNumber::one; ++i) {
+    for (auto i = num.get_real() + LongNumber::one; i < LongNumber::one; ++i) {
         r /= LongComplex(i, num.get_imag());
     }
     return r;

@@ -81,7 +81,6 @@ static const std::unordered_map<std::string, std::pair<std::function<T(const std
         {"acoth",     {[](const std::vector<T> &args) { return actanh(args[0]); },        1}},
         {"asech",     {[](const std::vector<T> &args) { return asech(args[0]); },         1}},
         {"acsch",     {[](const std::vector<T> &args) { return acosech(args[0]); },       1}},
-
         {"phase",     {[](const std::vector<T> &args) { return T(phase(args[0])); },      1}},
 };
 static const std::unordered_map<std::string, std::pair<std::function<LongComplex(const std::vector<LongComplex> &args)>, int>> many_value_funcs = {
