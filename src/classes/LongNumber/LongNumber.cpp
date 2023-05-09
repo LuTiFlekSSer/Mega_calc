@@ -968,10 +968,10 @@ LongNumber factorial(const LongNumber &num) {
     }
     LongNumber la_rez = la2 / la1, r = la_rez / exp_y.get();
     r *= pow_for_r.get();
-    for (auto i = num; i >= LongNumber::one; --i) {
+    for (auto i = num; i > LongNumber::one; --i) {
         r *= i;
     }
-    for (auto i = num + LongNumber::one; i <= LongNumber::one; ++i) {
+    for (auto i = num + LongNumber::one; i < LongNumber::one; ++i) {
         r /= i;
     }
     return r;
