@@ -7,47 +7,47 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build_qt:
-    name: Build Qt
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3.5.2
-
-      - name: Install qt
-        uses: jurplel/install-qt-action@v3.2.1
-        with:
-          dir: 'C:/'
-          aqtversion: '==3.1.*'
-          version: '6.4.3'
-          host: 'windows'
-          target: 'desktop'
-          arch: 'win64_mingw'
-
-      - name: Build
-        run: |
-          mkdir cmake-build-release-mingw-for-qt
-          cd cmake-build-release-mingw-for-qt
-          cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows"
-          cmake --build . --target Mega_calcApp -j 10 
-
-      - name: Create installer
-        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
-        with:
-            filepath: './installer/setup.iss'
-
-      - name: Upload installer to git
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: Mega Calc App
-          path: ./installer/Setup.exe
-          retention-days: 5
+#  build_qt:
+#    name: Build Qt
+#    runs-on: windows-latest
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3.5.2
+#
+#      - name: Install qt
+#        uses: jurplel/install-qt-action@v3.2.1
+#        with:
+#          dir: 'C:/'
+#          aqtversion: '==3.1.*'
+#          version: '6.4.3'
+#          host: 'windows'
+#          target: 'desktop'
+#          arch: 'win64_mingw'
+#
+#      - name: Build
+#        run: |
+#          mkdir cmake-build-release-mingw-for-qt
+#          cd cmake-build-release-mingw-for-qt
+#          cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows"
+#          cmake --build . --target Mega_calcApp -j 10
+#
+#      - name: Create installer
+#        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
+#        with:
+#            filepath: './installer/setup.iss'
+#
+#      - name: Upload installer to git
+#        uses: actions/upload-artifact@v3.1.2
+#        with:
+#          name: Mega Calc App
+#          path: ./installer/Setup.exe
+#          retention-days: 5
 
   send_file:
     runs-on: ubuntu-latest
     name: Send file
-    needs: build_qt
+#    needs: build_qt
 
     steps:
       - name: Download artifact
@@ -62,7 +62,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           document: Setup.exe
           message: |
-            ${{ github.actor }} навалил кода в репозиторий: {{ github.repository }}:
+            ${{ github.actor }} навалил кода в репозиторий: ${{ github.repository }}
             
             Текст коммита: ${{ github.event.commits[0].message }}
-          sticker: AAMCAgADGQEAAxVkeNw9Qt05UtpDX1JWhL91qmCGDQACDhgAAmic0Etl0e8eHjWrIQEAB20AAy8E
+          sticker: AAMCAgADGQEAAxhkeN9kMqUvUtNcdOZzDxDtHtq6AQACyhEAAhchCUmugnvAP_sMpAEAB20AAy8E
