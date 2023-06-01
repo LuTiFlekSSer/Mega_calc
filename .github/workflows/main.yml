@@ -14,14 +14,14 @@ jobs:
       - name: checkout
         uses: actions/checkout@v3.5.2
 
-      #      - name: install qt
-      #        uses: jurplel/install-qt-action@v3.2.1
-      #        with:
-      #          version: 6.4.3
+      - name: install qt
+        uses: jurplel/install-qt-action@v3.2.1
+        with:
+          version: 6.4.3
 
-      #      - name: build
-      #        run: |
-      #          cmake DCMAKE_CXX_FLAGS="-O3 -mwindows"
-
-      - name: test
-        run: ls
+      - name: build
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          cmake --build . --target Mega_calcApp 
