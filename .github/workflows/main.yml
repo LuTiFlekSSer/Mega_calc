@@ -26,7 +26,7 @@ jobs:
 
       - name: Build
         run: |
-          cmake -DCMAKE_CXX_COMPILER="C:\Qt\Tools\mingw1120_64\bin\c++.exe" -DCMAKE_C_COMPILER="C:\Qt\Tools\mingw1120_64\bin\gcc.exe" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows" .
+          cmake -G "MinGW Makefiles" -DCMAKE_CXX_COMPILER="C:\Qt\Tools\mingw1120_64\bin\c++.exe" -DCMAKE_C_COMPILER="C:\Qt\Tools\mingw1120_64\bin\gcc.exe" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows" .
           cmake --build . --target Mega_calcApp -j 10 
 
       - name: Upload a Build Artifact
