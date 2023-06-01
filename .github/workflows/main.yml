@@ -28,7 +28,7 @@ jobs:
         run: |
           mkdir cmake-build-release-mingw-for-qt
           cd cmake-build-release-mingw-for-qt
-          cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows" -B ..
+          cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows" -B
           cmake --build . --target Mega_calcApp -j 10 
 
       - name: Create installer
