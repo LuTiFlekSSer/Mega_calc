@@ -26,7 +26,7 @@ jobs:
 
       - name: Build
         run: |
-          cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows" -B ./cmake-build-release-mingw-for-qt/ .
+          cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows" -B ./cmake-build-release-mingw-for-qt/ .
           cmake --build . --target Mega_calcApp -j 10 
 
       - name: Create installer
@@ -34,7 +34,7 @@ jobs:
         with:
             filepath: './installer/setup.iss'
 
-      - name: Upload a Build Artifact
+      - name: Upload installer
         uses: actions/upload-artifact@v3.1.2
         with:
           name: Mega Calc App
