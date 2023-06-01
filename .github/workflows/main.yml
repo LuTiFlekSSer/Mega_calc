@@ -14,31 +14,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.5.2
 
-      - name: Install qt
-        uses: jurplel/install-qt-action@v3.2.1
-        with:
-          dir: 'C:/'
-          aqtversion: '==3.1.*'
-          version: '6.4.3'
-          host: 'windows'
-          target: 'desktop'
-          arch: 'win64_mingw'
-
-      - name: Build
-        run: |
-          mkdir cmake-build-release-mingw-for-qt
-          cd cmake-build-release-mingw-for-qt
-          cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows"
-          cmake --build . --target Mega_calcApp -j 10 
+#      - name: Install qt
+#        uses: jurplel/install-qt-action@v3.2.1
+#        with:
+#          dir: 'C:/'
+#          aqtversion: '==3.1.*'
+#          version: '6.4.3'
+#          host: 'windows'
+#          target: 'desktop'
+#          arch: 'win64_mingw'
+#
+#      - name: Build
+#        run: |
+#          mkdir cmake-build-release-mingw-for-qt
+#          cd cmake-build-release-mingw-for-qt
+#          cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows"
+#          cmake --build . --target Mega_calcApp -j 10
 
       - name: Create installer
-        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
+        uses: callebstrom/inno-setup-cli-action@6.2.1
         with:
-            filepath: './installer/setup.iss'
+            file: './installer/setup.iss'
 
-      - name: Upload installer
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: Mega Calc App
-          path: ./installer/Setup.exe
-          retention-days: 5
+#      - name: Upload installer
+#        uses: actions/upload-artifact@v3.1.2
+#        with:
+#          name: Mega Calc App
+#          path: ./installer/Setup.exe
+#          retention-days: 5
