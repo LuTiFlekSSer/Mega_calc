@@ -7,30 +7,43 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build_qt:
-    name: Build Qt
-    runs-on: windows-latest
+  static_analysis:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3.5.2
+      - uses: actions/checkout@v3
 
-      - name: check
-        uses: cpp-linter/cpp-linter-action@v2
-        id: linter
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: setup init_script
+#        shell: bash
+#        run: |
+#          echo "#!/bin/bash
+#
+#          # Input args provided by StaticAnalysis action
+#          root_dir=\${1}
+#          build_dir=\${2}
+#          echo \"Hello from the init script! First arg=\${root_dir} second arg=\${build_dir}\"
+#
+#          add-apt-repository ppa:oibaf/graphics-drivers
+#          apt update && apt upgrade
+#          apt install -y libvulkan1 mesa-vulkan-drivers vulkan-utils" > init_script.sh
+
+      - name: Run static analysis
+        uses: JacobDomagala/StaticAnalysis@master
         with:
-          style: file
-          files-changed-only: false
 
-      - name: Fail
-        if: steps.linter.outputs.checks-failed > 0
-        run: echo "Some files failed the linting checks!"
+          # (Optional) clang-tidy args
+          clang_tidy_args: -checks='*,fuchsia-*,google-*,zircon-*,abseil-*,modernize-use-trailing-return-type'
 
-      - name: good
-        if: steps.linter.outputs.checks-failed == 0
-        run: echo "norm"
+          # (Optional) cppcheck args
+          cppcheck_args: --enable=all --suppress=missingInclude
+#  build_qt:
+#    name: Build Qt
+#    runs-on: windows-latest
+
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3.5.2
+
 #      - name: Install qt
 #        uses: jurplel/install-qt-action@v3.2.1
 #        with:
