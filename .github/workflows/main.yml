@@ -7,64 +7,86 @@ on:
     branches: [ "main" ]
 
 jobs:
-  #  build_qt:
-  #    name: Build Qt
-  #    runs-on: windows-latest
-  #
-  #    steps:
-  #      - name: Checkout
-  #        uses: actions/checkout@v3.5.2
-  #
-  #      - name: Install qt
-  #        uses: jurplel/install-qt-action@v3.2.1
-  #        with:
-  #          dir: 'C:/'
-  #          aqtversion: '==3.1.*'
-  #          version: '6.4.3'
-  #          host: 'windows'
-  #          target: 'desktop'
-  #          arch: 'win64_mingw'
-  #
-  #      - name: Build
-  #        run: |
-  #          mkdir cmake-build-release-mingw-for-qt
-  #          cd cmake-build-release-mingw-for-qt
-  #          cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows"
-  #          cmake --build . --target Mega_calcApp -j 10
-  #
-  #      - name: Create installer
-  #        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
-  #        with:
-  #          filepath: './installer/setup.iss'
-  #
-  #      - name: Upload installer to git
-  #        uses: actions/upload-artifact@v3.1.2
-  #        with:
-  #          name: Mega Calc App
-  #          path: ./installer/Setup.exe
-  #          retention-days: 5
-
-  send_file:
-    runs-on: ubuntu-latest
-    name: Send file
-    #    needs: build_qt
-    strategy:
-      matrix:
-        users: ${{ github.secrets.TELEGRAM_TO_BORIS }}, ${{ github.secrets.TELEGRAM_TO_ILYA }}
+  build_qt:
+    name: Build Qt
+    runs-on: windows-latest
 
     steps:
-      #      - name: Download artifact
-      #        uses: actions/download-artifact@v3
-      #        with:
-      #          name: Mega Calc App
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
 
-      - name: Send message
-        uses: appleboy/telegram-action@master
+      - name: check
+        uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          to: ${{ matrix.users }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          document: Setup.exe
-          message: |
-            ${{ github.actor }} навалил кода в репозиторий: ${{ github.repository }}
-            
-            Текст коммита: ${{ github.event.commits[0].message }}
+          style: file
+
+      - name: Fail
+        if: steps.linter.outputs.checks-failed > 0
+        run: echo "Some files failed the linting checks!"
+
+      - name: good
+        if: steps.linter.outputs.checks-failed = 0
+        run: echo "norm"
+#      - name: Install qt
+#        uses: jurplel/install-qt-action@v3.2.1
+#        with:
+#          dir: 'C:/'
+#          aqtversion: '==3.1.*'
+#          version: '6.4.3'
+#          host: 'windows'
+#          target: 'desktop'
+#          arch: 'win64_mingw'
+#
+#      - name: Build
+#        run: |
+#          mkdir cmake-build-release-mingw-for-qt
+#          cd cmake-build-release-mingw-for-qt
+#          cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-O3 -mwindows"
+#          cmake --build . --target Mega_calcApp -j 10
+#
+#      - name: Create installer
+#        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
+#        with:
+#          filepath: './installer/setup.iss'
+#
+#      - name: Upload installer to git
+#        uses: actions/upload-artifact@v3.1.2
+#        with:
+#          name: Mega Calc App
+#          path: ./installer/Setup.exe
+#          retention-days: 5
+
+#  send_file:
+#    runs-on: ubuntu-latest
+#    name: Send file
+#    needs: build_qt
+#    steps:
+#      - name: Download artifact
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: Mega Calc App
+#
+#      - name: Send message 1
+#        uses: appleboy/telegram-action@master
+#        with:
+#          to: ${{ secrets.TELEGRAM_TO_BORIS }}
+#          token: ${{ secrets.TELEGRAM_TOKEN }}
+#          document: Setup.exe
+#          message: |
+#            ${{ github.actor }} навалил кода в репозиторий: ${{ github.repository }}
+#
+#            Текст коммита: ${{ github.event.commits[0].message }}
+
+#      - name: Send message 2
+#        uses: appleboy/telegram-action@master
+#        with:
+#          to: ${{ secrets.TELEGRAM_TO_ILYA }}
+#          token: ${{ secrets.TELEGRAM_TOKEN }}
+#          document: Setup.exe
+#          message: |
+#            ${{ github.actor }} навалил кода в репозиторий: ${{ github.repository }}
+#
+#            Текст коммита: ${{ github.event.commits[0].message }}
