@@ -8,11 +8,19 @@ on:
 
 jobs:
   static_analysis:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v3
-
+      - name: Install qt
+        uses: jurplel/install-qt-action@v3.2.1
+        with:
+          dir: 'C:/'
+          aqtversion: '==3.1.*'
+          version: '6.4.3'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_mingw'
 #      - name: setup init_script
 #        shell: bash
 #        run: |
