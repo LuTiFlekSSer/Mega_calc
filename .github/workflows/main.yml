@@ -35,7 +35,7 @@ jobs:
 #      - name: Create installer
 #        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
 #        with:
-#            filepath: './installer/setup.iss'
+#          filepath: './installer/setup.iss'
 #
 #      - name: Upload installer to git
 #        uses: actions/upload-artifact@v3.1.2
@@ -48,7 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Send file
 #    needs: build_qt
-
+    strategy:
+      matrix:
+        users: [ ${ { secrets.TELEGRAM_TO_BORIS } }, ${ { secrets.TELEGRAM_TO_ILYA } } ]
     steps:
 #      - name: Download artifact
 #        uses: actions/download-artifact@v3
@@ -58,13 +60,10 @@ jobs:
       - name: Send message
         uses: appleboy/telegram-action@master
         with:
-          to: ${{ secrets.TELEGRAM_TO }}
+          to: ${{ matrix.user }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           document: Setup.exe
           message: |
             ${{ github.actor }} навалил кода в репозиторий: ${{ github.repository }}
             
             Текст коммита: ${{ github.event.commits[0].message }}
-            
-            <sticker src="AAMCAgADGQEAAxhkeN9kMqUvUtNcdOZzDxDtHtq6AQACyhEAAhchCUmugnvAP_sMpAEAB20AAy8E" alt="стикер"/>
-          sticker: <sticker src="AAMCAgADGQEAAxhkeN9kMqUvUtNcdOZzDxDtHtq6AQACyhEAAhchCUmugnvAP_sMpAEAB20AAy8E" alt="стикер"/>
