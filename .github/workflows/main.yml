@@ -50,7 +50,7 @@ jobs:
     #    needs: build_qt
     strategy:
       matrix:
-        users: ${{ secrets.TELEGRAM_TO_BORIS }}, ${{ secrets.TELEGRAM_TO_ILYA }}
+        users: ${{ github.secrets.TELEGRAM_TO_BORIS }}, ${{ github.secrets.TELEGRAM_TO_ILYA }}
 
     steps:
       #      - name: Download artifact
