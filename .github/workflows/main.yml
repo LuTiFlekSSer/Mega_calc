@@ -62,7 +62,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           document: Setup.exe
           message: |
-            ${{ github.actor }} created commit:
-            Commit message: ${{ github.event.commits[0].message }}
+            ${{ github.actor }} навалил кода в репозиторий: {{ github.repository }}:
             
-            Repository: ${{ github.repository }}
+            Текст коммита: ${{ github.event.commits[0].message }}
+          sticker: AAMCAgADGQEAAxVkeNw9Qt05UtpDX1JWhL91qmCGDQACDhgAAmic0Etl0e8eHjWrIQEAB20AAy8E
