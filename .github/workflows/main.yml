@@ -8,32 +8,18 @@ on:
 
 jobs:
   static_analysis:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
-      - name: Install qt
-        uses: jurplel/install-qt-action@v3.2.1
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
         with:
-          dir: 'C:/'
           aqtversion: '==3.1.*'
           version: '6.4.3'
-          host: 'windows'
+          host: 'linux'
           target: 'desktop'
-          arch: 'win64_mingw'
-#      - name: setup init_script
-#        shell: bash
-#        run: |
-#          echo "#!/bin/bash
-#
-#          # Input args provided by StaticAnalysis action
-#          root_dir=\${1}
-#          build_dir=\${2}
-#          echo \"Hello from the init script! First arg=\${root_dir} second arg=\${build_dir}\"
-#
-#          add-apt-repository ppa:oibaf/graphics-drivers
-#          apt update && apt upgrade
-#          apt install -y libvulkan1 mesa-vulkan-drivers vulkan-utils" > init_script.sh
+          arch: 'gcc_64'
 
       - name: Run static analysis
         uses: JacobDomagala/StaticAnalysis@master
