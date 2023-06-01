@@ -1,0 +1,24 @@
+name: build
+
+on:
+  push:
+    branches: ["main", "github_actions"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build_qt:
+    runs-on: windows-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3.5.2
+
+      - name: install qt
+        uses: jurplel/install-qt-action@v3.2.1
+        with:
+          version: 6.4.3
+
+      - name: build
+        run: |
+          cmake DCMAKE_CXX_FLAGS="-O3 -mwindows" -j 10
