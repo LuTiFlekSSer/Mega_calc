@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: ["main", "github_actions"]
+    branches: [ "main", "github_actions" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
 
 jobs:
   build_qt:
@@ -21,4 +21,4 @@ jobs:
 
       - name: build
         run: |
-          cmake DCMAKE_CXX_FLAGS="-O3 -mwindows" -j 10
+          cmake DCMAKE_CXX_FLAGS="-O3 -mwindows"
