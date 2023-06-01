@@ -270,7 +270,7 @@ Page {
                 model: ListModel {
                     id: mat_C_Elems
                 }
-
+                
                 delegate: TextField {
                     width: gw_C.elem_width
                     height: gw_C.elem_height
