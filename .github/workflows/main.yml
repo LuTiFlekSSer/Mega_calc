@@ -50,10 +50,10 @@ jobs:
 #    needs: build_qt
 
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: Mega Calc App
+#      - name: Download artifact
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: Mega Calc App
 
       - name: Send message
         uses: appleboy/telegram-action@master
