@@ -28,7 +28,7 @@ jobs:
         run: echo "Some files failed the linting checks!"
 
       - name: good
-        if: steps.linter.outputs.checks-failed = 0
+        if: steps.linter.outputs.checks-failed == 0
         run: echo "norm"
 #      - name: Install qt
 #        uses: jurplel/install-qt-action@v3.2.1
