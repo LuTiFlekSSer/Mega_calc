@@ -21,8 +21,6 @@ jobs:
 
       - name: build
         run: |
-          mkdir build
-          cd build
           cmake . -DCMAKE_CXX_FLAGS="-O3 -mwindows"
           cmake --build . --target Mega_calcApp 
 
