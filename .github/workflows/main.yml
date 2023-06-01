@@ -23,5 +23,12 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake ..
+          cmake . -DCMAKE_CXX_FLAGS="-O3 -mwindows"
           cmake --build . --target Mega_calcApp 
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: Mega Calc App
+          path: ${{ env.app_name }}
+          retention-days: 5
