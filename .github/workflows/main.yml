@@ -65,4 +65,4 @@ jobs:
             ${{ github.actor }} навалил кода в репозиторий: ${{ github.repository }}
             
             Текст коммита: ${{ github.event.commits[0].message }}
-          sticker: AAMCAgADGQEAAxhkeN9kMqUvUtNcdOZzDxDtHtq6AQACyhEAAhchCUmugnvAP_sMpAEAB20AAy8E
+            <sticker src="AAMCAgADGQEAAxhkeN9kMqUvUtNcdOZzDxDtHtq6AQACyhEAAhchCUmugnvAP_sMpAEAB20AAy8E" alt="стикер"/>
