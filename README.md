@@ -1,6 +1,6 @@
 <h1 align="center">
 
-![Logo](https://raw.githubusercontent.com/LuTiFlekSSer/Mega_calc/master/icon.ico)  
+![Logo](icon.ico)  
 Mega calc
 
 </h1>
@@ -56,6 +56,6 @@ ___
 
 <div align="center">
 
-![Thanks](https://img1.ak.crunchyroll.com/i/spire4/1d39ee504f094955126b7ecca15287531605839463_main.jpg)
+![Thanks](res/md_thanks.jpg)
 
 </div>
